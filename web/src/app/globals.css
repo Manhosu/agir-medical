@@ -1,0 +1,511 @@
+@import "tailwindcss";
+
+/* Design System AGIR - E-Learning Médico */
+/* Baseado no design do Lovable (drge-agir) */
+/* Fontes carregadas via next/font no layout.tsx */
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Colors */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  /* Charts */
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  /* Sidebar */
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* Border Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  /* Fonts */
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "Inconsolata", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Shadows */
+  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+}
+
+/* Light Mode - Design AGIR */
+:root {
+  --radius: 0.75rem;
+
+  /* Cores principais - Verde médico */
+  --background: 0 0% 96%;
+  --foreground: 0 0% 9%;
+
+  --card: 0 0% 98%;
+  --card-foreground: 0 0% 9%;
+
+  --popover: 0 0% 89%;
+  --popover-foreground: 0 0% 9%;
+
+  /* Primary - Verde azulado (cor principal AGIR) */
+  --primary: 161 93% 30%;
+  --primary-foreground: 151 80% 95%;
+
+  /* Secondary - Cinza escuro */
+  --secondary: 0 0% 32%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 0 0% 63%;
+  --muted-foreground: 0 0% 9%;
+
+  /* Accent - Verde claro */
+  --accent: 166 76% 96%;
+  --accent-foreground: 173 80% 40%;
+
+  /* Destructive - Vermelho */
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 85% 97%;
+
+  --border: 0 0% 83%;
+  --input: 0 0% 83%;
+  --ring: 161 93% 30%;
+
+  /* Charts - Tons de verde e azul */
+  --chart-1: 158 64% 51%;
+  --chart-2: 141 69% 58%;
+  --chart-3: 172 66% 50%;
+  --chart-4: 82 77% 55%;
+  --chart-5: 0 0% 45%;
+
+  /* Sidebar */
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 0 0% 9%;
+  --sidebar-primary: 161 93% 30%;
+  --sidebar-primary-foreground: 151 80% 95%;
+  --sidebar-accent: 0 0% 32%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 0 0% 83%;
+  --sidebar-ring: 161 93% 30%;
+}
+
+/* Dark Mode - Design AGIR */
+.dark {
+  --background: 0 0% 9%;
+  --foreground: 0 0% 98%;
+
+  --card: 0 0% 14%;
+  --card-foreground: 0 0% 98%;
+
+  --popover: 0 0% 25%;
+  --popover-foreground: 0 0% 98%;
+
+  /* Primary - Teal mais claro no dark */
+  --primary: 158 64% 51%;
+  --primary-foreground: 165 91% 9%;
+
+  --secondary: 0 0% 45%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 0 0% 45%;
+  --muted-foreground: 0 0% 98%;
+
+  /* Accent - Azul escuro */
+  --accent: 178 84% 10%;
+  --accent-foreground: 172 66% 50%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 85% 97%;
+
+  --border: 0 0% 32%;
+  --input: 0 0% 32%;
+  --ring: 158 64% 51%;
+
+  /* Charts - Dark mode */
+  --chart-1: 156 71% 66%;
+  --chart-2: 141 76% 73%;
+  --chart-3: 170 76% 64%;
+  --chart-4: 81 84% 67%;
+  --chart-5: 0 0% 45%;
+
+  /* Sidebar - Dark */
+  --sidebar: 0 0% 14%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 158 64% 51%;
+  --sidebar-primary-foreground: 165 91% 9%;
+  --sidebar-accent: 172 66% 50%;
+  --sidebar-accent-foreground: 178 84% 10%;
+  --sidebar-border: 0 0% 32%;
+  --sidebar-ring: 158 64% 51%;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* Offset for fixed header */
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Typography - Lora para títulos de seção */
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+  }
+}
+
+/* ========================================
+   SISTEMA DE PROTEÇÃO DE CONTEÚDO
+   Visualizador Seguro Anti-Fraude
+======================================== */
+
+/* Classe base de proteção de conteúdo */
+.content-protected {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* Secure Content Viewer - Modal Fullscreen */
+.secure-viewer-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: hsl(var(--background));
+  overflow: hidden;
+}
+
+.secure-viewer-modal * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* Bloquear arraste de imagens */
+.secure-viewer-modal img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
+/* Watermark dinâmica */
+.dynamic-watermark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+  overflow: hidden;
+  opacity: 0.03;
+}
+
+.dynamic-watermark-text {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  transform: rotate(-30deg);
+  pointer-events: none;
+}
+
+/* Overlay de bloqueio quando DevTools aberto */
+.security-overlay {
+  position: absolute;
+  inset: 0;
+  background: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 50000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Blur de proteção */
+.content-blur {
+  filter: blur(20px);
+  pointer-events: none;
+  transition: filter 0.3s ease;
+}
+
+/* Desabilitar highlight em touch */
+.secure-viewer-modal,
+.content-protected {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Esconder cursor ao tentar selecionar */
+.content-protected::selection,
+.secure-viewer-modal ::selection {
+  background: transparent;
+  color: inherit;
+}
+
+.content-protected::-moz-selection,
+.secure-viewer-modal ::-moz-selection {
+  background: transparent;
+  color: inherit;
+}
+
+/* Legacy watermark class (compatibilidade) */
+.watermark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.15;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  transform: rotate(-30deg);
+  font-size: 14px;
+  color: var(--foreground);
+}
+
+/* Prose - Typography for lesson content */
+.prose {
+  color: hsl(var(--foreground));
+  max-width: 65ch;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+  color: hsl(var(--foreground));
+}
+
+.prose h1 { font-size: 2.25rem; }
+.prose h2 { font-size: 1.75rem; }
+.prose h3 { font-size: 1.5rem; }
+.prose h4 { font-size: 1.25rem; }
+
+.prose p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+
+.prose strong {
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.prose em {
+  font-style: italic;
+}
+
+.prose ul, .prose ol {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.5em;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose blockquote {
+  font-style: italic;
+  border-left: 4px solid hsl(var(--primary));
+  padding-left: 1em;
+  margin: 1.5em 0;
+  color: hsl(var(--muted-foreground));
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+}
+
+.prose th, .prose td {
+  border: 1px solid hsl(var(--border));
+  padding: 0.75em 1em;
+  text-align: left;
+}
+
+.prose th {
+  background: hsl(var(--muted));
+  font-weight: 600;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin: 1.5em 0;
+}
+
+.prose a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: hsl(var(--primary) / 0.8);
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: hsl(var(--muted));
+  padding: 0.125em 0.375em;
+  border-radius: calc(var(--radius) - 4px);
+}
+
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  padding: 1em;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+  margin: 2em 0;
+}
+
+/* Dark mode prose adjustments */
+.dark .prose {
+  color: hsl(var(--foreground));
+}
+
+/* ========================================
+   PROTEÇÃO CONTRA IMPRESSÃO
+   Bloqueio total de print/PDF
+======================================== */
+@media print {
+  /* Esconder todo conteúdo protegido */
+  .content-protected,
+  .secure-viewer-modal,
+  .secure-content-area,
+  [data-protected="true"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+
+  /* Esconder body inteiro quando visualizador está aberto */
+  body:has(.secure-viewer-modal) {
+    display: none !important;
+  }
+
+  /* Mensagem de bloqueio */
+  body::before {
+    content: "⚠️ IMPRESSÃO NÃO PERMITIDA ⚠️";
+    display: block !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 2rem !important;
+    font-weight: bold !important;
+    color: hsl(0 72% 50%) !important;
+    text-align: center !important;
+    z-index: 999999 !important;
+    background: white !important;
+    padding: 2rem !important;
+    border: 3px solid hsl(0 72% 50%) !important;
+    border-radius: 8px !important;
+  }
+
+  body::after {
+    content: "Este conteúdo é protegido e não pode ser impresso. Acesse a plataforma AGIR para visualizar.";
+    display: block !important;
+    position: fixed !important;
+    top: calc(50% + 80px) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    font-size: 1rem !important;
+    color: #333 !important;
+    text-align: center !important;
+    max-width: 400px !important;
+    z-index: 999999 !important;
+  }
+
+  /* Garantir página em branco */
+  * {
+    visibility: hidden !important;
+    color: transparent !important;
+    background: white !important;
+  }
+}

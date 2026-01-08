@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "AGIR E-Learning",
+    "slug": "agir-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0A0A0B"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.agir.elearning"
+    },
+    "android": {
+      "package": "com.agir.elearning"
+    },
+    "scheme": "agir"
+  }
+}

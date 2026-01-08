@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-git)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest init:*)",
+      "Bash(npx shadcn@latest add button card input label form textarea select checkbox dialog sheet tabs avatar badge separator skeleton toast sonner dropdown-menu scroll-area progress -y)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npm run build:*)",
+      "Bash(dir /a \"c:\\\\Users\\\\delas\\\\OneDrive\\\\Documentos\\\\Projetos2\\\\medic\")",
+      "Bash(npm run dev:*)",
+      "Bash(npx supabase:*)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(if exist .next rmdir /s /q .next)",
+      "Bash(cat:*)",
+      "Bash(dir:*)",
+      "Bash(del \"c:\\\\Users\\\\delas\\\\OneDrive\\\\Documentos\\\\Projetos2\\\\medic\\\\web\\\\src\\\\app\\\\\\(admin\\)\\\\admin\\\\login\\\\page.tsx\")",
+      "Bash(timeout /t 2 /nobreak)",
+      "Bash(ping:*)",
+      "Bash(node scripts/import-courses.js:*)",
+      "Bash(node:*)",
+      "Bash(timeout /t 10 /nobreak)",
+      "Bash(del /f \"c:\\\\Users\\\\delas\\\\OneDrive\\\\Documentos\\\\Projetos2\\\\medic\\\\web\\\\.next\\\\dev\\\\lock\")",
+      "Bash(pkill:*)",
+      "Bash(find:*)",
+      "Bash(timeout:*)",
+      "Bash(del \"c:\\\\Users\\\\delas\\\\OneDrive\\\\Documentos\\\\Projetos2\\\\medic\\\\mobile\\\\src\\\\lib\\\\session.ts\")",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(cmd /c \"dir /s /b nul 2>nul || echo File not found as dir command\")",
+      "Bash(powershell -Command:*)",
+      "Bash(git config:*)"
+    ]
+  }
+}
