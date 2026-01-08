@@ -35,6 +35,14 @@ export function useAuth() {
   // Ref para controlar o intervalo de validação de sessão
   const sessionCheckInterval = useRef<NodeJS.Timeout | null>(null)
 
+  // Limpar sessão local (localStorage)
+  const clearLocalSession = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('session_token')
+      localStorage.removeItem('device_id')
+    }
+  }, [])
+
   // Buscar perfil do usuário
   const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
     try {
@@ -97,7 +105,7 @@ export function useAuth() {
     // Atualizar última atividade
     await updateSessionActivity(userId)
     return true
-  }, [router])
+  }, [router, clearLocalSession])
 
   // Inicializar autenticação
   useEffect(() => {
