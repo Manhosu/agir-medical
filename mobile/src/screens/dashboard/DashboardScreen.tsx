@@ -46,12 +46,12 @@ export default function DashboardScreen() {
         return
       }
 
-      if (data && data.length > 0) {
+      if (data) {
         setStats({
-          availableCourses: data[0].total_courses || 0,
-          completedLessons: data[0].completed_lessons || 0,
-          totalLessons: data[0].total_lessons || 0,
-          overallProgress: Math.round(data[0].average_progress || 0),
+          availableCourses: data.total_courses || 0,
+          completedLessons: data.completed_lessons || 0,
+          totalLessons: data.total_lessons || 0,
+          overallProgress: Math.round(data.average_progress || 0),
         })
       }
     } catch (error) {
