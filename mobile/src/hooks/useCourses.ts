@@ -156,10 +156,24 @@ export function useCourses() {
     }
   }, [])
 
-  // Salvar progresso de uma aula
+  // Salvar progresso de uma aula (apenas se for maior que o atual)
   const saveProgress = useCallback(
     async (userId: string, lessonId: string, progressPercent: number) => {
       try {
+        // Buscar progresso atual do banco para evitar regressao
+        const { data: currentProgress } = await supabase
+          .from('user_progress')
+          .select('progress_percent')
+          .eq('user_id', userId)
+          .eq('lesson_id', lessonId)
+          .single()
+
+        // Apenas salvar se o novo progresso for MAIOR que o atual
+        if (currentProgress && progressPercent <= currentProgress.progress_percent) {
+          console.log('Progress not saved: new value is not greater than current')
+          return true // Retorna true pois nao e um erro
+        }
+
         const { error } = await supabase.from('user_progress').upsert(
           {
             user_id: userId,

@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
 } from 'react-native'
 import { useAuthStore } from '../../stores/authStore'
+import { useTheme } from '../../hooks/useTheme'
 import type { AuthScreenProps } from '../../navigation/types'
 
 export default function ForgotPasswordScreen({
@@ -19,6 +20,7 @@ export default function ForgotPasswordScreen({
 }: AuthScreenProps<'ForgotPassword'>) {
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const colors = useTheme()
 
   const { resetPassword } = useAuthStore()
 
@@ -46,28 +48,28 @@ export default function ForgotPasswordScreen({
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Text style={styles.logo}>AGIR</Text>
-          <Text style={styles.subtitle}>E-Learning Medico</Text>
+          <Text style={[styles.logo, { color: colors.primary }]}>AGIR</Text>
+          <Text style={[styles.subtitle, { color: colors.textTertiary }]}>E-Learning Medico</Text>
         </View>
 
-        <View style={styles.form}>
-          <Text style={styles.title}>Recuperar Senha</Text>
-          <Text style={styles.description}>
+        <View style={[styles.form, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.title, { color: colors.text }]}>Recuperar Senha</Text>
+          <Text style={[styles.description, { color: colors.textSecondary }]}>
             Digite seu email para receber um link de recuperacao
           </Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Email</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: colors.border, color: colors.text, borderColor: colors.textTertiary }]}
               placeholder="seu@email.com"
-              placeholderTextColor="#71717A"
+              placeholderTextColor={colors.textTertiary}
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
@@ -77,13 +79,13 @@ export default function ForgotPasswordScreen({
           </View>
 
           <TouchableOpacity
-            style={[styles.button, isSubmitting && styles.buttonDisabled]}
+            style={[styles.button, { backgroundColor: colors.primary }, isSubmitting && styles.buttonDisabled]}
             onPress={handleResetPassword}
             disabled={isSubmitting}>
             {isSubmitting ? (
-              <ActivityIndicator color="#FAFAFA" />
+              <ActivityIndicator color={colors.text} />
             ) : (
-              <Text style={styles.buttonText}>Enviar Link</Text>
+              <Text style={[styles.buttonText, { color: colors.text }]}>Enviar Link</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -92,7 +94,7 @@ export default function ForgotPasswordScreen({
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
             disabled={isSubmitting}>
-            <Text style={styles.footerLink}>Voltar para o login</Text>
+            <Text style={[styles.footerLink, { color: colors.primary }]}>Voltar para o login</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -103,7 +105,6 @@ export default function ForgotPasswordScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0B',
   },
   scrollContent: {
     flexGrow: 1,
@@ -117,30 +118,24 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#22C55E',
     letterSpacing: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#71717A',
     marginTop: 4,
   },
   form: {
-    backgroundColor: '#18181B',
     borderRadius: 16,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#27272A',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FAFAFA',
     marginBottom: 8,
   },
   description: {
     fontSize: 14,
-    color: '#A1A1AA',
     marginBottom: 24,
   },
   inputGroup: {
@@ -149,20 +144,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#FAFAFA',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#27272A',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    color: '#FAFAFA',
     borderWidth: 1,
-    borderColor: '#3F3F46',
   },
   button: {
-    backgroundColor: '#22C55E',
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
@@ -173,7 +163,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FAFAFA',
   },
   footer: {
     alignItems: 'center',
@@ -181,7 +170,6 @@ const styles = StyleSheet.create({
   },
   footerLink: {
     fontSize: 14,
-    color: '#22C55E',
     fontWeight: '500',
   },
 })

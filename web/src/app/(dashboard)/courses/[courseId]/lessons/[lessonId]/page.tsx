@@ -44,6 +44,7 @@ export default function LessonViewerPage() {
   const [allLessons, setAllLessons] = useState<Lesson[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [progress, setProgress] = useState(0)
+  const [maxProgress, setMaxProgress] = useState(0) // Track maximum progress reached
   const [showSidebar, setShowSidebar] = useState(false)
 
   const contentRef = useRef<HTMLDivElement>(null)
@@ -92,7 +93,7 @@ export default function LessonViewerPage() {
     }
   }, [])
 
-  // Rastrear progresso de scroll
+  // Rastrear progresso de scroll (apenas aumenta, nunca diminui)
   useEffect(() => {
     const handleScroll = () => {
       if (!contentRef.current) return
@@ -101,8 +102,13 @@ export default function LessonViewerPage() {
       const scrollTop = element.scrollTop
       const scrollHeight = element.scrollHeight - element.clientHeight
       const scrollProgress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
+      const currentProgress = Math.min(100, Math.round(scrollProgress))
 
-      setProgress(Math.min(100, Math.round(scrollProgress)))
+      // Apenas atualizar se o progresso AUMENTOU
+      if (currentProgress > maxProgress) {
+        setMaxProgress(currentProgress)
+        setProgress(currentProgress)
+      }
     }
 
     const contentElement = contentRef.current
@@ -110,17 +116,17 @@ export default function LessonViewerPage() {
       contentElement.addEventListener('scroll', handleScroll)
       return () => contentElement.removeEventListener('scroll', handleScroll)
     }
-  }, [content])
+  }, [content, maxProgress])
 
-  // Salvar progresso periodicamente
+  // Salvar progresso periodicamente (usa maxProgress para evitar regressao)
   useEffect(() => {
-    if (progress > 0 && user) {
+    if (maxProgress > 0 && user) {
       if (progressUpdateRef.current) {
         clearTimeout(progressUpdateRef.current)
       }
 
       progressUpdateRef.current = setTimeout(() => {
-        saveProgress(progress)
+        saveProgress(maxProgress)
       }, 2000) // Salvar após 2 segundos de inatividade
     }
 
@@ -129,7 +135,7 @@ export default function LessonViewerPage() {
         clearTimeout(progressUpdateRef.current)
       }
     }
-  }, [progress, user])
+  }, [maxProgress, user])
 
   const loadLessonData = async () => {
     try {
@@ -177,6 +183,7 @@ export default function LessonViewerPage() {
 
         if (progressData) {
           setProgress(progressData.progress_percent)
+          setMaxProgress(progressData.progress_percent) // Inicializar maxProgress com valor salvo
         }
       }
     } catch (error) {

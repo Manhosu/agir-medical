@@ -6,11 +6,13 @@ import type { RootStackParamList } from './types'
 import { useAuthStore } from '../stores/authStore'
 import AuthNavigator from './AuthNavigator'
 import MainNavigator from './MainNavigator'
+import { useTheme } from '../hooks/useTheme'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export function RootNavigator() {
   const { isLoading, isAuthenticated, initialize } = useAuthStore()
+  const colors = useTheme()
 
   useEffect(() => {
     initialize()
@@ -18,8 +20,8 @@ export function RootNavigator() {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#22C55E" />
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     )
   }
@@ -28,7 +30,7 @@ export function RootNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: '#0A0A0B' },
+        contentStyle: { backgroundColor: colors.background },
       }}>
       {isAuthenticated ? (
         <Stack.Screen name="Main" component={MainNavigator} />
@@ -44,7 +46,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0A0A0B',
   },
 })
 

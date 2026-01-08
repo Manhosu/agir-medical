@@ -1,38 +1,54 @@
-import { Platform, NativeModules } from 'react-native'
+import { Platform } from 'react-native'
+import * as ScreenCapture from 'expo-screen-capture'
 
 /**
  * Utilitário para proteção de conteúdo no app mobile
  * Implementa medidas de segurança para evitar captura de tela e gravação
+ * Usa expo-screen-capture para protecao nativa
+ *
+ * Nota: Em Expo Go a funcionalidade e limitada. Para protecao completa,
+ * use um build de producao (EAS Build)
  */
-
-// Para implementação completa, seria necessário criar módulos nativos:
-// Android: FLAG_SECURE
-// iOS: UIApplication.shared.userInterfaceLayoutDirection
 
 /**
  * Habilita proteção de tela (bloqueia screenshots e gravação)
- * Requer implementação de módulo nativo
+ * Android: Usa FLAG_SECURE
+ * iOS: Limita gravacao de tela (screenshots podem ainda funcionar)
  */
-export function enableScreenProtection(): void {
-  if (Platform.OS === 'android') {
-    // Android: Usar FLAG_SECURE através de módulo nativo
-    // NativeModules.ScreenProtection?.enable()
-    console.log('[ContentProtection] Screen protection enabled for Android')
-  } else if (Platform.OS === 'ios') {
-    // iOS: Usar secureTextField ou similar
-    // NativeModules.ScreenProtection?.enable()
-    console.log('[ContentProtection] Screen protection enabled for iOS')
+export async function enableScreenProtection(): Promise<void> {
+  try {
+    await ScreenCapture.preventScreenCaptureAsync()
+    console.log('[ContentProtection] Screen protection enabled')
+  } catch (error) {
+    // Em Expo Go, isso pode falhar - e esperado
+    console.warn('[ContentProtection] Screen protection not available:', error)
   }
 }
 
 /**
  * Desabilita proteção de tela
- * Requer implementação de módulo nativo
  */
-export function disableScreenProtection(): void {
-  if (Platform.OS === 'android' || Platform.OS === 'ios') {
-    // NativeModules.ScreenProtection?.disable()
+export async function disableScreenProtection(): Promise<void> {
+  try {
+    await ScreenCapture.allowScreenCaptureAsync()
     console.log('[ContentProtection] Screen protection disabled')
+  } catch (error) {
+    console.warn('[ContentProtection] Could not disable screen protection:', error)
+  }
+}
+
+/**
+ * Hook para monitorar tentativas de captura de tela
+ * Retorna subscription que deve ser limpa no cleanup
+ */
+export function addScreenshotListener(
+  callback: () => void
+): ScreenCapture.Subscription | null {
+  try {
+    return ScreenCapture.addScreenshotListener(callback)
+  } catch (error) {
+    console.warn('[ContentProtection] Screenshot listener not available:', error)
+    return null
   }
 }
 

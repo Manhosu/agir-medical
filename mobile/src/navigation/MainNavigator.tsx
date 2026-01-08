@@ -6,10 +6,11 @@ import type { MainTabParamList } from './types'
 import DashboardScreen from '../screens/dashboard/DashboardScreen'
 import CoursesNavigator from './CoursesNavigator'
 import ProfileScreen from '../screens/profile/ProfileScreen'
+import { useTheme } from '../hooks/useTheme'
 
 const Tab = createBottomTabNavigator<MainTabParamList>()
 
-// Ícones simples usando texto (em produção usar react-native-vector-icons ou similar)
+// Icones simples usando texto (em producao usar react-native-vector-icons ou similar)
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons: Record<string, string> = {
     Dashboard: '🏠',
@@ -27,28 +28,30 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
 }
 
 export function MainNavigator() {
+  const colors = useTheme()
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#0A0A0B',
+          backgroundColor: colors.background,
           borderBottomWidth: 1,
-          borderBottomColor: '#27272A',
+          borderBottomColor: colors.border,
         },
-        headerTintColor: '#FAFAFA',
+        headerTintColor: colors.text,
         headerTitleStyle: {
           fontWeight: '600',
         },
         tabBarStyle: {
-          backgroundColor: '#0A0A0B',
-          borderTopColor: '#27272A',
+          backgroundColor: colors.background,
+          borderTopColor: colors.border,
           borderTopWidth: 1,
           paddingBottom: 5,
           paddingTop: 5,
           height: 60,
         },
-        tabBarActiveTintColor: '#22C55E',
-        tabBarInactiveTintColor: '#71717A',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '500',

@@ -12,7 +12,13 @@ import { WebView } from 'react-native-webview'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { useAuthStore } from '../../stores/authStore'
 import { useCourses } from '../../hooks/useCourses'
+import { useTheme } from '../../hooks/useTheme'
 import { supabase } from '../../lib/supabase'
+import {
+  enableScreenProtection,
+  disableScreenProtection,
+  addScreenshotListener,
+} from '../../utils/contentProtection'
 import type { CoursesScreenProps } from '../../navigation/types'
 import type { Lesson, LessonContent } from '../../types/database'
 
@@ -24,15 +30,36 @@ export default function LessonViewerScreen() {
   const { courseId, lessonId } = route.params
   const { user, profile, hasActiveSubscription } = useAuthStore()
   const { fetchLessonContent, saveProgress } = useCourses()
+  const colors = useTheme()
 
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [content, setContent] = useState<string>('')
   const [allLessons, setAllLessons] = useState<Lesson[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [progress, setProgress] = useState(0)
+  const [maxProgress, setMaxProgress] = useState(0) // Track maximum progress reached
 
   const webViewRef = useRef<WebView>(null)
   const progressSaveTimeout = useRef<NodeJS.Timeout | null>(null)
+
+  // Habilitar protecao de tela ao entrar na aula
+  useEffect(() => {
+    enableScreenProtection()
+
+    // Monitorar tentativas de screenshot
+    const subscription = addScreenshotListener(() => {
+      Alert.alert(
+        'Aviso',
+        'A captura de tela nao e permitida nesta secao.',
+        [{ text: 'OK' }],
+      )
+    })
+
+    return () => {
+      disableScreenProtection()
+      subscription?.remove()
+    }
+  }, [])
 
   // Verificar assinatura
   useEffect(() => {
@@ -65,11 +92,11 @@ export default function LessonViewerScreen() {
       setLesson(lessonData)
       navigation.setOptions({ title: lessonData.title })
 
-      // Carregar conteúdo
+      // Carregar conteudo
       const contentData = await fetchLessonContent(lessonId)
       setContent(contentData?.content_html || '<p>Conteudo nao disponivel.</p>')
 
-      // Carregar todas as aulas do curso para navegação
+      // Carregar todas as aulas do curso para navegacao
       const { data: allLessonsData } = await supabase
         .from('lessons')
         .select('*')
@@ -90,6 +117,7 @@ export default function LessonViewerScreen() {
 
         if (progressData) {
           setProgress(progressData.progress_percent)
+          setMaxProgress(progressData.progress_percent) // Initialize maxProgress with saved value
         }
       }
     } catch (error) {
@@ -100,9 +128,15 @@ export default function LessonViewerScreen() {
     }
   }
 
-  // Salvar progresso com debounce
+  // Salvar progresso com debounce - APENAS se for maior que o atual
   const handleProgressUpdate = useCallback(
     (newProgress: number) => {
+      // Apenas atualizar se o novo progresso for MAIOR que o maximo registrado
+      if (newProgress <= maxProgress) {
+        return // Nao regredir o progresso
+      }
+
+      setMaxProgress(newProgress)
       setProgress(newProgress)
 
       if (progressSaveTimeout.current) {
@@ -115,10 +149,10 @@ export default function LessonViewerScreen() {
         }
       }, 2000)
     },
-    [user, lessonId, saveProgress],
+    [user, lessonId, saveProgress, maxProgress],
   )
 
-  // Navegação entre aulas
+  // Navegacao entre aulas
   const currentIndex = allLessons.findIndex(l => l.id === lessonId)
   const hasPrevious = currentIndex > 0
   const hasNext = currentIndex < allLessons.length - 1
@@ -145,14 +179,15 @@ export default function LessonViewerScreen() {
     if (user) {
       await saveProgress(user.id, lessonId, 100)
       setProgress(100)
+      setMaxProgress(100)
       Alert.alert('Sucesso', 'Aula marcada como concluida!')
     }
   }
 
-  // Email do usuário para watermark
+  // Email do usuario para watermark
   const watermarkEmail = profile?.email || user?.email || 'Usuario'
 
-  // HTML para o WebView com proteções
+  // HTML para o WebView com protecoes e cores dinamicas
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -167,15 +202,15 @@ export default function LessonViewerScreen() {
         }
         body {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          background-color: #0A0A0B;
-          color: #FAFAFA;
+          background-color: ${colors.background};
+          color: ${colors.text};
           padding: 16px;
           margin: 0;
           line-height: 1.6;
           font-size: 16px;
         }
         h1, h2, h3 {
-          color: #FAFAFA;
+          color: ${colors.text};
           margin-top: 24px;
           margin-bottom: 12px;
         }
@@ -192,7 +227,7 @@ export default function LessonViewerScreen() {
           border-radius: 8px;
         }
         a {
-          color: #22C55E;
+          color: ${colors.primary};
         }
         .watermark {
           position: fixed;
@@ -209,7 +244,7 @@ export default function LessonViewerScreen() {
           position: absolute;
           white-space: nowrap;
           font-size: 12px;
-          color: #FAFAFA;
+          color: ${colors.text};
           transform: rotate(-30deg);
         }
       </style>
@@ -227,15 +262,24 @@ export default function LessonViewerScreen() {
         ${content}
       </div>
       <script>
-        // Reportar scroll progress
+        // Track maximum progress locally in WebView
+        let maxScrollProgress = ${maxProgress};
+
+        // Reportar scroll progress - APENAS quando aumenta
         let ticking = false;
         document.addEventListener('scroll', function() {
           if (!ticking) {
             window.requestAnimationFrame(function() {
               const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
               const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-              const progress = scrollHeight > 0 ? Math.round((scrollTop / scrollHeight) * 100) : 0;
-              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'scroll', progress: Math.min(100, progress) }));
+              const currentProgress = scrollHeight > 0 ? Math.round((scrollTop / scrollHeight) * 100) : 0;
+              const progress = Math.min(100, currentProgress);
+
+              // Apenas reportar se o progresso AUMENTOU
+              if (progress > maxScrollProgress) {
+                maxScrollProgress = progress;
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'scroll', progress: maxScrollProgress }));
+              }
               ticking = false;
             });
             ticking = true;
@@ -247,7 +291,7 @@ export default function LessonViewerScreen() {
           e.preventDefault();
         });
 
-        // Bloquear cópia
+        // Bloquear copia
         document.addEventListener('copy', function(e) {
           e.preventDefault();
         });
@@ -263,37 +307,37 @@ export default function LessonViewerScreen() {
         handleProgressUpdate(data.progress)
       }
     } catch (e) {
-      // Ignorar mensagens não-JSON
+      // Ignorar mensagens nao-JSON
     }
   }
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#22C55E" />
-        <Text style={styles.loadingText}>Carregando conteudo...</Text>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Carregando conteudo...</Text>
       </View>
     )
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Progress Header */}
-      <View style={styles.progressHeader}>
-        <Text style={styles.progressText}>
+      <View style={[styles.progressHeader, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+        <Text style={[styles.progressText, { color: colors.textSecondary }]}>
           Aula {currentIndex + 1} de {allLessons.length}
         </Text>
-        <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${progress}%` }]} />
+        <View style={[styles.progressBarContainer, { backgroundColor: colors.border }]}>
+          <View style={[styles.progressBar, { width: `${progress}%`, backgroundColor: colors.primary }]} />
         </View>
-        <Text style={styles.progressPercent}>{progress}%</Text>
+        <Text style={[styles.progressPercent, { color: colors.primary }]}>{progress}%</Text>
       </View>
 
       {/* Content */}
       <WebView
         ref={webViewRef}
         source={{ html: htmlContent }}
-        style={styles.webview}
+        style={[styles.webview, { backgroundColor: colors.background }]}
         onMessage={handleWebViewMessage}
         scrollEnabled={true}
         showsVerticalScrollIndicator={true}
@@ -305,15 +349,16 @@ export default function LessonViewerScreen() {
       />
 
       {/* Navigation Footer */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
         <TouchableOpacity
-          style={[styles.navButton, !hasPrevious && styles.navButtonDisabled]}
+          style={[styles.navButton, { backgroundColor: colors.border }, !hasPrevious && styles.navButtonDisabled]}
           onPress={goToPrevious}
           disabled={!hasPrevious}>
           <Text
             style={[
               styles.navButtonText,
-              !hasPrevious && styles.navButtonTextDisabled,
+              { color: colors.text },
+              !hasPrevious && { color: colors.textTertiary },
             ]}>
             ← Anterior
           </Text>
@@ -322,23 +367,25 @@ export default function LessonViewerScreen() {
         <TouchableOpacity
           style={[
             styles.completeButton,
-            progress >= 100 && styles.completeButtonDone,
+            { backgroundColor: colors.primary },
+            progress >= 100 && { backgroundColor: colors.border },
           ]}
           onPress={markAsCompleted}
           disabled={progress >= 100}>
-          <Text style={styles.completeButtonText}>
+          <Text style={[styles.completeButtonText, { color: colors.text }]}>
             {progress >= 100 ? '✓ Concluida' : 'Concluir'}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.navButton, !hasNext && styles.navButtonDisabled]}
+          style={[styles.navButton, { backgroundColor: colors.border }, !hasNext && styles.navButtonDisabled]}
           onPress={goToNext}
           disabled={!hasNext}>
           <Text
             style={[
               styles.navButtonText,
-              !hasNext && styles.navButtonTextDisabled,
+              { color: colors.text },
+              !hasNext && { color: colors.textTertiary },
             ]}>
             Proxima →
           </Text>
@@ -351,94 +398,72 @@ export default function LessonViewerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0B',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0A0A0B',
   },
   loadingText: {
     marginTop: 12,
     fontSize: 14,
-    color: '#A1A1AA',
   },
   progressHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    backgroundColor: '#18181B',
     borderBottomWidth: 1,
-    borderBottomColor: '#27272A',
   },
   progressText: {
     fontSize: 12,
-    color: '#A1A1AA',
     marginRight: 12,
   },
   progressBarContainer: {
     flex: 1,
     height: 4,
-    backgroundColor: '#27272A',
     borderRadius: 2,
     overflow: 'hidden',
   },
   progressBar: {
     height: '100%',
-    backgroundColor: '#22C55E',
     borderRadius: 2,
   },
   progressPercent: {
     fontSize: 12,
-    color: '#22C55E',
     fontWeight: '600',
     marginLeft: 12,
   },
   webview: {
     flex: 1,
-    backgroundColor: '#0A0A0B',
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    backgroundColor: '#18181B',
     borderTopWidth: 1,
-    borderTopColor: '#27272A',
     gap: 8,
   },
   navButton: {
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: '#27272A',
   },
   navButtonDisabled: {
     opacity: 0.5,
   },
   navButtonText: {
     fontSize: 14,
-    color: '#FAFAFA',
     fontWeight: '500',
-  },
-  navButtonTextDisabled: {
-    color: '#71717A',
   },
   completeButton: {
     flex: 1,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: '#22C55E',
     alignItems: 'center',
-  },
-  completeButtonDone: {
-    backgroundColor: '#27272A',
   },
   completeButtonText: {
     fontSize: 14,
-    color: '#FAFAFA',
     fontWeight: '600',
   },
 })
