@@ -13,10 +13,10 @@ import { supabase } from '../../lib/supabase'
 import { useTheme } from '../../hooks/useTheme'
 
 interface DashboardStats {
-  totalCourses: number
-  completedCourses: number
-  lessonsCompleted: number
-  totalHours: number
+  availableCourses: number
+  completedLessons: number
+  totalLessons: number
+  overallProgress: number
 }
 
 export default function DashboardScreen() {
@@ -24,10 +24,10 @@ export default function DashboardScreen() {
   const { user, profile, hasActiveSubscription } = useAuthStore()
   const colors = useTheme()
   const [stats, setStats] = useState<DashboardStats>({
-    totalCourses: 0,
-    completedCourses: 0,
-    lessonsCompleted: 0,
-    totalHours: 0,
+    availableCourses: 0,
+    completedLessons: 0,
+    totalLessons: 0,
+    overallProgress: 0,
   })
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -48,10 +48,10 @@ export default function DashboardScreen() {
 
       if (data && data.length > 0) {
         setStats({
-          totalCourses: data[0].enrolled_courses || 0,
-          completedCourses: data[0].completed_courses || 0,
-          lessonsCompleted: data[0].completed_lessons || 0,
-          totalHours: Math.round((data[0].total_hours || 0) / 60),
+          availableCourses: data[0].total_courses || 0,
+          completedLessons: data[0].completed_lessons || 0,
+          totalLessons: data[0].total_lessons || 0,
+          overallProgress: Math.round(data[0].average_progress || 0),
         })
       }
     } catch (error) {
@@ -97,56 +97,58 @@ export default function DashboardScreen() {
         </Text>
       </View>
 
-      {/* Subscription Status */}
-      <View
-        style={[
-          styles.subscriptionCard,
-          hasActiveSubscription
-            ? { backgroundColor: `${colors.primary}15`, borderColor: `${colors.primary}50` }
-            : { backgroundColor: `${colors.error}15`, borderColor: `${colors.error}50` },
-        ]}>
-        <View style={[styles.subscriptionIcon, { backgroundColor: `${colors.text}15` }]}>
-          <Text style={styles.subscriptionIconText}>
-            {hasActiveSubscription ? '✓' : '!'}
-          </Text>
-        </View>
-        <View style={styles.subscriptionInfo}>
-          <Text style={[styles.subscriptionTitle, { color: colors.text }]}>
-            {hasActiveSubscription ? 'Assinatura Ativa' : 'Sem Assinatura'}
-          </Text>
-          <Text style={[styles.subscriptionDescription, { color: colors.textSecondary }]}>
-            {hasActiveSubscription
-              ? 'Voce tem acesso a todos os cursos'
-              : 'Assine para acessar o conteudo'}
-          </Text>
-        </View>
-      </View>
-
-      {/* Stats Grid */}
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>Seu Progresso</Text>
+      {/* Stats Grid - igual desktop */}
       <View style={styles.statsGrid}>
+        {/* Cursos Disponiveis */}
         <View style={styles.statCard}>
           <View style={[styles.statCardInner, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.statValue, { color: colors.primary }]}>{stats.totalCourses}</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Cursos</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Cursos Disponiveis</Text>
+            <Text style={[styles.statValue, { color: colors.text }]}>{stats.availableCourses}</Text>
           </View>
         </View>
+        {/* Aulas Concluidas */}
         <View style={styles.statCard}>
           <View style={[styles.statCardInner, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.statValue, { color: colors.primary }]}>{stats.completedCourses}</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Concluidos</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Aulas Concluidas</Text>
+            <Text style={[styles.statValue, { color: colors.text }]}>
+              {stats.completedLessons}/{stats.totalLessons}
+            </Text>
           </View>
         </View>
+        {/* Progresso Geral */}
         <View style={styles.statCard}>
           <View style={[styles.statCardInner, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.statValue, { color: colors.primary }]}>{stats.lessonsCompleted}</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Aulas</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Progresso Geral</Text>
+            <Text style={[styles.statValue, { color: colors.text }]}>{stats.overallProgress}%</Text>
+            <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
+              <View
+                style={[
+                  styles.progressBarFill,
+                  { width: `${stats.overallProgress}%`, backgroundColor: colors.primary },
+                ]}
+              />
+            </View>
           </View>
         </View>
+        {/* Status da Assinatura */}
         <View style={styles.statCard}>
           <View style={[styles.statCardInner, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.statValue, { color: colors.primary }]}>{stats.totalHours}h</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Estudadas</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Status da Assinatura</Text>
+            <View
+              style={[
+                styles.subscriptionBadge,
+                hasActiveSubscription
+                  ? { backgroundColor: `${colors.primary}20` }
+                  : { backgroundColor: `${colors.textSecondary}20` },
+              ]}>
+              <Text
+                style={[
+                  styles.subscriptionBadgeText,
+                  { color: hasActiveSubscription ? colors.primary : colors.textSecondary },
+                ]}>
+                {hasActiveSubscription ? '✓ Ativa' : 'Inativa'}
+              </Text>
+            </View>
           </View>
         </View>
       </View>
@@ -244,9 +246,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   statLabel: {
-    fontSize: 14,
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  progressBarBg: {
+    width: '100%',
+    height: 6,
+    borderRadius: 3,
+    marginTop: 8,
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  subscriptionBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
     marginTop: 4,
-    textAlign: 'center',
+  },
+  subscriptionBadgeText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   quickAction: {
     flexDirection: 'row',

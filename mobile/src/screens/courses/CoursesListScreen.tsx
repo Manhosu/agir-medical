@@ -9,6 +9,7 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { useAuthStore } from '../../stores/authStore'
 import { useCourses } from '../../hooks/useCourses'
@@ -66,9 +67,6 @@ export default function CoursesListScreen() {
           </Text>
         )}
         <View style={styles.courseStats}>
-          <Text style={[styles.courseStat, { color: colors.textTertiary }]}>
-            {item.totalLessons} aulas
-          </Text>
           <View style={[styles.progressContainer, { backgroundColor: colors.border }]}>
             <View
               style={[styles.progressBar, { width: `${item.progressPercent}%`, backgroundColor: colors.primary }]}
@@ -110,7 +108,7 @@ export default function CoursesListScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <FlatList
         data={courses}
         keyExtractor={item => item.id}
@@ -127,7 +125,7 @@ export default function CoursesListScreen() {
         }
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
