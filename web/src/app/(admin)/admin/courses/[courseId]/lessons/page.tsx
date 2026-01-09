@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { convertPdfToHtml, estimateReadingTime } from '@/lib/pdf-converter'
+import { convertDocxToHtml, isValidDocx, isValidPdf, getFileType } from '@/lib/docx-converter'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -196,10 +197,12 @@ export default function CourseLessonsPage() {
       .replace(/^-|-$/g, '')
   }
 
-  // Handler para upload de PDF
-  const handlePdfUpload = async (file: File) => {
-    if (!file || file.type !== 'application/pdf') {
-      toast.error('Por favor, selecione um arquivo PDF válido')
+  // Handler para upload de PDF ou DOCX
+  const handleFileUpload = async (file: File) => {
+    const fileType = getFileType(file)
+
+    if (fileType === 'unknown') {
+      toast.error('Por favor, selecione um arquivo PDF ou DOCX válido')
       return
     }
 
@@ -208,32 +211,59 @@ export default function CourseLessonsPage() {
     setConversionProgress(10)
 
     try {
-      toast.info('Convertendo PDF para HTML...')
-      setConversionProgress(30)
+      if (fileType === 'pdf') {
+        toast.info('Convertendo PDF para HTML...')
+        setConversionProgress(30)
 
-      const result = await convertPdfToHtml(file)
-      setConversionProgress(70)
+        const result = await convertPdfToHtml(file)
+        setConversionProgress(70)
 
-      // Atualizar conteúdo HTML
-      setHtmlContent(result.fullHtml)
+        // Atualizar conteúdo HTML
+        setHtmlContent(result.fullHtml)
 
-      // Estimar tempo de leitura
-      const fullText = result.pages.map(p => p.textContent).join(' ')
-      const readingTime = estimateReadingTime(fullText)
+        // Estimar tempo de leitura
+        const fullText = result.pages.map(p => p.textContent).join(' ')
+        const readingTime = estimateReadingTime(fullText)
 
-      // Se está no dialog de nova aula, atualizar o tempo estimado
-      if (!editingLesson) {
-        setFormData(prev => ({
-          ...prev,
-          estimated_time: readingTime.toString()
-        }))
+        // Se está no dialog de nova aula, atualizar o tempo estimado
+        if (!editingLesson) {
+          setFormData(prev => ({
+            ...prev,
+            estimated_time: readingTime.toString()
+          }))
+        }
+
+        setConversionProgress(100)
+        toast.success(`PDF convertido! ${result.totalPages} páginas, ~${readingTime} min de leitura`)
+      } else if (fileType === 'docx') {
+        toast.info('Convertendo DOCX para HTML...')
+        setConversionProgress(30)
+
+        const result = await convertDocxToHtml(file)
+        setConversionProgress(70)
+
+        // Atualizar conteúdo HTML
+        setHtmlContent(result.html)
+
+        // Se está no dialog de nova aula, atualizar o tempo estimado
+        if (!editingLesson) {
+          setFormData(prev => ({
+            ...prev,
+            estimated_time: result.estimatedReadingTime.toString()
+          }))
+        }
+
+        setConversionProgress(100)
+        toast.success(`DOCX convertido! ${result.wordCount} palavras, ~${result.estimatedReadingTime} min de leitura`)
+
+        // Mostrar avisos se houver
+        if (result.messages.length > 0) {
+          result.messages.forEach(msg => toast.warning(msg))
+        }
       }
-
-      setConversionProgress(100)
-      toast.success(`PDF convertido! ${result.totalPages} páginas, ~${readingTime} min de leitura`)
     } catch (error) {
-      console.error('Error converting PDF:', error)
-      toast.error('Erro ao converter PDF. Tente novamente.')
+      console.error('Error converting file:', error)
+      toast.error('Erro ao converter arquivo. Tente novamente.')
     } finally {
       setIsConverting(false)
       setConversionProgress(0)
@@ -643,32 +673,32 @@ export default function CourseLessonsPage() {
               />
             </div>
 
-            {/* Upload de PDF */}
+            {/* Upload de PDF ou DOCX */}
             <div className="space-y-2">
-              <Label>Upload de PDF (opcional)</Label>
+              <Label>Upload de Documento (opcional)</Label>
               <div className="border-2 border-dashed rounded-lg p-4 text-center">
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".pdf"
+                  accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0]
-                    if (file) handlePdfUpload(file)
+                    if (file) handleFileUpload(file)
                   }}
                   disabled={isSubmitting || isConverting}
                 />
                 {isConverting ? (
                   <div className="space-y-2">
                     <Loader2 className="h-8 w-8 mx-auto animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">Convertendo PDF...</p>
+                    <p className="text-sm text-muted-foreground">Convertendo documento...</p>
                     <Progress value={conversionProgress} className="h-2" />
                   </div>
                 ) : selectedFile ? (
                   <div className="space-y-2">
                     <FileText className="h-8 w-8 mx-auto text-green-600" />
                     <p className="text-sm font-medium">{selectedFile.name}</p>
-                    <p className="text-xs text-muted-foreground">PDF convertido com sucesso!</p>
+                    <p className="text-xs text-muted-foreground">Documento convertido com sucesso!</p>
                     <Button
                       type="button"
                       variant="outline"
@@ -682,7 +712,7 @@ export default function CourseLessonsPage() {
                   <div className="space-y-2">
                     <FileUp className="h-8 w-8 mx-auto text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      Arraste um PDF ou clique para selecionar
+                      Arraste um PDF ou DOCX ou clique para selecionar
                     </p>
                     <Button
                       type="button"
@@ -690,13 +720,13 @@ export default function CourseLessonsPage() {
                       size="sm"
                       onClick={() => fileInputRef.current?.click()}
                     >
-                      Selecionar PDF
+                      Selecionar Documento
                     </Button>
                   </div>
                 )}
               </div>
               <p className="text-xs text-muted-foreground">
-                O PDF será convertido automaticamente para HTML protegido
+                O documento será convertido automaticamente para HTML protegido
               </p>
             </div>
 
@@ -732,41 +762,41 @@ export default function CourseLessonsPage() {
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {/* Upload de PDF */}
+            {/* Upload de PDF ou DOCX */}
             <div className="space-y-2">
-              <Label>Upload de PDF</Label>
+              <Label>Upload de Documento (PDF ou DOCX)</Label>
               <div className="border-2 border-dashed rounded-lg p-4 text-center">
                 <input
                   type="file"
-                  accept=".pdf"
+                  accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   className="hidden"
-                  id="contentPdfInput"
+                  id="contentFileInput"
                   onChange={(e) => {
                     const file = e.target.files?.[0]
-                    if (file) handlePdfUpload(file)
+                    if (file) handleFileUpload(file)
                   }}
                   disabled={isSubmitting || isConverting}
                 />
                 {isConverting ? (
                   <div className="space-y-2">
                     <Loader2 className="h-8 w-8 mx-auto animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">Convertendo PDF...</p>
+                    <p className="text-sm text-muted-foreground">Convertendo documento...</p>
                     <Progress value={conversionProgress} className="h-2" />
                   </div>
                 ) : (
                   <div className="space-y-2">
                     <FileUp className="h-8 w-8 mx-auto text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      Faça upload de um PDF para converter automaticamente
+                      Faça upload de um PDF ou DOCX para converter automaticamente
                     </p>
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => document.getElementById('contentPdfInput')?.click()}
+                      onClick={() => document.getElementById('contentFileInput')?.click()}
                     >
                       <Upload className="mr-2 h-4 w-4" />
-                      Selecionar PDF
+                      Selecionar Documento
                     </Button>
                   </div>
                 )}
