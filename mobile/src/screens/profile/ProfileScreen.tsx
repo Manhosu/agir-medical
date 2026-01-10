@@ -8,10 +8,14 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
+import * as ImageManipulator from 'expo-image-manipulator'
 import { useAuthStore } from '../../stores/authStore'
 import { useThemeStore, themes } from '../../stores/themeStore'
 import { ThemeToggle } from '../../components/ThemeToggle'
+import { supabase } from '../../lib/supabase'
 
 export default function ProfileScreen() {
   const { user, profile, hasActiveSubscription, signOut, updateProfile } =
@@ -22,6 +26,71 @@ export default function ProfileScreen() {
   const [fullName, setFullName] = useState(profile?.full_name || '')
   const [phone, setPhone] = useState(profile?.phone || '')
   const [isSaving, setIsSaving] = useState(false)
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
+
+  const handlePickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
+
+    if (!permissionResult.granted) {
+      Alert.alert('Permissao necessaria', 'Precisamos de acesso a sua galeria para selecionar uma foto.')
+      return
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    })
+
+    if (!result.canceled && result.assets[0]) {
+      await uploadAvatar(result.assets[0].uri)
+    }
+  }
+
+  const uploadAvatar = async (uri: string) => {
+    if (!user?.id) return
+
+    setIsUploadingAvatar(true)
+    try {
+      // Resize and crop image
+      const manipulated = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 200, height: 200 } }],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+      )
+
+      // Convert to blob
+      const response = await fetch(manipulated.uri)
+      const blob = await response.blob()
+
+      const fileName = `${user.id}-${Date.now()}.jpg`
+
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, blob, {
+          upsert: true,
+          contentType: 'image/jpeg',
+        })
+
+      if (uploadError) throw uploadError
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName)
+
+      // Update profile
+      await updateProfile({ avatar_url: publicUrl })
+      Alert.alert('Sucesso', 'Foto atualizada com sucesso!')
+    } catch (error: any) {
+      console.error('Upload error:', error)
+      Alert.alert('Erro', error.message || 'Erro ao fazer upload da foto')
+    } finally {
+      setIsUploadingAvatar(false)
+    }
+  }
 
   const handleSave = async () => {
     setIsSaving(true)
@@ -57,11 +126,30 @@ export default function ProfileScreen() {
     >
       {/* Profile Header */}
       <View style={styles.header}>
-        <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
-          <Text style={[styles.avatarText, { color: colors.primaryForeground }]}>
-            {(profile?.full_name || user?.email || 'U')[0].toUpperCase()}
+        <TouchableOpacity onPress={handlePickImage} disabled={isUploadingAvatar}>
+          {profile?.avatar_url ? (
+            <Image
+              source={{ uri: profile.avatar_url }}
+              style={styles.avatarImage}
+            />
+          ) : (
+            <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
+              <Text style={[styles.avatarText, { color: colors.primaryForeground }]}>
+                {(profile?.full_name || user?.email || 'U')[0].toUpperCase()}
+              </Text>
+            </View>
+          )}
+          {isUploadingAvatar && (
+            <View style={styles.avatarLoading}>
+              <ActivityIndicator color="#fff" />
+            </View>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handlePickImage} disabled={isUploadingAvatar}>
+          <Text style={[styles.changePhotoText, { color: colors.primary }]}>
+            {isUploadingAvatar ? 'Enviando...' : 'Alterar Foto'}
           </Text>
-        </View>
+        </TouchableOpacity>
         <Text style={[styles.name, { color: colors.text }]}>{profile?.full_name || 'Usuario'}</Text>
         <Text style={[styles.email, { color: colors.textSecondary }]}>{user?.email}</Text>
         <View
@@ -206,12 +294,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#22C55E',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+  },
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  avatarLoading: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarText: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#FAFAFA',
+  },
+  changePhotoText: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 8,
+    marginBottom: 8,
   },
   name: {
     fontSize: 24,
