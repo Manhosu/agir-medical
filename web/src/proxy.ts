@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -35,9 +35,9 @@ export async function middleware(request: NextRequest) {
   const { data: { user }, error: authError } = await supabase.auth.getUser()
 
   // Debug logs
-  console.log('[Middleware] Path:', request.nextUrl.pathname)
-  console.log('[Middleware] User:', user?.id || 'null')
-  if (authError) console.log('[Middleware] Auth Error:', authError.message)
+  console.log('[Proxy] Path:', request.nextUrl.pathname)
+  console.log('[Proxy] User:', user?.id || 'null')
+  if (authError) console.log('[Proxy] Auth Error:', authError.message)
 
   const pathname = request.nextUrl.pathname
 
