@@ -59,32 +59,55 @@ interface User {
   subscription?: Subscription | null
 }
 
+// Hook de debounce
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+  return debouncedValue
+}
+
+const PAGE_SIZE = 20
+
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
+  const [page, setPage] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+
+  const debouncedSearch = useDebounce(searchQuery, 300)
 
   useEffect(() => {
     loadUsers()
-  }, [])
+  }, [page])
 
   useEffect(() => {
-    if (searchQuery) {
+    if (debouncedSearch) {
       const filtered = users.filter(user =>
-        user.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.cpf?.includes(searchQuery) ||
-        user.crm?.toLowerCase().includes(searchQuery.toLowerCase())
+        user.full_name?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        user.email.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        user.cpf?.includes(debouncedSearch) ||
+        user.crm?.toLowerCase().includes(debouncedSearch.toLowerCase())
       )
       setFilteredUsers(filtered)
     } else {
       setFilteredUsers(users)
     }
-  }, [searchQuery, users])
+  }, [debouncedSearch, users])
 
   const loadUsers = async () => {
     try {
+      // Buscar total para paginacao
+      const { count } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+
+      setTotalCount(count || 0)
+
       // Carregar perfis com dados completos de assinatura
       const { data: profiles, error } = await supabase
         .from('profiles')
@@ -93,6 +116,7 @@ export default function AdminUsersPage() {
           subscriptions (id, status, plan, starts_at, expires_at)
         `)
         .order('created_at', { ascending: false })
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
       if (error) throw error
 
@@ -477,6 +501,35 @@ export default function AdminUsersPage() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Pagination Controls */}
+          {totalCount > PAGE_SIZE && (
+            <div className="flex justify-between items-center mt-4 pt-4 border-t">
+              <p className="text-sm text-muted-foreground">
+                {totalCount > 0
+                  ? `${page * PAGE_SIZE + 1}-${Math.min((page + 1) * PAGE_SIZE, totalCount)} de ${totalCount}`
+                  : 'Nenhum resultado'}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page === 0}
+                  onClick={() => setPage(p => p - 1)}
+                >
+                  Anterior
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={(page + 1) * PAGE_SIZE >= totalCount}
+                  onClick={() => setPage(p => p + 1)}
+                >
+                  Proximo
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

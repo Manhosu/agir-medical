@@ -100,8 +100,19 @@ export default function LoginPage() {
 
     toast.success('Login realizado com sucesso!')
 
-    // Redirecionar para dashboard
-    window.location.href = '/dashboard'
+    // Buscar perfil para verificar se é admin
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single()
+
+    // Redirecionar baseado no role
+    if (profile?.role === 'admin') {
+      window.location.href = '/admin'
+    } else {
+      window.location.href = '/dashboard'
+    }
   }
 
   return (

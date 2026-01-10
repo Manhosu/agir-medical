@@ -18,9 +18,7 @@ import {
   LayoutDashboard,
   Users,
   BookOpen,
-  FileText,
   BarChart3,
-  Settings,
   LogOut,
   Menu,
   ChevronRight,
@@ -33,7 +31,6 @@ const adminNavItems = [
   { href: '/admin/users', label: 'Usuários', icon: Users },
   { href: '/admin/courses', label: 'Cursos', icon: BookOpen },
   { href: '/admin/reports', label: 'Relatórios', icon: BarChart3 },
-  { href: '/admin/settings', label: 'Configurações', icon: Settings },
 ]
 
 export default function AdminLayout({

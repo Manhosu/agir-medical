@@ -57,6 +57,18 @@ interface Course {
   lessons_count?: number
 }
 
+// Hook de debounce
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+  return debouncedValue
+}
+
+const PAGE_SIZE = 20
+
 export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -64,39 +76,49 @@ export default function AdminCoursesPage() {
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([])
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null)
+  const [page, setPage] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+
+  const debouncedSearch = useDebounce(searchQuery, 300)
 
   useEffect(() => {
     loadCourses()
-  }, [])
+  }, [page])
 
   useEffect(() => {
-    if (searchQuery) {
+    if (debouncedSearch) {
       const filtered = courses.filter(course =>
-        course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.category?.toLowerCase().includes(searchQuery.toLowerCase())
+        course.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        course.description?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        course.category?.toLowerCase().includes(debouncedSearch.toLowerCase())
       )
       setFilteredCourses(filtered)
     } else {
       setFilteredCourses(courses)
     }
-  }, [searchQuery, courses])
+  }, [debouncedSearch, courses])
 
   const loadCourses = async () => {
     try {
+      // Buscar total para paginacao
+      const { count } = await supabase
+        .from('courses')
+        .select('*', { count: 'exact', head: true })
+
+      setTotalCount(count || 0)
+
+      // Buscar cursos com contagem de licoes usando agregacao
       const { data, error } = await supabase
         .from('courses')
-        .select(`
-          *,
-          lessons (id)
-        `)
+        .select(`*, lessons(count)`)
         .order('created_at', { ascending: false })
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
       if (error) throw error
 
       const coursesWithCount = data.map((course: any) => ({
         ...course,
-        lessons_count: course.lessons?.length || 0
+        lessons_count: course.lessons?.[0]?.count || 0
       }))
 
       setCourses(coursesWithCount)
@@ -370,6 +392,35 @@ export default function AdminCoursesPage() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Pagination Controls */}
+          {totalCount > PAGE_SIZE && (
+            <div className="flex justify-between items-center mt-4 pt-4 border-t">
+              <p className="text-sm text-muted-foreground">
+                {totalCount > 0
+                  ? `${page * PAGE_SIZE + 1}-${Math.min((page + 1) * PAGE_SIZE, totalCount)} de ${totalCount}`
+                  : 'Nenhum resultado'}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page === 0}
+                  onClick={() => setPage(p => p - 1)}
+                >
+                  Anterior
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={(page + 1) * PAGE_SIZE >= totalCount}
+                  onClick={() => setPage(p => p + 1)}
+                >
+                  Proximo
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
