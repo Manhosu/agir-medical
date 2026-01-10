@@ -61,7 +61,9 @@
       "Bash(powershell.exe -Command \"Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object LocalPort, State, OwningProcess\")",
       "Bash(powershell.exe -Command \"\\(Invoke-WebRequest -Uri ''http://localhost:3000'' -UseBasicParsing -TimeoutSec 5\\).StatusCode\")",
       "Bash(powershell.exe:*)",
-      "Bash(npm view:*)"
+      "Bash(npm view:*)",
+      "mcp__Supabase__list_projects",
+      "mcp__Supabase__execute_sql"
     ]
   }
 }
