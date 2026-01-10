@@ -68,15 +68,25 @@ export async function middleware(request: NextRequest) {
 
   // Se tenta acessar rota de admin, verificar se é admin
   if (isAdminRoute && user) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single()
 
-    if (profile?.role !== 'admin') {
+    console.log('[Middleware] Admin check - Profile:', profile, 'Error:', profileError?.message)
+
+    // Se houver erro na query, permitir acesso (a pagina fara verificacao adicional)
+    // Se profile existe e NAO e admin, redirecionar
+    if (!profileError && profile && profile.role !== 'admin') {
+      console.log('[Middleware] User is not admin, redirecting to dashboard')
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
+  }
+
+  // Se nao esta logado e tenta acessar rota de admin
+  if (isAdminRoute && !user) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   return response

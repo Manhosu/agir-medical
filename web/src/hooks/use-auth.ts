@@ -13,10 +13,10 @@ export function useAuth() {
     store.initialize()
   }, [])
 
-  // Add router-based signOut that redirects
+  // Add signOut that redirects (using hard reload for reliability)
   const signOut = async () => {
     await store.signOut()
-    router.push('/login')
+    window.location.href = '/login'
   }
 
   return {

@@ -48,20 +48,20 @@ export default function DashboardLayout({
           setLocalUser(session.user)
           setForceRender(true)
         } else {
-          router.push('/login')
+          window.location.href = '/login'
         }
       }
     }, 3000) // 3 segundos de timeout
 
     return () => clearTimeout(timeout)
-  }, [isLoading, router])
+  }, [isLoading])
 
   // Redirecionar para login se nao autenticado
   useEffect(() => {
     if (!isLoading && !user && !localUser) {
-      router.push('/login')
+      window.location.href = '/login'
     }
-  }, [isLoading, user, localUser, router])
+  }, [isLoading, user, localUser])
 
   // Usar usuario do hook ou local
   const currentUser = user || localUser
