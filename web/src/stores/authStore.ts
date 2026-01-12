@@ -13,7 +13,6 @@ interface AuthState {
   isAuthenticated: boolean
   isAdmin: boolean
   hasActiveSubscription: boolean
-  sessionValid: boolean
   initialized: boolean
 }
 
@@ -84,7 +83,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   isAuthenticated: false,
   isAdmin: false,
   hasActiveSubscription: false,
-  sessionValid: true,
   initialized: false,
 
   setLoading: (loading: boolean) => set({ isLoading: loading }),
@@ -130,7 +128,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           isAuthenticated: true,
           isAdmin,
           hasActiveSubscription,
-          sessionValid: true,
           initialized: true,
         })
       } else {
@@ -160,7 +157,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             isAuthenticated: true,
             isAdmin: profile?.role === 'admin',
             hasActiveSubscription,
-            sessionValid: true,
           })
         } else if (event === 'SIGNED_OUT') {
           set({
@@ -171,7 +167,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             isAuthenticated: false,
             isAdmin: false,
             hasActiveSubscription: false,
-            sessionValid: true,
           })
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
           set({
@@ -230,12 +225,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signOut: async () => {
     set({ isLoading: true })
 
-    // Clear localStorage session
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('session_token')
-      localStorage.removeItem('device_id')
-    }
-
     try {
       await supabase.auth.signOut()
     } catch (error) {
@@ -250,7 +239,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       isAuthenticated: false,
       isAdmin: false,
       hasActiveSubscription: false,
-      sessionValid: true,
     })
   },
 

@@ -27,7 +27,6 @@ export function useAuth() {
     isAuthenticated: store.isAuthenticated,
     isAdmin: store.isAdmin,
     hasActiveSubscription: store.hasActiveSubscription,
-    sessionValid: store.sessionValid,
     signIn: store.signIn,
     signUp: store.signUp,
     signOut,
