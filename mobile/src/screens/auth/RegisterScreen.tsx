@@ -47,12 +47,13 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
       await signUp(email.trim().toLowerCase(), password, fullName.trim())
       Alert.alert(
         'Conta Criada',
-        'Verifique seu email para confirmar o cadastro.',
-        [{ text: 'OK', onPress: () => navigation.navigate('Login') }],
+        'Bem-vindo ao AGIR! Sua conta foi criada com sucesso.',
+        [{ text: 'Continuar' }],
       )
+      // O listener de auth (onAuthStateChange) vai detectar SIGNED_IN automaticamente
+      // e redirecionar para a tela principal
     } catch (error: any) {
       Alert.alert('Erro no Cadastro', error.message || 'Erro ao criar conta')
-    } finally {
       setIsSubmitting(false)
     }
   }

@@ -41,22 +41,26 @@ export default function CoursesListScreen() {
     setIsRefreshing(false)
   }
 
-  const renderCourse = ({ item }: { item: typeof courses[0] }) => (
-    <TouchableOpacity
-      style={[styles.courseCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-      onPress={() => navigation.navigate('CourseDetail', { courseId: item.id })}
-      activeOpacity={0.7}>
-      {item.cover_url ? (
-        <Image
-          source={{ uri: item.cover_url }}
-          style={[styles.courseCover, { backgroundColor: colors.border }]}
-          resizeMode="cover"
-        />
-      ) : (
-        <View style={[styles.courseCoverPlaceholder, { backgroundColor: colors.border }]}>
-          <Text style={styles.courseCoverPlaceholderText}>📚</Text>
-        </View>
-      )}
+  const renderCourse = ({ item }: { item: typeof courses[0] }) => {
+    // Usar thumbnail_url com fallback para cover_url (igual ao web)
+    const imageUrl = item.thumbnail_url || item.cover_url
+
+    return (
+      <TouchableOpacity
+        style={[styles.courseCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+        onPress={() => navigation.navigate('CourseDetail', { courseId: item.id })}
+        activeOpacity={0.7}>
+        {imageUrl ? (
+          <Image
+            source={{ uri: imageUrl }}
+            style={[styles.courseCover, { backgroundColor: colors.border }]}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={[styles.courseCoverPlaceholder, { backgroundColor: colors.border }]}>
+            <Text style={styles.courseCoverPlaceholderText}>📚</Text>
+          </View>
+        )}
       <View style={styles.courseInfo}>
         <Text style={[styles.courseTitle, { color: colors.text }]} numberOfLines={2}>
           {item.title}
@@ -76,7 +80,8 @@ export default function CoursesListScreen() {
         </View>
       </View>
     </TouchableOpacity>
-  )
+    )
+  }
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>

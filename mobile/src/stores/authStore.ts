@@ -9,7 +9,9 @@ interface AuthState {
   session: Session | null
   isLoading: boolean
   isAuthenticated: boolean
+  isAdmin: boolean
   hasActiveSubscription: boolean
+  initialized: boolean
 }
 
 interface AuthActions {
@@ -24,6 +26,32 @@ interface AuthActions {
 
 type AuthStore = AuthState & AuthActions
 
+// Helper para buscar com timeout
+const fetchWithTimeout = async <T>(
+  promise: Promise<T>,
+  timeoutMs: number = 3000
+): Promise<T | null> => {
+  try {
+    const result = await Promise.race([
+      promise,
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), timeoutMs)
+      ),
+    ])
+    return result
+  } catch (error: any) {
+    if (error.message === 'Timeout') {
+      console.warn('Request timed out')
+    } else {
+      console.error('Request error:', error)
+    }
+    return null
+  }
+}
+
+// Flag para evitar multiplos listeners
+let authListenerSetup = false
+
 export const useAuthStore = create<AuthStore>((set, get) => ({
   // Estado inicial
   user: null,
@@ -31,72 +59,55 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   session: null,
   isLoading: true,
   isAuthenticated: false,
+  isAdmin: false,
   hasActiveSubscription: false,
+  initialized: false,
 
   setLoading: (loading: boolean) => set({ isLoading: loading }),
 
-  // Inicializar autenticação
+  // Inicializar autenticacao
   initialize: async () => {
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+    // Evitar inicializacao dupla
+    if (get().initialized) return
 
-      if (session?.user) {
-        // Buscar perfil
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-
-        // Verificar assinatura ativa
-        const { data: subscription } = await supabase
-          .from('subscriptions')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .eq('status', 'active')
-          .gt('expires_at', new Date().toISOString())
-          .single()
-
-        set({
-          user: session.user,
-          profile: profile as Profile | null,
-          session,
-          isLoading: false,
-          isAuthenticated: true,
-          hasActiveSubscription: !!subscription,
-        })
-      } else {
-        set({ isLoading: false })
-      }
-
-      // Listener para mudanças de auth
+    // Configurar listener apenas uma vez
+    if (!authListenerSetup) {
+      authListenerSetup = true
       supabase.auth.onAuthStateChange(async (event, session) => {
         console.log('Auth state change:', event)
 
         if (event === 'SIGNED_IN' && session?.user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single()
+          // Buscar perfil com timeout
+          const profileResult = await fetchWithTimeout(
+            supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single(),
+            3000
+          )
+          const profile = profileResult?.data as Profile | null
 
-          const { data: subscription } = await supabase
-            .from('subscriptions')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .eq('status', 'active')
-            .gt('expires_at', new Date().toISOString())
-            .single()
+          // Buscar assinatura com timeout
+          const subscriptionResult = await fetchWithTimeout(
+            supabase
+              .from('subscriptions')
+              .select('*')
+              .eq('user_id', session.user.id)
+              .eq('status', 'active')
+              .gt('expires_at', new Date().toISOString())
+              .single(),
+            3000
+          )
 
           set({
             user: session.user,
-            profile: profile as Profile | null,
+            profile,
             session,
             isLoading: false,
             isAuthenticated: true,
-            hasActiveSubscription: !!subscription,
+            isAdmin: profile?.role === 'admin',
+            hasActiveSubscription: !!subscriptionResult?.data,
           })
         } else if (event === 'SIGNED_OUT') {
           set({
@@ -105,10 +116,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             session: null,
             isLoading: false,
             isAuthenticated: false,
+            isAdmin: false,
             hasActiveSubscription: false,
           })
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-          // Atualizar sessão sem mudar o resto do estado
           set(prev => ({
             ...prev,
             session,
@@ -116,9 +127,63 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           }))
         }
       })
+    }
+
+    try {
+      // Buscar sessao com timeout de 5 segundos
+      const sessionResult = await fetchWithTimeout(
+        supabase.auth.getSession(),
+        5000
+      )
+
+      if (!sessionResult) {
+        console.warn('Session fetch timed out or failed')
+        set({ isLoading: false, initialized: true })
+        return
+      }
+
+      const session = sessionResult.data.session
+
+      if (session?.user) {
+        // Buscar perfil com timeout
+        const profileResult = await fetchWithTimeout(
+          supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single(),
+          3000
+        )
+        const profile = profileResult?.data as Profile | null
+
+        // Buscar assinatura com timeout
+        const subscriptionResult = await fetchWithTimeout(
+          supabase
+            .from('subscriptions')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .eq('status', 'active')
+            .gt('expires_at', new Date().toISOString())
+            .single(),
+          3000
+        )
+
+        set({
+          user: session.user,
+          profile,
+          session,
+          isLoading: false,
+          isAuthenticated: true,
+          isAdmin: profile?.role === 'admin',
+          hasActiveSubscription: !!subscriptionResult?.data,
+          initialized: true,
+        })
+      } else {
+        set({ isLoading: false, initialized: true })
+      }
     } catch (error) {
       console.error('Error initializing auth:', error)
-      set({ isLoading: false })
+      set({ isLoading: false, initialized: true })
     }
   },
 
@@ -136,7 +201,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       throw error
     }
 
-    set({ isLoading: false })
+    // Nao setar isLoading false aqui - deixar o onAuthStateChange fazer
   },
 
   // Cadastro
@@ -158,7 +223,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       throw error
     }
 
-    set({ isLoading: false })
+    // Nao setar isLoading false aqui - deixar o onAuthStateChange fazer
   },
 
   // Logout
@@ -177,6 +242,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       session: null,
       isLoading: false,
       isAuthenticated: false,
+      isAdmin: false,
       hasActiveSubscription: false,
     })
   },
@@ -201,6 +267,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
     if (error) throw error
 
-    set({ profile: data as Profile })
+    const profile = data as Profile
+    set({
+      profile,
+      isAdmin: profile?.role === 'admin',
+    })
   },
 }))

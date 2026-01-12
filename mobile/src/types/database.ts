@@ -94,6 +94,8 @@ export interface Database {
           slug: string
           description: string | null
           cover_url: string | null
+          thumbnail_url: string | null
+          category: string | null
           is_published: boolean
           order: number
         }
@@ -105,6 +107,8 @@ export interface Database {
           slug: string
           description?: string | null
           cover_url?: string | null
+          thumbnail_url?: string | null
+          category?: string | null
           is_published?: boolean
           order?: number
         }
@@ -116,6 +120,8 @@ export interface Database {
           slug?: string
           description?: string | null
           cover_url?: string | null
+          thumbnail_url?: string | null
+          category?: string | null
           is_published?: boolean
           order?: number
         }
@@ -219,38 +225,6 @@ export interface Database {
           completed_at?: string | null
         }
       }
-      active_sessions: {
-        Row: {
-          id: string
-          created_at: string
-          user_id: string
-          device_id: string
-          session_token: string
-          last_activity: string
-          user_agent: string | null
-          ip_address: string | null
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          user_id: string
-          device_id: string
-          session_token: string
-          last_activity?: string
-          user_agent?: string | null
-          ip_address?: string | null
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          user_id?: string
-          device_id?: string
-          session_token?: string
-          last_activity?: string
-          user_agent?: string | null
-          ip_address?: string | null
-        }
-      }
     }
     Views: {
       [_ in never]: never
@@ -271,4 +245,3 @@ export type Course = Database['public']['Tables']['courses']['Row']
 export type Lesson = Database['public']['Tables']['lessons']['Row']
 export type LessonContent = Database['public']['Tables']['lesson_content']['Row']
 export type UserProgress = Database['public']['Tables']['user_progress']['Row']
-export type ActiveSession = Database['public']['Tables']['active_sessions']['Row']
