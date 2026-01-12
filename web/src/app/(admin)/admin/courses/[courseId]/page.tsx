@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { ArrowLeft, Save, FileText, Loader2, Upload, X, ImageIcon } from 'lucide-react'
+import { ImageCropper } from '@/components/ui/image-cropper'
+import { ArrowLeft, Save, FileText, Loader2, X, ImageIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface Course {
@@ -34,6 +35,8 @@ export default function EditCoursePage() {
   const [course, setCourse] = useState<Course | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [showCropper, setShowCropper] = useState(false)
+  const [originalImageSrc, setOriginalImageSrc] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -82,8 +85,8 @@ export default function EditCoursePage() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Imagem deve ter no maximo 2MB')
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Imagem deve ter no maximo 10MB')
       return
     }
 
@@ -92,8 +95,26 @@ export default function EditCoursePage() {
       return
     }
 
-    setImageFile(file)
-    setImagePreview(URL.createObjectURL(file))
+    // Show cropper with original image
+    const src = URL.createObjectURL(file)
+    setOriginalImageSrc(src)
+    setShowCropper(true)
+  }
+
+  const handleCropComplete = (croppedFile: File) => {
+    setImageFile(croppedFile)
+    setImagePreview(URL.createObjectURL(croppedFile))
+    setShowCropper(false)
+    setOriginalImageSrc(null)
+    toast.success('Imagem ajustada com sucesso!')
+  }
+
+  const handleCropCancel = () => {
+    setShowCropper(false)
+    if (originalImageSrc) {
+      URL.revokeObjectURL(originalImageSrc)
+    }
+    setOriginalImageSrc(null)
   }
 
   const removeImage = () => {
@@ -105,12 +126,15 @@ export default function EditCoursePage() {
   const uploadImage = async (): Promise<string | null> => {
     if (!imageFile) return formData.thumbnail_url || null
 
-    const fileExt = imageFile.name.split('.').pop()
-    const fileName = `course-${Date.now()}.${fileExt}`
+    // Sempre usar .jpg pois a imagem foi convertida para JPEG
+    const fileName = `course-${Date.now()}.jpg`
 
     const { error } = await supabase.storage
       .from('course-thumbnails')
-      .upload(fileName, imageFile, { upsert: true })
+      .upload(fileName, imageFile, {
+        upsert: true,
+        contentType: 'image/jpeg'
+      })
 
     if (error) {
       console.error('Upload error:', error)
@@ -184,6 +208,18 @@ export default function EditCoursePage() {
 
   return (
     <div className="space-y-6">
+      {/* Image Cropper Modal */}
+      {showCropper && originalImageSrc && (
+        <ImageCropper
+          imageSrc={originalImageSrc}
+          aspectRatio={16 / 9}
+          outputWidth={800}
+          outputHeight={450}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
+
       <div className="flex items-center gap-4">
         <Link href="/admin/courses">
           <Button variant="ghost" size="icon">
@@ -258,7 +294,8 @@ export default function EditCoursePage() {
                     <img
                       src={imagePreview || formData.thumbnail_url}
                       alt="Preview"
-                      className="w-32 h-32 object-cover rounded-lg border"
+                      className="w-48 h-27 object-cover rounded-lg border"
+                      style={{ aspectRatio: '16/9' }}
                     />
                     <Button
                       type="button"
@@ -272,7 +309,10 @@ export default function EditCoursePage() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="w-32 h-32 rounded-lg border-2 border-dashed flex items-center justify-center bg-muted">
+                  <div
+                    className="w-48 rounded-lg border-2 border-dashed flex items-center justify-center bg-muted"
+                    style={{ aspectRatio: '16/9' }}
+                  >
                     <ImageIcon className="h-8 w-8 text-muted-foreground" />
                   </div>
                 )}
@@ -287,7 +327,7 @@ export default function EditCoursePage() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    JPG, PNG ou WebP. Maximo 2MB.
+                    JPG, PNG ou WebP. Maximo 10MB. Voce podera ajustar a posicao da imagem.
                   </p>
                 </div>
               </div>
