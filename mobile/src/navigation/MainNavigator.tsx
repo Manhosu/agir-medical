@@ -1,6 +1,7 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Platform } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { MainTabParamList } from './types'
 
 import DashboardScreen from '../screens/dashboard/DashboardScreen'
@@ -29,6 +30,13 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
 
 export function MainNavigator() {
   const colors = useTheme()
+  const insets = useSafeAreaInsets()
+
+  // Android com navegacao por botoes precisa de padding extra
+  // Minimo de 20 para garantir que nao fique embaixo da barra de navegacao
+  const androidBottomPadding = Math.max(insets.bottom, 20)
+  const tabBarHeight = Platform.OS === 'android' ? 60 + androidBottomPadding : 60 + insets.bottom
+  const tabBarPaddingBottom = Platform.OS === 'android' ? androidBottomPadding : Math.max(insets.bottom, 5)
 
   return (
     <Tab.Navigator
@@ -46,15 +54,22 @@ export function MainNavigator() {
           backgroundColor: colors.background,
           borderTopColor: colors.border,
           borderTopWidth: 1,
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
+          paddingBottom: tabBarPaddingBottom,
+          paddingTop: 8,
+          height: tabBarHeight,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
         },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '500',
+        },
+        sceneContainerStyle: {
+          paddingBottom: tabBarHeight,
         },
       }}>
       <Tab.Screen

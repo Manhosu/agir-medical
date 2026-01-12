@@ -367,13 +367,13 @@ export default function LessonViewerScreen() {
         <TouchableOpacity
           style={[
             styles.completeButton,
-            { backgroundColor: colors.primary },
+            { backgroundColor: progress >= 90 ? colors.primary : colors.border },
             progress >= 100 && { backgroundColor: colors.border },
           ]}
           onPress={markAsCompleted}
-          disabled={progress >= 100}>
-          <Text style={[styles.completeButtonText, { color: colors.text }]}>
-            {progress >= 100 ? '✓ Concluida' : 'Concluir'}
+          disabled={progress < 90 || progress >= 100}>
+          <Text style={[styles.completeButtonText, { color: progress >= 90 ? colors.text : colors.textTertiary }]}>
+            {progress >= 100 ? '✓ Concluida' : progress >= 90 ? 'Concluir' : `Leia ate o fim (${progress}%)`}
           </Text>
         </TouchableOpacity>
 

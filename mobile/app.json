@@ -13,8 +13,19 @@
       "bundleIdentifier": "com.agir.elearning"
     },
     "android": {
-      "package": "com.agir.elearning"
+      "package": "com.agir.elearning",
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0A0B"
+      },
+      "navigationBarColor": "#0A0A0B",
+      "navigationBarStyle": "light-content",
+      "softwareKeyboardLayoutMode": "pan"
     },
-    "scheme": "agir"
+    "scheme": "agir",
+    "extra": {
+      "eas": {
+        "projectId": "807544f0-4b3c-4f2a-8325-8a5957ce27ad"
+      }
+    }
   }
 }
