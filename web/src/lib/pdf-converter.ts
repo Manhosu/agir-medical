@@ -2,9 +2,10 @@
 
 import * as pdfjsLib from 'pdfjs-dist'
 
-// Configurar worker do PDF.js
+// Configurar worker do PDF.js usando unpkg (sempre tem a versao correta do npm)
 if (typeof window !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+  // PDF.js 5.x usa .mjs e caminho diferente
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`
 }
 
 interface ConvertedPage {

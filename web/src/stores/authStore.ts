@@ -30,14 +30,20 @@ interface AuthActions {
 
 type AuthStore = AuthState & AuthActions
 
-// Helper to fetch profile
-const fetchProfile = async (userId: string): Promise<Profile | null> => {
+// Helper to fetch profile with timeout
+const fetchProfile = async (userId: string, timeoutMs = 3000): Promise<Profile | null> => {
   try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .limit(1)
+      .abortSignal(controller.signal)
+
+    clearTimeout(timeoutId)
 
     if (error) {
       console.error('Error fetching profile:', error)
@@ -45,15 +51,22 @@ const fetchProfile = async (userId: string): Promise<Profile | null> => {
     }
 
     return (data && data.length > 0 ? data[0] : null) as Profile | null
-  } catch (error) {
-    console.error('Error fetching profile:', error)
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.warn('Profile fetch timed out')
+    } else {
+      console.error('Error fetching profile:', error)
+    }
     return null
   }
 }
 
-// Helper to check subscription
-const checkSubscription = async (userId: string): Promise<boolean> => {
+// Helper to check subscription with timeout
+const checkSubscription = async (userId: string, timeoutMs = 3000): Promise<boolean> => {
   try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+
     const { data, error } = await supabase
       .from('subscriptions')
       .select('*')
@@ -61,6 +74,9 @@ const checkSubscription = async (userId: string): Promise<boolean> => {
       .eq('status', 'active')
       .gt('expires_at', new Date().toISOString())
       .limit(1)
+      .abortSignal(controller.signal)
+
+    clearTimeout(timeoutId)
 
     if (error) {
       console.error('Error checking subscription:', error)
@@ -68,11 +84,18 @@ const checkSubscription = async (userId: string): Promise<boolean> => {
     }
 
     return data && data.length > 0
-  } catch (error) {
-    console.error('Error checking subscription:', error)
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.warn('Subscription check timed out')
+    } else {
+      console.error('Error checking subscription:', error)
+    }
     return false
   }
 }
+
+// Flag to track if auth listener is already set up
+let authListenerSetup = false
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   // Initial state
@@ -92,62 +115,18 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     // Only initialize once
     if (get().initialized) return
 
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-
-      if (session?.user) {
-        let profile = null
-        let hasActiveSubscription = false
-
-        try {
-          const profilePromise = fetchProfile(session.user.id)
-          const subscriptionPromise = checkSubscription(session.user.id)
-
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout')), 5000)
-          )
-
-          const results = await Promise.race([
-            Promise.all([profilePromise, subscriptionPromise]),
-            timeoutPromise
-          ]) as [Profile | null, boolean]
-
-          profile = results[0]
-          hasActiveSubscription = results[1]
-        } catch (err) {
-          console.error('Error fetching profile/subscription:', err)
-        }
-
-        const isAdmin = profile?.role === 'admin'
-
-        set({
-          user: session.user,
-          profile,
-          session,
-          isLoading: false,
-          isAuthenticated: true,
-          isAdmin,
-          hasActiveSubscription,
-          initialized: true,
-        })
-      } else {
-        set({ isLoading: false, initialized: true })
-      }
-
-      // Listener for auth changes
+    // Set up auth listener only once (outside the try-catch to always run)
+    if (!authListenerSetup) {
+      authListenerSetup = true
       supabase.auth.onAuthStateChange(async (event, session) => {
         console.log('Auth state change:', event)
 
         if (event === 'SIGNED_IN' && session?.user) {
-          let profile = null
-          let hasActiveSubscription = false
-
-          try {
-            profile = await fetchProfile(session.user.id)
-            hasActiveSubscription = await checkSubscription(session.user.id)
-          } catch (err) {
-            console.error('Error in auth state change:', err)
-          }
+          // Fetch profile and subscription in parallel with timeouts
+          const [profile, hasActiveSubscription] = await Promise.all([
+            fetchProfile(session.user.id),
+            checkSubscription(session.user.id)
+          ])
 
           set({
             user: session.user,
@@ -175,6 +154,47 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           })
         }
       })
+    }
+
+    try {
+      // Get session with a timeout
+      const sessionPromise = supabase.auth.getSession()
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Session timeout')), 5000)
+      )
+
+      let session: Session | null = null
+      try {
+        const result = await Promise.race([sessionPromise, timeoutPromise])
+        session = result.data.session
+      } catch (err) {
+        console.warn('Session fetch timed out or failed, continuing without session')
+        set({ isLoading: false, initialized: true })
+        return
+      }
+
+      if (session?.user) {
+        // Fetch profile and subscription in parallel
+        const [profile, hasActiveSubscription] = await Promise.all([
+          fetchProfile(session.user.id),
+          checkSubscription(session.user.id)
+        ])
+
+        const isAdmin = profile?.role === 'admin'
+
+        set({
+          user: session.user,
+          profile,
+          session,
+          isLoading: false,
+          isAuthenticated: true,
+          isAdmin,
+          hasActiveSubscription,
+          initialized: true,
+        })
+      } else {
+        set({ isLoading: false, initialized: true })
+      }
     } catch (error) {
       console.error('Error initializing auth:', error)
       set({ isLoading: false, initialized: true })
@@ -185,40 +205,51 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signIn: async (email: string, password: string) => {
     set({ isLoading: true })
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-    if (error) {
+      if (error) {
+        set({ isLoading: false })
+        throw error
+      }
+
+      // Don't set isLoading to false here - let onAuthStateChange handle it
+      return data
+    } catch (error) {
       set({ isLoading: false })
       throw error
     }
-
-    set({ isLoading: false })
-    return data
   },
 
   // Sign up
   signUp: async (email: string, password: string, fullName?: string) => {
     set({ isLoading: true })
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
         },
-      },
-    })
+      })
 
-    if (error) {
+      if (error) {
+        set({ isLoading: false })
+        throw error
+      }
+
+      set({ isLoading: false })
+      return data
+    } catch (error) {
       set({ isLoading: false })
       throw error
     }
-
-    return data
   },
 
   // Sign out
