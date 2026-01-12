@@ -67,7 +67,7 @@ export default function NewCoursePage() {
 
     if (error) {
       console.error('Upload error:', error)
-      toast.error('Erro ao fazer upload da imagem')
+      toast.error(`Erro ao fazer upload: ${error.message}`)
       return null
     }
 
@@ -108,9 +108,10 @@ export default function NewCoursePage() {
 
       toast.success('Curso criado com sucesso!')
       router.push(`/admin/courses/${data.id}/lessons`)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating course:', error)
-      toast.error('Erro ao criar curso')
+      const errorMessage = error?.message || error?.error_description || 'Erro desconhecido'
+      toast.error(`Erro ao criar curso: ${errorMessage}`)
     } finally {
       setIsSubmitting(false)
     }
