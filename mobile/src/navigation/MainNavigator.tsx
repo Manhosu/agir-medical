@@ -1,5 +1,6 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import { View, Text, StyleSheet, Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { MainTabParamList } from './types'
@@ -8,6 +9,9 @@ import DashboardScreen from '../screens/dashboard/DashboardScreen'
 import CoursesNavigator from './CoursesNavigator'
 import ProfileScreen from '../screens/profile/ProfileScreen'
 import { useTheme } from '../hooks/useTheme'
+
+// Telas onde a tab bar deve ficar escondida
+const HIDDEN_TAB_SCREENS = ['CourseDetail', 'LessonViewer']
 
 const Tab = createBottomTabNavigator<MainTabParamList>()
 
@@ -83,10 +87,27 @@ export function MainNavigator() {
       <Tab.Screen
         name="Courses"
         component={CoursesNavigator}
-        options={{
-          title: 'Cursos',
-          headerShown: false,
-          tabBarIcon: ({ focused }) => <TabIcon name="Courses" focused={focused} />,
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? 'CoursesList'
+          const shouldHideTabBar = HIDDEN_TAB_SCREENS.includes(routeName)
+
+          return {
+            title: 'Cursos',
+            headerShown: false,
+            tabBarIcon: ({ focused }) => <TabIcon name="Courses" focused={focused} />,
+            tabBarStyle: shouldHideTabBar ? { display: 'none' } : {
+              backgroundColor: colors.background,
+              borderTopColor: colors.border,
+              borderTopWidth: 1,
+              paddingBottom: tabBarPaddingBottom,
+              paddingTop: 8,
+              height: tabBarHeight,
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+            },
+          }
         }}
       />
       <Tab.Screen

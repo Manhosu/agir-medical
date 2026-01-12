@@ -8,8 +8,10 @@ import {
   Image,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native'
 import { useRoute, useNavigation } from '@react-navigation/native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAuthStore } from '../../stores/authStore'
 import { useCourses } from '../../hooks/useCourses'
 import { useTheme } from '../../hooks/useTheme'
@@ -27,6 +29,10 @@ export default function CourseDetailScreen() {
   const { user, hasActiveSubscription } = useAuthStore()
   const { fetchCourseDetails, isLoading } = useCourses()
   const colors = useTheme()
+  const insets = useSafeAreaInsets()
+
+  // Padding extra para Android que nao tem safe area no bottom
+  const bottomPadding = Platform.OS === 'android' ? Math.max(insets.bottom, 16) : insets.bottom
 
   const [course, setCourse] = useState<Course | null>(null)
   const [lessons, setLessons] = useState<LessonWithProgress[]>([])
@@ -86,7 +92,7 @@ export default function CourseDetailScreen() {
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={styles.content}>
+      contentContainerStyle={[styles.content, { paddingBottom: 32 + bottomPadding }]}>
       {/* Course Header */}
       {course.cover_url ? (
         <Image
@@ -198,7 +204,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    // paddingBottom is set dynamically based on safe area
   },
   loadingContainer: {
     flex: 1,

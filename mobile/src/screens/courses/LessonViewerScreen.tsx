@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react'
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import {
   View,
   Text,
@@ -7,9 +7,11 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  Platform,
 } from 'react-native'
 import { WebView } from 'react-native-webview'
 import { useRoute, useNavigation } from '@react-navigation/native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAuthStore } from '../../stores/authStore'
 import { useCourses } from '../../hooks/useCourses'
 import { useTheme } from '../../hooks/useTheme'
@@ -31,16 +33,21 @@ export default function LessonViewerScreen() {
   const { user, profile, hasActiveSubscription } = useAuthStore()
   const { fetchLessonContent, saveProgress } = useCourses()
   const colors = useTheme()
+  const insets = useSafeAreaInsets()
+
+  // Padding extra para Android que nao tem safe area no bottom
+  const bottomPadding = Platform.OS === 'android' ? Math.max(insets.bottom, 16) : insets.bottom
 
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [content, setContent] = useState<string>('')
   const [allLessons, setAllLessons] = useState<Lesson[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [progress, setProgress] = useState(0)
-  const [maxProgress, setMaxProgress] = useState(0) // Track maximum progress reached
+  const [displayProgress, setDisplayProgress] = useState(0) // Progress shown in UI
+  const [initialProgress, setInitialProgress] = useState(0) // Progress loaded from DB (for HTML)
 
   const webViewRef = useRef<WebView>(null)
   const progressSaveTimeout = useRef<NodeJS.Timeout | null>(null)
+  const maxProgressRef = useRef(0) // Track max progress without causing re-renders
 
   // Habilitar protecao de tela ao entrar na aula
   useEffect(() => {
@@ -116,8 +123,9 @@ export default function LessonViewerScreen() {
           .single()
 
         if (progressData) {
-          setProgress(progressData.progress_percent)
-          setMaxProgress(progressData.progress_percent) // Initialize maxProgress with saved value
+          setDisplayProgress(progressData.progress_percent)
+          setInitialProgress(progressData.progress_percent)
+          maxProgressRef.current = progressData.progress_percent
         }
       }
     } catch (error) {
@@ -129,27 +137,32 @@ export default function LessonViewerScreen() {
   }
 
   // Salvar progresso com debounce - APENAS se for maior que o atual
+  // Usa ref para evitar re-renders durante scroll
   const handleProgressUpdate = useCallback(
     (newProgress: number) => {
       // Apenas atualizar se o novo progresso for MAIOR que o maximo registrado
-      if (newProgress <= maxProgress) {
+      if (newProgress <= maxProgressRef.current) {
         return // Nao regredir o progresso
       }
 
-      setMaxProgress(newProgress)
-      setProgress(newProgress)
+      maxProgressRef.current = newProgress
 
+      // Atualizar UI com debounce para evitar muitos re-renders
       if (progressSaveTimeout.current) {
         clearTimeout(progressSaveTimeout.current)
       }
 
       progressSaveTimeout.current = setTimeout(() => {
+        // Atualizar display progress
+        setDisplayProgress(newProgress)
+
+        // Salvar no banco
         if (user) {
           saveProgress(user.id, lessonId, newProgress)
         }
-      }, 2000)
+      }, 500) // Atualiza UI a cada 500ms no maximo
     },
-    [user, lessonId, saveProgress, maxProgress],
+    [user, lessonId, saveProgress],
   )
 
   // Navegacao entre aulas
@@ -178,8 +191,8 @@ export default function LessonViewerScreen() {
   const markAsCompleted = async () => {
     if (user) {
       await saveProgress(user.id, lessonId, 100)
-      setProgress(100)
-      setMaxProgress(100)
+      setDisplayProgress(100)
+      maxProgressRef.current = 100
       Alert.alert('Sucesso', 'Aula marcada como concluida!')
     }
   }
@@ -188,7 +201,8 @@ export default function LessonViewerScreen() {
   const watermarkEmail = profile?.email || user?.email || 'Usuario'
 
   // HTML para o WebView com protecoes e cores dinamicas
-  const htmlContent = `
+  // Memoizado para nao recriar durante scroll (evita reload do WebView)
+  const htmlContent = useMemo(() => `
     <!DOCTYPE html>
     <html>
     <head>
@@ -205,6 +219,7 @@ export default function LessonViewerScreen() {
           background-color: ${colors.background};
           color: ${colors.text};
           padding: 16px;
+          padding-bottom: 100px;
           margin: 0;
           line-height: 1.6;
           font-size: 16px;
@@ -263,28 +278,28 @@ export default function LessonViewerScreen() {
       </div>
       <script>
         // Track maximum progress locally in WebView
-        let maxScrollProgress = ${maxProgress};
+        let maxScrollProgress = ${initialProgress};
 
-        // Reportar scroll progress - APENAS quando aumenta
-        let ticking = false;
+        // Reportar scroll progress - com throttle
+        let lastReportTime = 0;
+        const THROTTLE_MS = 300;
+
         document.addEventListener('scroll', function() {
-          if (!ticking) {
-            window.requestAnimationFrame(function() {
-              const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-              const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-              const currentProgress = scrollHeight > 0 ? Math.round((scrollTop / scrollHeight) * 100) : 0;
-              const progress = Math.min(100, currentProgress);
+          const now = Date.now();
+          if (now - lastReportTime < THROTTLE_MS) return;
 
-              // Apenas reportar se o progresso AUMENTOU
-              if (progress > maxScrollProgress) {
-                maxScrollProgress = progress;
-                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'scroll', progress: maxScrollProgress }));
-              }
-              ticking = false;
-            });
-            ticking = true;
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const currentProgress = scrollHeight > 0 ? Math.round((scrollTop / scrollHeight) * 100) : 0;
+          const progress = Math.min(100, Math.max(0, currentProgress));
+
+          // Apenas reportar se o progresso AUMENTOU
+          if (progress > maxScrollProgress) {
+            maxScrollProgress = progress;
+            lastReportTime = now;
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'scroll', progress: maxScrollProgress }));
           }
-        });
+        }, { passive: true });
 
         // Bloquear menu de contexto
         document.addEventListener('contextmenu', function(e) {
@@ -298,7 +313,7 @@ export default function LessonViewerScreen() {
       </script>
     </body>
     </html>
-  `
+  `, [content, colors.background, colors.text, colors.primary, watermarkEmail, initialProgress])
 
   const handleWebViewMessage = (event: any) => {
     try {
@@ -328,9 +343,9 @@ export default function LessonViewerScreen() {
           Aula {currentIndex + 1} de {allLessons.length}
         </Text>
         <View style={[styles.progressBarContainer, { backgroundColor: colors.border }]}>
-          <View style={[styles.progressBar, { width: `${progress}%`, backgroundColor: colors.primary }]} />
+          <View style={[styles.progressBar, { width: `${displayProgress}%`, backgroundColor: colors.primary }]} />
         </View>
-        <Text style={[styles.progressPercent, { color: colors.primary }]}>{progress}%</Text>
+        <Text style={[styles.progressPercent, { color: colors.primary }]}>{displayProgress}%</Text>
       </View>
 
       {/* Content */}
@@ -349,7 +364,7 @@ export default function LessonViewerScreen() {
       />
 
       {/* Navigation Footer */}
-      <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
+      <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border, paddingBottom: 12 + bottomPadding }]}>
         <TouchableOpacity
           style={[styles.navButton, { backgroundColor: colors.border }, !hasPrevious && styles.navButtonDisabled]}
           onPress={goToPrevious}
@@ -367,13 +382,13 @@ export default function LessonViewerScreen() {
         <TouchableOpacity
           style={[
             styles.completeButton,
-            { backgroundColor: progress >= 90 ? colors.primary : colors.border },
-            progress >= 100 && { backgroundColor: colors.border },
+            { backgroundColor: displayProgress >= 90 ? colors.primary : colors.border },
+            displayProgress >= 100 && { backgroundColor: colors.border },
           ]}
           onPress={markAsCompleted}
-          disabled={progress < 90 || progress >= 100}>
-          <Text style={[styles.completeButtonText, { color: progress >= 90 ? colors.text : colors.textTertiary }]}>
-            {progress >= 100 ? '✓ Concluida' : progress >= 90 ? 'Concluir' : `Leia ate o fim (${progress}%)`}
+          disabled={displayProgress < 90 || displayProgress >= 100}>
+          <Text style={[styles.completeButtonText, { color: displayProgress >= 90 ? colors.text : colors.textTertiary }]}>
+            {displayProgress >= 100 ? '✓ Concluida' : displayProgress >= 90 ? 'Concluir' : `Leia ate o fim (${displayProgress}%)`}
           </Text>
         </TouchableOpacity>
 
