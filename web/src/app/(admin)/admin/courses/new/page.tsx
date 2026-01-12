@@ -31,6 +31,16 @@ export default function NewCoursePage() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  // Gerar slug a partir do título
+  const generateSlug = (title: string): string => {
+    return title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+  }
+
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -96,6 +106,7 @@ export default function NewCoursePage() {
         .from('courses')
         .insert([{
           title: formData.title.trim(),
+          slug: generateSlug(formData.title.trim()),
           description: formData.description.trim() || null,
           category: formData.category.trim() || null,
           thumbnail_url: thumbnailUrl,
