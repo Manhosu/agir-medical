@@ -276,6 +276,12 @@ export default function CourseLessonsPage() {
       return
     }
 
+    // Para novas aulas, o documento é obrigatório
+    if (!editingLesson && !selectedFile && !htmlContent) {
+      toast.error('O upload de documento é obrigatório')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -661,21 +667,9 @@ export default function CourseLessonsPage() {
               />
             </div>
 
+            {/* Upload de PDF ou DOCX - OBRIGATÓRIO */}
             <div className="space-y-2">
-              <Label htmlFor="lessonDuration">Duração (minutos)</Label>
-              <Input
-                id="lessonDuration"
-                type="number"
-                value={formData.estimated_time}
-                onChange={(e) => setFormData(prev => ({ ...prev, estimated_time: e.target.value }))}
-                placeholder="15"
-                disabled={isSubmitting}
-              />
-            </div>
-
-            {/* Upload de PDF ou DOCX */}
-            <div className="space-y-2">
-              <Label>Upload de Documento (opcional)</Label>
+              <Label>Upload de Documento *</Label>
               <div className="border-2 border-dashed rounded-lg p-4 text-center">
                 <input
                   ref={fileInputRef}
@@ -698,7 +692,9 @@ export default function CourseLessonsPage() {
                   <div className="space-y-2">
                     <FileText className="h-8 w-8 mx-auto text-green-600" />
                     <p className="text-sm font-medium">{selectedFile.name}</p>
-                    <p className="text-xs text-muted-foreground">Documento convertido com sucesso!</p>
+                    <p className="text-xs text-green-600">
+                      Convertido! Tempo de leitura: ~{formData.estimated_time || '?'} min
+                    </p>
                     <Button
                       type="button"
                       variant="outline"
@@ -726,7 +722,7 @@ export default function CourseLessonsPage() {
                 )}
               </div>
               <p className="text-xs text-muted-foreground">
-                O documento será convertido automaticamente para HTML protegido
+                O conteúdo da aula será extraído do documento. O tempo de leitura é calculado automaticamente.
               </p>
             </div>
 
