@@ -55,6 +55,7 @@ interface CoursePreview {
   title: string
   description: string | null
   cover_url: string | null
+  thumbnail_url: string | null
   lesson_count: number
 }
 
@@ -80,7 +81,7 @@ export default function DashboardPage() {
       // Buscar cursos disponiveis para preview
       const { data: coursesData } = await supabase
         .from('courses')
-        .select('id, title, description, cover_url')
+        .select('id, title, description, cover_url, thumbnail_url')
         .eq('is_published', true)
         .limit(6)
 
@@ -470,7 +471,15 @@ export default function DashboardPage() {
               {availableCourses.slice(0, 6).map((course) => (
                 <Card key={course.id} className="overflow-hidden group hover:shadow-lg dark:hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1 bg-card">
                   <div className="relative h-32 bg-gradient-to-br from-primary/20 to-primary/5 dark:from-primary/30 dark:to-primary/10 flex items-center justify-center">
-                    <BookOpen className="w-12 h-12 text-primary/50" />
+                    {(course.thumbnail_url || course.cover_url) ? (
+                      <img
+                        src={course.thumbnail_url || course.cover_url || ''}
+                        alt={course.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <BookOpen className="w-12 h-12 text-primary/50" />
+                    )}
                     <div className="absolute top-3 right-3">
                       <Badge variant="secondary" className="text-xs">
                         <Crown className="w-3 h-3 mr-1" />

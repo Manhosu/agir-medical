@@ -14,6 +14,7 @@ interface Course {
   title: string
   description: string | null
   cover_url: string | null
+  thumbnail_url: string | null
   slug: string
 }
 
@@ -21,24 +22,16 @@ export default function CoursesPage() {
   const [search, setSearch] = useState('')
   const [courses, setCourses] = useState<Course[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [mounted, setMounted] = useState(false)
 
-  // Garantir que o componente está montado (evita problemas de hidratação)
   useEffect(() => {
-    setMounted(true)
+    loadCourses()
   }, [])
-
-  useEffect(() => {
-    if (mounted) {
-      loadCourses()
-    }
-  }, [mounted])
 
   const loadCourses = async () => {
     try {
       const { data, error } = await supabase
         .from('courses')
-        .select('id, title, description, cover_url, slug')
+        .select('id, title, description, cover_url, thumbnail_url, slug')
         .eq('is_published', true)
         .order('order', { ascending: true })
 
@@ -77,7 +70,7 @@ export default function CoursesPage() {
       </div>
 
       {/* Courses Grid */}
-      {!mounted || isLoading ? (
+      {isLoading ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <Card key={i} className="overflow-hidden">
@@ -98,9 +91,9 @@ export default function CoursesPage() {
             <Card key={course.id} className="overflow-hidden hover:border-primary transition-colors">
               {/* Cover Image */}
               <div className="aspect-video bg-muted flex items-center justify-center">
-                {course.cover_url ? (
+                {(course.thumbnail_url || course.cover_url) ? (
                   <img
-                    src={course.cover_url}
+                    src={course.thumbnail_url || course.cover_url || ''}
                     alt={course.title}
                     className="w-full h-full object-cover"
                   />

@@ -28,6 +28,7 @@ interface Course {
   title: string
   description: string | null
   cover_url: string | null
+  thumbnail_url: string | null
   is_published: boolean
 }
 
@@ -261,9 +262,9 @@ export default function CourseDetailPage() {
           <div className="grid md:grid-cols-2 gap-0">
             {/* Cover Image */}
             <div className="h-64 md:h-auto bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center">
-              {course.cover_url ? (
+              {(course.thumbnail_url || course.cover_url) ? (
                 <img
-                  src={course.cover_url}
+                  src={course.thumbnail_url || course.cover_url || ''}
                   alt={course.title}
                   className="w-full h-full object-cover"
                 />
