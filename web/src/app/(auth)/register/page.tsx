@@ -57,8 +57,9 @@ export default function RegisterPage() {
 
     try {
       await signUp(formData.email, formData.password, formData.fullName)
-      toast.success('Cadastro realizado! Verifique seu email para confirmar.')
-      router.push('/login')
+      toast.success('Conta criada com sucesso! Bem-vindo!')
+      // Redirecionar para dashboard (usuario ja esta logado)
+      window.location.href = '/dashboard'
     } catch (error: any) {
       console.error('Register error:', error)
 
