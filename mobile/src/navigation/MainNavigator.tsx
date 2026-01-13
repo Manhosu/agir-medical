@@ -72,9 +72,6 @@ export function MainNavigator() {
           fontSize: 12,
           fontWeight: '500',
         },
-        sceneContainerStyle: {
-          paddingBottom: tabBarHeight,
-        },
       }}>
       <Tab.Screen
         name="Dashboard"

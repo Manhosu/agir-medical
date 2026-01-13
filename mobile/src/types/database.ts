@@ -230,7 +230,15 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_dashboard_stats: {
+        Args: { p_user_id: string }
+        Returns: {
+          total_courses: number
+          completed_lessons: number
+          total_lessons: number
+          average_progress: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

@@ -18,8 +18,9 @@
         "backgroundColor": "#0A0A0B"
       },
       "navigationBarColor": "#0A0A0B",
-      "navigationBarStyle": "light-content",
-      "softwareKeyboardLayoutMode": "pan"
+      "navigationBarStyle": "light",
+      "softwareKeyboardLayoutMode": "pan",
+      "newArchEnabled": false
     },
     "scheme": "agir",
     "extra": {

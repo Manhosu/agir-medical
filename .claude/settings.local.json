@@ -72,7 +72,8 @@
       "Bash(git status:*)",
       "mcp__Supabase__get_logs",
       "Bash(npm start)",
-      "Read(//c/**)"
+      "Read(//c/**)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
