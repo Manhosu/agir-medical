@@ -165,28 +165,8 @@ export default function LessonViewerScreen() {
     [user, lessonId, saveProgress],
   )
 
-  // Navegacao entre aulas
+  // Indice da aula atual para exibicao
   const currentIndex = allLessons.findIndex(l => l.id === lessonId)
-  const hasPrevious = currentIndex > 0
-  const hasNext = currentIndex < allLessons.length - 1
-
-  const goToPrevious = () => {
-    if (hasPrevious) {
-      navigation.replace('LessonViewer', {
-        courseId,
-        lessonId: allLessons[currentIndex - 1].id,
-      })
-    }
-  }
-
-  const goToNext = () => {
-    if (hasNext) {
-      navigation.replace('LessonViewer', {
-        courseId,
-        lessonId: allLessons[currentIndex + 1].id,
-      })
-    }
-  }
 
   const markAsCompleted = async () => {
     if (user) {
@@ -363,22 +343,8 @@ export default function LessonViewerScreen() {
         bounces={false}
       />
 
-      {/* Navigation Footer */}
+      {/* Footer */}
       <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border, paddingBottom: 12 + bottomPadding }]}>
-        <TouchableOpacity
-          style={[styles.navButton, { backgroundColor: colors.border }, !hasPrevious && styles.navButtonDisabled]}
-          onPress={goToPrevious}
-          disabled={!hasPrevious}>
-          <Text
-            style={[
-              styles.navButtonText,
-              { color: colors.text },
-              !hasPrevious && { color: colors.textTertiary },
-            ]}>
-            ← Anterior
-          </Text>
-        </TouchableOpacity>
-
         <TouchableOpacity
           style={[
             styles.completeButton,
@@ -389,20 +355,6 @@ export default function LessonViewerScreen() {
           disabled={displayProgress < 90 || displayProgress >= 100}>
           <Text style={[styles.completeButtonText, { color: displayProgress >= 90 ? colors.text : colors.textTertiary }]}>
             {displayProgress >= 100 ? '✓ Concluida' : displayProgress >= 90 ? 'Concluir' : `Leia ate o fim (${displayProgress}%)`}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.navButton, { backgroundColor: colors.border }, !hasNext && styles.navButtonDisabled]}
-          onPress={goToNext}
-          disabled={!hasNext}>
-          <Text
-            style={[
-              styles.navButtonText,
-              { color: colors.text },
-              !hasNext && { color: colors.textTertiary },
-            ]}>
-            Proxima →
           </Text>
         </TouchableOpacity>
       </View>
@@ -452,27 +404,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
     padding: 12,
     borderTopWidth: 1,
-    gap: 8,
-  },
-  navButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  navButtonDisabled: {
-    opacity: 0.5,
-  },
-  navButtonText: {
-    fontSize: 14,
-    fontWeight: '500',
   },
   completeButton: {
-    flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 8,
     alignItems: 'center',
