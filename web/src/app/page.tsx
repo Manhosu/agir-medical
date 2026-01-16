@@ -21,17 +21,23 @@ import {
   GraduationCap,
   LockKeyhole,
   Zap,
-  RefreshCw
+  RefreshCw,
+  AlertTriangle,
+  Target,
+  Search,
+  Brain,
+  MessageSquare,
+  X
 } from "lucide-react"
 
 const tocItems = [
-  { id: 'features', label: '1. Recursos' },
-  { id: 'content', label: '2. Conteúdo' },
-  { id: 'mobile-app', label: '3. App Mobile' },
-  { id: 'how-it-works', label: '4. Como Funciona' },
-  { id: 'benefits', label: '5. Benefícios' },
-  { id: 'pricing', label: '6. Preços' },
-  { id: 'testimonials', label: '7. Depoimentos' },
+  { id: 'problema', label: '1. O Problema' },
+  { id: 'metodo', label: '2. Metodo A.G.I.R.' },
+  { id: 'para-quem', label: '3. Para Quem' },
+  { id: 'conteudo', label: '4. Conteudo' },
+  { id: 'diferenciais', label: '5. Diferenciais' },
+  { id: 'bonus', label: '6. Bonus' },
+  { id: 'pricing', label: '7. Investimento' },
   { id: 'faq', label: '8. FAQ' },
 ]
 
@@ -43,20 +49,16 @@ export default function Home() {
   // Scroll spy - detect current section and show/hide TOC
   useEffect(() => {
     const handleScroll = () => {
-      // Show TOC when scrolling
       setIsScrolling(true)
 
-      // Clear previous timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
       }
 
-      // Hide TOC after 1.5 seconds of no scrolling
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false)
       }, 1500)
 
-      // Update active section
       const sections = tocItems.map(item => document.getElementById(item.id)).filter(Boolean)
       const scrollPosition = window.scrollY + 150
 
@@ -71,7 +73,7 @@ export default function Home() {
     }
 
     window.addEventListener('scroll', handleScroll)
-    handleScroll() // Check initial position
+    handleScroll()
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
@@ -81,7 +83,6 @@ export default function Home() {
     }
   }, [])
 
-  // Fast smooth scroll
   const scrollToSection = useCallback((e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>, targetId: string) => {
     e.preventDefault()
     const target = document.getElementById(targetId)
@@ -105,29 +106,29 @@ export default function Home() {
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">A</span>
             </div>
-            <span className="text-2xl font-bold text-foreground font-serif">AGIR</span>
+            <span className="text-2xl font-bold text-foreground font-serif">A.G.I.R.</span>
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             <a
-              href="#features"
-              onClick={(e) => scrollToSection(e, 'features')}
+              href="#metodo"
+              onClick={(e) => scrollToSection(e, 'metodo')}
               className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
-              Recursos
+              Metodo
             </a>
             <a
-              href="#content"
-              onClick={(e) => scrollToSection(e, 'content')}
+              href="#conteudo"
+              onClick={(e) => scrollToSection(e, 'conteudo')}
               className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
-              Conteúdo
+              Conteudo
             </a>
             <a
               href="#pricing"
               onClick={(e) => scrollToSection(e, 'pricing')}
               className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
-              Preços
+              Investimento
             </a>
             <a
               href="#faq"
@@ -143,13 +144,13 @@ export default function Home() {
               <Button variant="ghost">Entrar</Button>
             </Link>
             <Link href="/register">
-              <Button>Começar Grátis</Button>
+              <Button>Quero Participar</Button>
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Floating Table of Contents - Desktop Only - Shows on scroll */}
+      {/* Floating Table of Contents */}
       <aside
         className={`hidden xl:block fixed left-8 top-1/2 -translate-y-1/2 z-40 transition-opacity duration-300 ${
           isScrolling ? 'opacity-100' : 'opacity-0 pointer-events-none'
@@ -157,7 +158,7 @@ export default function Home() {
       >
         <nav className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-5 shadow-lg">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-            Índice
+            Indice
           </h3>
           <ul className="space-y-1">
             {tocItems.map((item) => (
@@ -180,8 +181,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/50 via-background to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
         <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/30 rounded-full blur-3xl" />
 
@@ -189,34 +189,39 @@ export default function Home() {
           <div className="text-center max-w-4xl mx-auto">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8 border border-primary/20">
               <Stethoscope className="w-4 h-4" />
-              Plataforma de E-Learning Médico
+              Programa de Formacao Medica
             </span>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground font-serif mb-6 leading-tight">
-              Guidelines Médicos<br />
-              <span className="text-primary">Atualizados e Acessíveis</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground font-serif mb-6 leading-tight">
+              <span className="text-primary">A</span>bdome Agudo{' '}
+              <span className="text-primary">G</span>uiado por{' '}
+              <span className="text-primary">I</span>nvestigacao e{' '}
+              <span className="text-primary">R</span>aciocinio
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Acesse os principais guidelines de gastroenterologia e emergência médica.
-              Conteúdo elaborado por especialistas, formatado para estudo eficiente
-              e disponível em qualquer dispositivo.
+            <p className="text-xl md:text-2xl text-foreground font-medium mb-4">
+              Nao enfrente o plantao sozinho. Tenha respaldo para decidir.
+            </p>
+
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-10">
+              Aprenda o que fazer, quando fazer e quando transferir diante das principais
+              patologias cirurgicas de urgencia e emergencia no plantao.
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
               <Link href="/register">
                 <Button size="lg" className="px-8 h-14 text-lg gap-2">
                   <Play className="w-5 h-5" />
-                  Começar Agora
+                  Quero Aprender o Metodo A.G.I.R.
                 </Button>
               </Link>
               <a
-                href="#content"
-                onClick={(e) => scrollToSection(e, 'content')}
+                href="#metodo"
+                onClick={(e) => scrollToSection(e, 'metodo')}
                 className="cursor-pointer"
               >
                 <Button size="lg" variant="outline" className="px-8 h-14 text-lg gap-2">
-                  Ver Conteúdo
+                  Conhecer o Metodo
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </a>
@@ -225,16 +230,16 @@ export default function Home() {
             {/* Trust badges */}
             <div className="flex flex-wrap justify-center items-center gap-8 text-muted-foreground">
               <div className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-primary" />
+                <span className="text-sm">Foco no Plantao Real</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-primary" />
+                <span className="text-sm">Raciocinio Estruturado</span>
+              </div>
+              <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-primary" />
-                <span className="text-sm">Conteúdo Seguro</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <RefreshCw className="w-5 h-5 text-primary" />
-                <span className="text-sm">Atualizado Constantemente</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-primary" />
-                <span className="text-sm">Por Especialistas</span>
+                <span className="text-sm">Decisoes Seguras</span>
               </div>
             </div>
           </div>
@@ -246,167 +251,212 @@ export default function Home() {
         <div className="container mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-primary font-serif mb-2">4</div>
+              <div className="text-muted-foreground">Pilares do Metodo</div>
+            </div>
+            <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-primary font-serif mb-2">20+</div>
-              <div className="text-muted-foreground">Guidelines Disponíveis</div>
+              <div className="text-muted-foreground">Patologias Abordadas</div>
             </div>
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-primary font-serif mb-2">100%</div>
-              <div className="text-muted-foreground">Baseado em Evidências</div>
+              <div className="text-muted-foreground">Pratico e Aplicavel</div>
             </div>
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-primary font-serif mb-2">24/7</div>
               <div className="text-muted-foreground">Acesso Ilimitado</div>
             </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-primary font-serif mb-2">Web+App</div>
-              <div className="text-muted-foreground">Multiplataforma</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem Section */}
+      <section id="problema" className="py-24 px-4">
+        <div className="container mx-auto">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <span className="text-primary font-medium mb-4 block">O PROBLEMA</span>
+              <h2 className="text-3xl md:text-4xl font-bold font-serif mb-6">
+                Atender dor abdominal no pronto-socorro e diferente de qualquer outro atendimento.
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mb-12">
+              {[
+                { icon: AlertTriangle, text: "Sintomas inespecificos" },
+                { icon: Search, text: "Diagnosticos que se sobrepoem" },
+                { icon: Clock, text: "Pressao por decisoes rapidas" },
+                { icon: AlertTriangle, text: "Medo de errar ou atrasar um diagnostico grave" },
+                { icon: Users, text: "Pouco suporte cirurgico na retaguarda" },
+              ].map((item, index) => (
+                <div key={index} className="flex items-center gap-4 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+                  <item.icon className="w-6 h-6 text-destructive flex-shrink-0" />
+                  <span className="text-foreground">{item.text}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-card border border-border rounded-2xl p-8 text-center">
+              <p className="text-lg text-muted-foreground mb-4">A verdade e simples:</p>
+              <p className="text-xl md:text-2xl font-semibold text-foreground mb-6">
+                O abdome agudo e uma das principais causas de <span className="text-destructive">erro</span>, <span className="text-destructive">inseguranca</span> e <span className="text-destructive">estresse</span> no plantao medico.
+              </p>
+              <p className="text-muted-foreground mb-8">
+                E nao porque voce nao sabe medicina — mas porque <strong className="text-foreground">ninguem te ensinou um metodo claro para decidir</strong>.
+              </p>
+              <Link href="/register">
+                <Button size="lg" className="gap-2">
+                  Quero Parar de Improvisar no Abdome Agudo
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-24 px-4">
+      {/* Method Section - 4 Pillars */}
+      <section id="metodo" className="py-24 px-4 bg-card">
         <div className="container mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-primary font-medium mb-4 block">RECURSOS</span>
-            <h2 className="text-3xl md:text-4xl font-bold font-serif mb-4">
-              Por que escolher o AGIR?
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-primary font-medium mb-4 block">O METODO A.G.I.R.</span>
+            <h2 className="text-3xl md:text-4xl font-bold font-serif mb-6">
+              E exatamente por isso que o A.G.I.R. foi criado.
             </h2>
-            <p className="text-muted-foreground text-lg">
-              Uma plataforma completa para médicos e residentes que buscam
-              excelência em conhecimento clínico.
+            <p className="text-lg text-muted-foreground">
+              O A.G.I.R. e um programa de formacao medica desenvolvido para oferecer <strong className="text-foreground">metodo</strong>, <strong className="text-foreground">organizacao mental</strong> e <strong className="text-foreground">seguranca clinica</strong> no atendimento da dor abdominal.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <BookOpen className="w-6 h-6 text-primary" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {[
+              {
+                letter: "A",
+                title: "Avaliacao Estruturada",
+                desc: "Historia clinica dirigida, exame fisico com proposito e identificacao precoce de gravidade."
+              },
+              {
+                letter: "G",
+                title: "Guiado por Evidencias",
+                desc: "Fluxos claros, prioridades bem definidas e decisoes fundamentadas."
+              },
+              {
+                letter: "I",
+                title: "Investigacao Inteligente",
+                desc: "Solicite apenas exames que impactam a conduta — e aprenda a interpreta-los corretamente."
+              },
+              {
+                letter: "R",
+                title: "Raciocinio para Acao",
+                desc: "Classifique risco, tome decisoes seguras e encaminhe com informacoes relevantes."
+              }
+            ].map((pillar, index) => (
+              <Card key={index} className="border-2 hover:border-primary/50 transition-colors relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-16 h-16 bg-primary/10 rounded-br-full flex items-start justify-start p-2">
+                  <span className="text-3xl font-bold text-primary font-serif">{pillar.letter}</span>
                 </div>
-                <CardTitle className="font-serif">Conteúdo Premium</CardTitle>
-                <CardDescription>
-                  Guidelines e protocolos atualizados
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Acesse os principais guidelines de gastroenterologia e emergência,
-                  com conteúdo revisado por especialistas e formatado para fácil leitura.
-                </p>
-              </CardContent>
-            </Card>
+                <CardHeader className="pt-16">
+                  <CardTitle className="font-serif text-lg">{pillar.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground text-sm">{pillar.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
-            <Card className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Smartphone className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle className="font-serif">Multiplataforma</CardTitle>
-                <CardDescription>
-                  Web e Mobile sincronizados
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Acesse de qualquer dispositivo com sincronização em tempo real.
-                  Seu progresso de leitura sempre atualizado entre web e app.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <LockKeyhole className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle className="font-serif">Seguro e Protegido</CardTitle>
-                <CardDescription>
-                  Conteúdo exclusivo para assinantes
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Sistema de proteção avançado com watermark personalizado.
-                  Seu acesso é único e seguro.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Clock className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle className="font-serif">Progresso Rastreado</CardTitle>
-                <CardDescription>
-                  Acompanhe sua evolução
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Dashboard personalizado mostrando seu progresso em cada guideline.
-                  Saiba exatamente onde parou e quanto falta.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Zap className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle className="font-serif">Leitura Otimizada</CardTitle>
-                <CardDescription>
-                  Dark mode e tipografia premium
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Interface projetada para longas sessões de estudo.
-                  Modo escuro e claro com tipografia que reduz a fadiga visual.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <RefreshCw className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle className="font-serif">Sempre Atualizado</CardTitle>
-                <CardDescription>
-                  Conteúdo revisado periodicamente
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Guidelines atualizados conforme novos consensos são publicados.
-                  Você sempre terá acesso à informação mais recente.
-                </p>
-              </CardContent>
-            </Card>
+          <div className="text-center">
+            <p className="text-lg text-foreground font-medium mb-6">
+              Esse metodo muda completamente a forma como voce encara o abdome agudo.
+            </p>
+            <Link href="/register">
+              <Button size="lg" className="gap-2">
+                Quero Decidir com Clareza no Plantao
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Content Preview Section */}
-      <section id="content" className="py-24 px-4 bg-card">
+      {/* Target Audience */}
+      <section id="para-quem" className="py-24 px-4">
+        <div className="container mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <span className="text-primary font-medium mb-4 block">PARA QUEM E O A.G.I.R.</span>
+              <h2 className="text-3xl md:text-4xl font-bold font-serif mb-6">
+                Este programa foi feito para quem esta na linha de frente
+              </h2>
+              <p className="text-muted-foreground text-lg mb-8">
+                Se voce atende dor abdominal e sente inseguranca, o A.G.I.R. e para voce.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  "Estudantes em internato de medicina",
+                  "Recem-formados iniciando plantoes",
+                  "Medicos generalistas",
+                  "Medicos de UPA e PS clinico",
+                  "Revalidantes",
+                  "Residentes de Clinica Medica, GO e Medicina de Familia",
+                  "Profissionais em hospitais sem equipe de Cirurgia Geral"
+                ].map((item, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-card rounded-2xl p-8 border border-border">
+              <h3 className="text-xl font-semibold mb-6 font-serif">O que voce vai aprender na pratica:</h3>
+              <div className="space-y-4">
+                {[
+                  "Como estruturar o raciocinio clinico desde a anamnese",
+                  "Quais sinais de alerta realmente mudam conduta",
+                  "Quais exames solicitar — e quais evitar",
+                  "Como classificar gravidade e risco",
+                  "Quando observar, quando estabilizar e quando encaminhar",
+                  "Como organizar e apresentar um caso ao cirurgiao",
+                  "Prescricoes objetivas e aplicaveis ao plantao real"
+                ].map((item, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle className="w-4 h-4 text-primary" />
+                    </div>
+                    <span className="text-muted-foreground">{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-border">
+                <p className="text-sm text-muted-foreground text-center">
+                  Tudo com foco no que <strong className="text-foreground">realmente importa na vida real</strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Content Section */}
+      <section id="conteudo" className="py-24 px-4 bg-card">
         <div className="container mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-primary font-medium mb-4 block">CONTEÚDO</span>
+            <span className="text-primary font-medium mb-4 block">CONTEUDO</span>
             <h2 className="text-3xl md:text-4xl font-bold font-serif mb-4">
-              Guidelines Disponíveis
+              Patologias Abordadas
             </h2>
             <p className="text-muted-foreground text-lg">
-              Mais de 20 guidelines de emergência e gastroenterologia,
-              prontos para estudo.
+              Conteudo completo sobre as principais patologias cirurgicas de urgencia e emergencia.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
+              "Dor Abdominal - Abordagem Geral",
               "Apendicite Aguda",
               "Pancreatite Aguda",
               "Colecistite Aguda",
@@ -414,15 +464,14 @@ export default function Home() {
               "Diverticulite Aguda",
               "Abdome Agudo Obstrutivo",
               "Abdome Agudo Perfurativo",
-              "Isquemia Mesentérica",
+              "Isquemia Mesenterica",
               "DRGE",
-              "Hérnia Inguinal",
-              "Hérnia Umbilical",
+              "Hernia Inguinal",
+              "Hernia Umbilical",
               "Volvo de Sigmoide",
-              "Síndrome de Ogilvie",
-              "Abscesso Hepático",
-              "Linfadenite Mesentérica",
-              "Ureterolitíase"
+              "Ulcera Peptica Perfurada",
+              "Abscesso Hepatico",
+              "Ureterolitiase"
             ].map((title, index) => (
               <div
                 key={index}
@@ -438,261 +487,193 @@ export default function Home() {
             <Link href="/register">
               <Button size="lg" className="gap-2">
                 <GraduationCap className="w-5 h-5" />
-                Acessar Todos os Guidelines
+                Quero Dominar a Avaliacao do Abdome Agudo
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Mobile App Section */}
-      <section id="mobile-app" className="py-24 px-4 bg-gradient-to-br from-primary/5 via-background to-accent/10">
+      {/* Why Different Section */}
+      <section id="diferenciais" className="py-24 px-4">
         <div className="container mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Content */}
-            <div>
-              <span className="text-primary font-medium mb-4 block">APP MOBILE</span>
-              <h2 className="text-3xl md:text-4xl font-bold font-serif mb-6">
-                Estude onde estiver com nosso app
-              </h2>
-              <p className="text-muted-foreground text-lg mb-8">
-                Disponível para iPhone e Android. Tenha todos os guidelines na palma da sua mão,
-                com sincronização automática em tempo real.
-              </p>
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-primary font-medium mb-4 block">DIFERENCIAIS</span>
+            <h2 className="text-3xl md:text-4xl font-bold font-serif mb-6">
+              Por que o A.G.I.R. e diferente?
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Porque ele foi desenvolvido para a realidade do plantao — <strong className="text-foreground">sem teoria excessiva, sem floreios, sem conteudos desconectados da pratica</strong>.
+            </p>
+          </div>
 
-              <div className="space-y-4 mb-8">
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <Card className="border-2 hover:border-primary/50 transition-colors">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <Brain className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle className="font-serif">Raciocinio Clinico Estruturado</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Aprenda a formular hipoteses diagnosticas coerentes, reconhecer padroes clinicos e entender quais dados realmente fazem diferenca.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-primary/50 transition-colors">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <Target className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle className="font-serif">Condutas Claras e Seguras</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Saiba exatamente o que fazer diante de cada contexto: quais exames solicitar, quando observar, quando estabilizar, quando referenciar.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-primary/50 transition-colors">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <FileText className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle className="font-serif">Prescricao Orientada pela Pratica</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Indicacoes objetivas, protocolos aplicaveis e modelos de prescricao para a vida real — nao apenas para provas.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Communication with Surgery */}
+          <div className="bg-primary/5 rounded-2xl p-8 border border-primary/20">
+            <div className="max-w-3xl mx-auto text-center">
+              <MessageSquare className="w-12 h-12 text-primary mx-auto mb-4" />
+              <h3 className="text-2xl font-bold font-serif mb-4">
+                Comunicacao com a Equipe de Cirurgia Geral
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                Um dos maiores diferenciais do A.G.I.R. e ensinar como se comunicar corretamente com servicos de referencia cirurgica.
+              </p>
+              <div className="grid md:grid-cols-2 gap-4 text-left max-w-xl mx-auto">
                 {[
-                  { title: 'Sincronização em tempo real', desc: 'Seu progresso sincroniza automaticamente entre web e app' },
-                  { title: 'Proteção de conteúdo', desc: 'Conteúdo protegido com marca d\'água e bloqueio de cópia' },
-                  { title: 'Notificações inteligentes', desc: 'Lembretes de estudo e novos conteúdos' },
-                  { title: 'Interface otimizada', desc: 'Design pensado para telas menores' },
+                  "O que nao pode faltar ao apresentar um caso",
+                  "Como organizar as informacoes",
+                  "Como transmitir seguranca e clareza",
+                  "Como evitar encaminhamentos frageis"
                 ].map((item, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <CheckCircle className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">{item.title}</p>
-                      <p className="text-sm text-muted-foreground">{item.desc}</p>
-                    </div>
+                  <div key={index} className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">{item}</span>
                   </div>
                 ))}
               </div>
-
-              {/* App Store Buttons */}
-              <div className="flex flex-wrap gap-4">
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-3 px-5 py-3 bg-foreground text-background rounded-xl hover:opacity-90 transition-opacity"
-                >
-                  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                  </svg>
-                  <div className="text-left">
-                    <div className="text-xs opacity-80">Baixar na</div>
-                    <div className="text-sm font-semibold">App Store</div>
-                  </div>
-                </a>
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-3 px-5 py-3 bg-foreground text-background rounded-xl hover:opacity-90 transition-opacity"
-                >
-                  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
-                  </svg>
-                  <div className="text-left">
-                    <div className="text-xs opacity-80">Disponível no</div>
-                    <div className="text-sm font-semibold">Google Play</div>
-                  </div>
-                </a>
-              </div>
-
-              <p className="text-xs text-muted-foreground mt-4">
-                * Apps disponíveis em breve. Cadastre-se para ser notificado do lançamento.
+              <p className="text-sm text-primary font-medium mt-6">
+                Isso muda a forma como voce e visto como profissional.
               </p>
-            </div>
-
-            {/* Phone Mockup */}
-            <div className="relative flex justify-center lg:justify-end">
-              <div className="relative">
-                {/* Phone Frame */}
-                <div className="w-64 md:w-72 bg-foreground rounded-[3rem] p-3 shadow-2xl">
-                  <div className="bg-background rounded-[2.5rem] overflow-hidden">
-                    {/* Status Bar */}
-                    <div className="bg-card px-6 py-2 flex justify-between items-center text-xs">
-                      <span>9:41</span>
-                      <div className="flex items-center gap-1">
-                        <div className="w-4 h-2 border border-foreground rounded-sm">
-                          <div className="w-3/4 h-full bg-primary rounded-sm"></div>
-                        </div>
-                      </div>
-                    </div>
-                    {/* App Content Preview */}
-                    <div className="p-4 space-y-4 h-[480px] md:h-[520px]">
-                      {/* Header */}
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Olá, Dr. Carlos</p>
-                          <p className="font-semibold text-sm">Continue estudando</p>
-                        </div>
-                        <div className="w-8 h-8 rounded-full bg-primary/20"></div>
-                      </div>
-                      {/* Progress Card */}
-                      <div className="bg-card rounded-xl p-4 border border-border">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                            <BookOpen className="w-5 h-5 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium">Apendicite Aguda</p>
-                            <p className="text-xs text-muted-foreground">75% concluído</p>
-                          </div>
-                        </div>
-                        <div className="w-full h-2 bg-accent rounded-full overflow-hidden">
-                          <div className="w-3/4 h-full bg-primary rounded-full"></div>
-                        </div>
-                      </div>
-                      {/* Guidelines List */}
-                      <div className="space-y-2">
-                        <p className="text-xs font-medium text-muted-foreground">GUIDELINES</p>
-                        {['Pancreatite Aguda', 'Colecistite Aguda', 'DRGE'].map((item, i) => (
-                          <div key={i} className="flex items-center gap-3 p-3 bg-card rounded-lg border border-border">
-                            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-                              <FileText className="w-4 h-4 text-primary" />
-                            </div>
-                            <span className="text-sm">{item}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Decorative elements */}
-                <div className="absolute -z-10 top-10 -right-10 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
-                <div className="absolute -z-10 bottom-10 -left-10 w-40 h-40 bg-accent/30 rounded-full blur-2xl"></div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How it Works */}
-      <section id="how-it-works" className="py-24 px-4">
+      {/* Bonus Section */}
+      <section id="bonus" className="py-24 px-4 bg-card">
         <div className="container mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-primary font-medium mb-4 block">COMO FUNCIONA</span>
+            <span className="text-primary font-medium mb-4 block">MUITO ALEM DAS AULAS</span>
             <h2 className="text-3xl md:text-4xl font-bold font-serif mb-4">
-              Comece em 3 passos simples
+              Ao entrar no A.G.I.R., voce tambem tera acesso a:
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-6">
-                1
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {[
+              { icon: MessageSquare, title: "Grupo Exclusivo no Telegram", desc: "Comunidade ativa de profissionais" },
+              { icon: Users, title: "Discussao de Casos Clinicos Reais", desc: "Aprenda com casos do dia a dia" },
+              { icon: RefreshCw, title: "Atualizacoes Cientificas", desc: "Conteudo sempre atualizado" },
+              { icon: Stethoscope, title: "Suporte da Equipe", desc: "Tire suas duvidas" }
+            ].map((bonus, index) => (
+              <div key={index} className="text-center p-6 rounded-xl bg-background border border-border">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <bonus.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">{bonus.title}</h3>
+                <p className="text-sm text-muted-foreground">{bonus.desc}</p>
               </div>
-              <h3 className="text-xl font-semibold mb-3 font-serif">Crie sua conta</h3>
-              <p className="text-muted-foreground">
-                Cadastre-se gratuitamente em menos de 1 minuto com seu email.
-              </p>
-            </div>
+            ))}
+          </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-6">
-                2
-              </div>
-              <h3 className="text-xl font-semibold mb-3 font-serif">Escolha seu plano</h3>
-              <p className="text-muted-foreground">
-                Selecione a assinatura anual e tenha acesso a todo o conteúdo.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-6">
-                3
-              </div>
-              <h3 className="text-xl font-semibold mb-3 font-serif">Comece a estudar</h3>
-              <p className="text-muted-foreground">
-                Acesse os guidelines de qualquer dispositivo e acompanhe seu progresso.
-              </p>
-            </div>
+          <div className="text-center mt-8">
+            <p className="text-lg text-foreground font-medium">
+              O A.G.I.R. e uma <span className="text-primary">comunidade de formacao clinica continua</span>.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Benefits for Doctors */}
-      <section id="benefits" className="py-24 px-4 bg-primary/5">
+      {/* Transformation Block */}
+      <section className="py-24 px-4 bg-gradient-to-br from-primary/10 via-background to-accent/10">
         <div className="container mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <span className="text-primary font-medium mb-4 block">PARA MÉDICOS</span>
-              <h2 className="text-3xl md:text-4xl font-bold font-serif mb-6">
-                Otimize seu tempo de estudo
-              </h2>
-              <p className="text-muted-foreground text-lg mb-8">
-                Sabemos que a rotina médica é intensa. Por isso, criamos uma plataforma
-                que permite estudar de forma eficiente, em qualquer lugar.
-              </p>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold font-serif text-center mb-12">
+              Com o A.G.I.R., voce deixa de:
+            </h2>
 
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Before */}
               <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-destructive mb-4 flex items-center gap-2">
+                  <X className="w-5 h-5" /> Antes
+                </h3>
                 {[
-                  "Conteúdo organizado por especialidade",
-                  "Formatação otimizada para leitura rápida",
-                  "Tabelas e fluxogramas de fácil consulta",
-                  "Busca inteligente por tópicos",
-                  "Marcadores de progresso automáticos",
-                  "Acesso offline no app mobile"
+                  "Improvisar",
+                  "Atender com medo",
+                  "Encaminhar sem seguranca"
                 ].map((item, index) => (
-                  <div key={index} className="flex items-center gap-3">
+                  <div key={index} className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+                    <X className="w-5 h-5 text-destructive flex-shrink-0" />
+                    <span className="text-foreground">{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* After */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5" /> Depois
+                </h3>
+                {[
+                  "Decidir com metodo",
+                  "Atender com clareza",
+                  "Agir com confianca"
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20">
                     <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>{item}</span>
+                    <span className="text-foreground">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-card rounded-2xl p-8 border border-border shadow-lg">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Users className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-semibold">Ideal para</h4>
-                  <p className="text-sm text-muted-foreground">Residentes e especialistas</p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-background border border-border">
-                  <div className="flex items-center gap-3 mb-2">
-                    <GraduationCap className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Residentes</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Prepare-se para provas e plantões com conteúdo atualizado
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-lg bg-background border border-border">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Stethoscope className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Emergencistas</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Consulta rápida durante atendimentos de urgência
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-lg bg-background border border-border">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Award className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Especialistas</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Atualização contínua baseada em consensos recentes
-                  </p>
-                </div>
-              </div>
+            <div className="text-center mt-12">
+              <p className="text-xl font-semibold text-foreground mb-2">
+                O abdome agudo nao permite improviso.
+              </p>
+              <p className="text-primary font-medium mb-8">
+                Ele exige metodo, raciocinio e decisao responsavel.
+              </p>
+              <Link href="/register">
+                <Button size="lg" className="h-14 px-10 text-lg gap-2">
+                  Quero Entrar para o A.G.I.R. Agora
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -702,12 +683,12 @@ export default function Home() {
       <section id="pricing" className="py-24 px-4">
         <div className="container mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-primary font-medium mb-4 block">PREÇOS</span>
+            <span className="text-primary font-medium mb-4 block">INVESTIMENTO</span>
             <h2 className="text-3xl md:text-4xl font-bold font-serif mb-4">
-              Investimento no seu conhecimento
+              Invista na sua seguranca clinica
             </h2>
             <p className="text-muted-foreground text-lg">
-              Um único plano com acesso completo a todos os guidelines.
+              Acesso completo ao metodo que vai transformar seus plantoes.
             </p>
           </div>
 
@@ -715,12 +696,12 @@ export default function Home() {
             <Card className="border-2 border-primary relative overflow-hidden">
               <div className="absolute top-4 right-4">
                 <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">
-                  MAIS POPULAR
+                  ACESSO COMPLETO
                 </span>
               </div>
               <CardHeader className="text-center pb-0">
                 <CardTitle className="text-2xl font-serif">Assinatura Anual</CardTitle>
-                <CardDescription>Acesso completo por 12 meses</CardDescription>
+                <CardDescription>Acesso ilimitado por 12 meses</CardDescription>
               </CardHeader>
               <CardContent className="text-center pt-8">
                 <div className="mb-8">
@@ -730,12 +711,13 @@ export default function Home() {
 
                 <div className="space-y-3 text-left mb-8">
                   {[
-                    "Acesso a todos os 20+ guidelines",
-                    "Web + App mobile",
-                    "Sincronização em tempo real",
-                    "Atualizações incluídas",
-                    "Suporte por email",
-                    "Cancelamento a qualquer momento"
+                    "Acesso a todo o conteudo do metodo A.G.I.R.",
+                    "Todas as patologias abordadas",
+                    "Grupo exclusivo no Telegram",
+                    "Discussao de casos clinicos",
+                    "Atualizacoes incluidas",
+                    "Suporte da equipe",
+                    "Acesso web + mobile"
                   ].map((feature, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
@@ -746,12 +728,12 @@ export default function Home() {
 
                 <Link href="/register" className="block">
                   <Button size="lg" className="w-full h-14 text-lg">
-                    Assinar Agora
+                    Quero Entrar para o A.G.I.R.
                   </Button>
                 </Link>
 
                 <p className="text-xs text-muted-foreground mt-4">
-                  Pagamento seguro via cartão ou PIX
+                  Pagamento seguro via cartao ou PIX
                 </p>
               </CardContent>
             </Card>
@@ -759,55 +741,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section id="testimonials" className="py-24 px-4 bg-card">
-        <div className="container mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-primary font-medium mb-4 block">DEPOIMENTOS</span>
-            <h2 className="text-3xl md:text-4xl font-bold font-serif mb-4">
-              O que dizem nossos usuários
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Dr. Carlos M.",
-                role: "Residente de Cirurgia",
-                text: "Fundamental para minha preparação nos plantões. Conteúdo direto ao ponto e bem organizado."
-              },
-              {
-                name: "Dra. Ana Paula S.",
-                role: "Emergencista",
-                text: "Uso diariamente no pronto-socorro. A formatação facilita muito a consulta rápida durante os atendimentos."
-              },
-              {
-                name: "Dr. Roberto L.",
-                role: "Gastroenterologista",
-                text: "Excelente material de atualização. Os guidelines estão sempre em dia com os consensos mais recentes."
-              }
-            ].map((testimonial, index) => (
-              <Card key={index}>
-                <CardContent className="pt-6">
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-primary text-primary" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground mb-6">"{testimonial.text}"</p>
-                  <div>
-                    <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* FAQ Section */}
-      <section id="faq" className="py-24 px-4">
+      <section id="faq" className="py-24 px-4 bg-card">
         <div className="container mx-auto max-w-3xl">
           <div className="text-center mb-16">
             <span className="text-primary font-medium mb-4 block">FAQ</span>
@@ -819,31 +754,31 @@ export default function Home() {
           <div className="space-y-4">
             {[
               {
-                q: "Como funciona o acesso ao conteúdo?",
-                a: "Após a assinatura, você terá acesso imediato a todos os guidelines pela web e pelo app mobile. O conteúdo fica disponível 24/7 durante todo o período da assinatura."
+                q: "Para quem e o A.G.I.R.?",
+                a: "O A.G.I.R. foi criado para estudantes de medicina em internato, recem-formados, medicos generalistas, emergencistas de UPA e PS, revalidantes e residentes que atendem dor abdominal e buscam mais seguranca clinica."
               },
               {
-                q: "O conteúdo é atualizado?",
-                a: "Sim! Atualizamos os guidelines sempre que novos consensos são publicados. Todas as atualizações estão incluídas na sua assinatura."
+                q: "O conteudo e atualizado?",
+                a: "Sim! Atualizamos o conteudo regularmente com base nos consensos e evidencias mais recentes. Todas as atualizacoes estao incluidas na sua assinatura."
               },
               {
-                q: "Posso acessar de múltiplos dispositivos?",
-                a: "Sim, você pode acessar de qualquer dispositivo. Porém, por segurança, permitimos apenas uma sessão ativa por vez."
+                q: "Posso acessar de qualquer dispositivo?",
+                a: "Sim, voce pode acessar pela web ou pelo app mobile. Seu progresso sincroniza automaticamente entre os dispositivos."
+              },
+              {
+                q: "Como funciona o grupo do Telegram?",
+                a: "Ao assinar, voce recebe acesso ao grupo exclusivo onde discutimos casos clinicos, tiramos duvidas e compartilhamos atualizacoes cientificas."
+              },
+              {
+                q: "E se eu tiver duvidas sobre um caso especifico?",
+                a: "Voce pode discutir casos no grupo do Telegram e contar com o suporte da equipe do programa para orientacoes."
               },
               {
                 q: "Como funciona o pagamento?",
-                a: "Aceitamos cartão de crédito e PIX. O pagamento é anual e você pode cancelar a qualquer momento."
-              },
-              {
-                q: "Tem app mobile?",
-                a: "Sim! Temos aplicativos para Android e iOS com todas as funcionalidades de visualização da versão web, com sincronização em tempo real."
-              },
-              {
-                q: "Posso compartilhar minha conta?",
-                a: "Não. A assinatura é individual e intransferível. O conteúdo possui watermark com seus dados para proteção."
+                a: "Aceitamos cartao de credito e PIX. O pagamento e anual e voce tem acesso completo durante 12 meses."
               }
             ].map((faq, index) => (
-              <div key={index} className="p-6 rounded-lg bg-card border border-border">
+              <div key={index} className="p-6 rounded-lg bg-background border border-border">
                 <h3 className="font-semibold mb-2">{faq.q}</h3>
                 <p className="text-muted-foreground">{faq.a}</p>
               </div>
@@ -852,19 +787,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Final CTA Section */}
       <section className="py-24 px-4 bg-primary">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-serif text-primary-foreground mb-6">
-            Pronto para elevar seu conhecimento?
+            Se voce quer atender dor abdominal com seguranca, clareza e confianca, o A.G.I.R. foi feito para voce.
           </h2>
           <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto mb-10">
-            Junte-se a centenas de médicos que já utilizam o AGIR para se
-            manterem atualizados com os principais guidelines.
+            Nao enfrente o plantao sozinho. Tenha respaldo para decidir.
           </p>
           <Link href="/register">
             <Button size="lg" variant="secondary" className="h-14 px-10 text-lg gap-2">
-              Começar Agora
+              Quero Entrar para o A.G.I.R. Agora
               <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>
@@ -880,20 +814,19 @@ export default function Home() {
                 <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                   <span className="text-primary-foreground font-bold text-lg">A</span>
                 </div>
-                <span className="text-2xl font-bold font-serif">AGIR</span>
+                <span className="text-2xl font-bold font-serif">A.G.I.R.</span>
               </div>
               <p className="text-muted-foreground text-sm">
-                Plataforma de e-learning médico com guidelines atualizados
-                para profissionais de saúde.
+                Abdome Agudo Guiado por Investigacao e Raciocinio. Programa de formacao medica para atendimento seguro do abdome agudo.
               </p>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Produto</h4>
+              <h4 className="font-semibold mb-4">Programa</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#features" onClick={(e) => scrollToSection(e, 'features')} className="hover:text-foreground transition-colors cursor-pointer">Recursos</a></li>
-                <li><a href="#content" onClick={(e) => scrollToSection(e, 'content')} className="hover:text-foreground transition-colors cursor-pointer">Conteúdo</a></li>
-                <li><a href="#pricing" onClick={(e) => scrollToSection(e, 'pricing')} className="hover:text-foreground transition-colors cursor-pointer">Preços</a></li>
+                <li><a href="#metodo" onClick={(e) => scrollToSection(e, 'metodo')} className="hover:text-foreground transition-colors cursor-pointer">Metodo A.G.I.R.</a></li>
+                <li><a href="#conteudo" onClick={(e) => scrollToSection(e, 'conteudo')} className="hover:text-foreground transition-colors cursor-pointer">Conteudo</a></li>
+                <li><a href="#pricing" onClick={(e) => scrollToSection(e, 'pricing')} className="hover:text-foreground transition-colors cursor-pointer">Investimento</a></li>
                 <li><a href="#faq" onClick={(e) => scrollToSection(e, 'faq')} className="hover:text-foreground transition-colors cursor-pointer">FAQ</a></li>
               </ul>
             </div>
@@ -902,7 +835,7 @@ export default function Home() {
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/terms" className="hover:text-foreground transition-colors">Termos de Uso</Link></li>
-                <li><Link href="/privacy" className="hover:text-foreground transition-colors">Política de Privacidade</Link></li>
+                <li><Link href="/privacy" className="hover:text-foreground transition-colors">Politica de Privacidade</Link></li>
               </ul>
             </div>
 
@@ -918,10 +851,10 @@ export default function Home() {
 
           <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">
-              &copy; 2026 AGIR - E-Learning Médico. Todos os direitos reservados.
+              &copy; 2026 A.G.I.R. - Programa de Formacao Medica. Todos os direitos reservados.
             </p>
             <p className="text-xs text-muted-foreground">
-              Material educacional baseado em consensos médicos atualizados.
+              Conteudo educacional baseado em evidencias cientificas.
             </p>
           </div>
         </div>
