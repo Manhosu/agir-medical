@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
-/* Design System AGIR - E-Learning Médico */
-/* Baseado no design do Lovable (drge-agir) */
-/* Fontes carregadas via next/font no layout.tsx */
+/* ========================================
+   PROGRAMA A.G.I.R. - Design System
+   Futuristic Medical Tech Theme
+======================================== */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -27,6 +28,11 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+
+  /* Custom colors */
+  --color-glow-primary: hsl(var(--glow-primary));
+  --color-glow-accent: hsl(var(--glow-accent));
+  --color-surface-elevated: hsl(var(--surface-elevated));
 
   /* Charts */
   --color-chart-1: hsl(var(--chart-1));
@@ -53,8 +59,8 @@
   --radius-2xl: calc(var(--radius) + 8px);
 
   /* Fonts */
-  --font-sans: "Work Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-serif: "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Inconsolata", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Shadows */
@@ -65,111 +71,124 @@
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+
+  /* Animations */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 3s linear infinite;
 }
 
-/* Light Mode - Design AGIR */
+/* Dark Futuristic Theme - Primary (Always Dark) */
 :root {
   --radius: 0.75rem;
 
-  /* Cores principais - Verde médico */
-  --background: 0 0% 96%;
-  --foreground: 0 0% 9%;
+  /* Dark futuristic colors */
+  --background: 220 30% 6%;
+  --foreground: 210 40% 96%;
 
-  --card: 0 0% 98%;
-  --card-foreground: 0 0% 9%;
+  --card: 220 25% 10%;
+  --card-foreground: 210 40% 96%;
 
-  --popover: 0 0% 89%;
-  --popover-foreground: 0 0% 9%;
+  --popover: 220 25% 10%;
+  --popover-foreground: 210 40% 96%;
 
-  /* Primary - Verde azulado (cor principal AGIR) */
-  --primary: 161 93% 30%;
-  --primary-foreground: 151 80% 95%;
+  /* Cyan/Teal accent - medical tech feel */
+  --primary: 175 80% 50%;
+  --primary-foreground: 220 30% 6%;
 
-  /* Secondary - Cinza escuro */
-  --secondary: 0 0% 32%;
-  --secondary-foreground: 0 0% 98%;
+  /* Deep blue secondary */
+  --secondary: 220 60% 20%;
+  --secondary-foreground: 210 40% 96%;
 
-  --muted: 0 0% 63%;
-  --muted-foreground: 0 0% 9%;
+  --muted: 220 25% 15%;
+  --muted-foreground: 215 20% 60%;
 
-  /* Accent - Verde claro */
-  --accent: 166 76% 96%;
-  --accent-foreground: 173 80% 40%;
+  /* Emerald accent */
+  --accent: 160 70% 45%;
+  --accent-foreground: 220 30% 6%;
 
-  /* Destructive - Vermelho */
-  --destructive: 0 72% 50%;
-  --destructive-foreground: 0 85% 97%;
+  /* Alert/CTA red */
+  --destructive: 0 70% 55%;
+  --destructive-foreground: 210 40% 98%;
 
-  --border: 0 0% 83%;
-  --input: 0 0% 83%;
-  --ring: 161 93% 30%;
+  --border: 220 30% 18%;
+  --input: 220 30% 18%;
+  --ring: 175 80% 50%;
 
-  /* Charts - Tons de verde e azul */
-  --chart-1: 158 64% 51%;
-  --chart-2: 141 69% 58%;
-  --chart-3: 172 66% 50%;
-  --chart-4: 82 77% 55%;
-  --chart-5: 0 0% 45%;
+  /* Custom glow tokens */
+  --glow-primary: 175 80% 50%;
+  --glow-accent: 160 70% 45%;
+  --surface-elevated: 220 25% 12%;
+  --gradient-start: 220 60% 15%;
+  --gradient-end: 200 50% 10%;
+
+  /* Charts - Teal/Cyan palette */
+  --chart-1: 175 80% 50%;
+  --chart-2: 160 70% 45%;
+  --chart-3: 190 70% 50%;
+  --chart-4: 145 65% 50%;
+  --chart-5: 215 20% 60%;
 
   /* Sidebar */
-  --sidebar: 0 0% 98%;
-  --sidebar-foreground: 0 0% 9%;
-  --sidebar-primary: 161 93% 30%;
-  --sidebar-primary-foreground: 151 80% 95%;
-  --sidebar-accent: 0 0% 32%;
-  --sidebar-accent-foreground: 0 0% 98%;
-  --sidebar-border: 0 0% 83%;
-  --sidebar-ring: 161 93% 30%;
+  --sidebar: 220 30% 8%;
+  --sidebar-foreground: 210 40% 96%;
+  --sidebar-primary: 175 80% 50%;
+  --sidebar-primary-foreground: 220 30% 6%;
+  --sidebar-accent: 220 25% 15%;
+  --sidebar-accent-foreground: 210 40% 96%;
+  --sidebar-border: 220 30% 18%;
+  --sidebar-ring: 175 80% 50%;
 }
 
-/* Dark Mode - Design AGIR */
+/* Dark class - same as root (always dark) */
 .dark {
-  --background: 0 0% 9%;
-  --foreground: 0 0% 98%;
+  --background: 220 30% 6%;
+  --foreground: 210 40% 96%;
+  --card: 220 25% 10%;
+  --card-foreground: 210 40% 96%;
+  --popover: 220 25% 10%;
+  --popover-foreground: 210 40% 96%;
+  --primary: 175 80% 50%;
+  --primary-foreground: 220 30% 6%;
+  --secondary: 220 60% 20%;
+  --secondary-foreground: 210 40% 96%;
+  --muted: 220 25% 15%;
+  --muted-foreground: 215 20% 60%;
+  --accent: 160 70% 45%;
+  --accent-foreground: 220 30% 6%;
+  --destructive: 0 70% 55%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 220 30% 18%;
+  --input: 220 30% 18%;
+  --ring: 175 80% 50%;
+}
 
-  --card: 0 0% 14%;
-  --card-foreground: 0 0% 98%;
+/* Keyframes */
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
 
-  --popover: 0 0% 25%;
-  --popover-foreground: 0 0% 98%;
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
 
-  /* Primary - Teal mais claro no dark */
-  --primary: 158 64% 51%;
-  --primary-foreground: 165 91% 9%;
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
 
-  --secondary: 0 0% 45%;
-  --secondary-foreground: 0 0% 98%;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
 
-  --muted: 0 0% 45%;
-  --muted-foreground: 0 0% 98%;
-
-  /* Accent - Azul escuro */
-  --accent: 178 84% 10%;
-  --accent-foreground: 172 66% 50%;
-
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 85% 97%;
-
-  --border: 0 0% 32%;
-  --input: 0 0% 32%;
-  --ring: 158 64% 51%;
-
-  /* Charts - Dark mode */
-  --chart-1: 156 71% 66%;
-  --chart-2: 141 76% 73%;
-  --chart-3: 170 76% 64%;
-  --chart-4: 81 84% 67%;
-  --chart-5: 0 0% 45%;
-
-  /* Sidebar - Dark */
-  --sidebar: 0 0% 14%;
-  --sidebar-foreground: 0 0% 98%;
-  --sidebar-primary: 158 64% 51%;
-  --sidebar-primary-foreground: 165 91% 9%;
-  --sidebar-accent: 172 66% 50%;
-  --sidebar-accent-foreground: 178 84% 10%;
-  --sidebar-border: 0 0% 32%;
-  --sidebar-ring: 158 64% 51%;
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 @layer base {
@@ -179,25 +198,99 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem; /* Offset for fixed header */
+    scroll-padding-top: 5rem;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
 
-  /* Typography - Lora para títulos de seção */
-  h1, h2, h3 {
-    font-family: var(--font-serif);
+  /* Typography - Space Grotesk for headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+}
+
+@layer utilities {
+  /* Futuristic glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--glow-primary) / 0.3),
+                0 0 40px hsl(var(--glow-primary) / 0.15),
+                0 0 60px hsl(var(--glow-primary) / 0.05);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px hsl(var(--glow-accent) / 0.3),
+                0 0 40px hsl(var(--glow-accent) / 0.15);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px hsl(var(--primary) / 0.5),
+                 0 0 20px hsl(var(--primary) / 0.3);
+  }
+
+  /* Grid background pattern */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-dark {
+    background: linear-gradient(135deg, hsl(var(--gradient-start)) 0%, hsl(var(--gradient-end)) 100%);
+  }
+
+  .bg-gradient-radial {
+    background: radial-gradient(ellipse at top, hsl(var(--secondary) / 0.3) 0%, transparent 50%);
+  }
+
+  /* Animated gradient border */
+  .border-gradient {
+    position: relative;
+    background: hsl(var(--card));
+    border-radius: var(--radius);
+  }
+
+  .border-gradient::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary)));
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.5;
+  }
+
+  /* Subtle scan line effect */
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      hsl(var(--foreground) / 0.01) 2px,
+      hsl(var(--foreground) / 0.01) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Font display utility */
+  .font-display {
+    font-family: var(--font-display);
   }
 }
 
 /* ========================================
-   SISTEMA DE PROTEÇÃO DE CONTEÚDO
+   SISTEMA DE PROTECAO DE CONTEUDO
    Visualizador Seguro Anti-Fraude
 ======================================== */
 
-/* Classe base de proteção de conteúdo */
+/* Classe base de protecao de conteudo */
 .content-protected {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -238,7 +331,7 @@
   pointer-events: none;
 }
 
-/* Watermark dinâmica */
+/* Watermark dinamica */
 .dynamic-watermark {
   position: absolute;
   inset: 0;
@@ -271,7 +364,7 @@
   justify-content: center;
 }
 
-/* Blur de proteção */
+/* Blur de protecao */
 .content-blur {
   filter: blur(20px);
   pointer-events: none;
@@ -327,7 +420,7 @@
 }
 
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-weight: 700;
   line-height: 1.25;
   margin-top: 2em;
@@ -444,17 +537,12 @@
   margin: 2em 0;
 }
 
-/* Dark mode prose adjustments */
-.dark .prose {
-  color: hsl(var(--foreground));
-}
-
 /* ========================================
-   PROTEÇÃO CONTRA IMPRESSÃO
+   PROTECAO CONTRA IMPRESSAO
    Bloqueio total de print/PDF
 ======================================== */
 @media print {
-  /* Esconder todo conteúdo protegido */
+  /* Esconder todo conteudo protegido */
   .content-protected,
   .secure-viewer-modal,
   .secure-content-area,
@@ -464,14 +552,14 @@
     opacity: 0 !important;
   }
 
-  /* Esconder body inteiro quando visualizador está aberto */
+  /* Esconder body inteiro quando visualizador esta aberto */
   body:has(.secure-viewer-modal) {
     display: none !important;
   }
 
   /* Mensagem de bloqueio */
   body::before {
-    content: "⚠️ IMPRESSÃO NÃO PERMITIDA ⚠️";
+    content: "IMPRESSAO NAO PERMITIDA";
     display: block !important;
     position: fixed !important;
     top: 50% !important;
@@ -489,7 +577,7 @@
   }
 
   body::after {
-    content: "Este conteúdo é protegido e não pode ser impresso. Acesse a plataforma AGIR para visualizar.";
+    content: "Este conteudo e protegido e nao pode ser impresso. Acesse a plataforma A.G.I.R. para visualizar.";
     display: block !important;
     position: fixed !important;
     top: calc(50% + 80px) !important;
@@ -502,7 +590,7 @@
     z-index: 999999 !important;
   }
 
-  /* Garantir página em branco */
+  /* Garantir pagina em branco */
   * {
     visibility: hidden !important;
     color: transparent !important;

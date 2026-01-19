@@ -9,12 +9,118 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native'
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  withDelay,
+  Easing,
+  Layout,
+} from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { useAuthStore } from '../../stores/authStore'
 import { useCourses } from '../../hooks/useCourses'
 import { useTheme } from '../../hooks/useTheme'
 import type { CoursesScreenProps } from '../../navigation/types'
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
+
+// Animated Progress Bar for Course Cards
+function AnimatedCourseProgress({ progress, color }: { progress: number, color: string }) {
+  const width = useSharedValue(0)
+
+  useEffect(() => {
+    width.value = withDelay(200, withTiming(progress, { duration: 800, easing: Easing.out(Easing.cubic) }))
+  }, [progress])
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: `${width.value}%`,
+  }))
+
+  return <Animated.View style={[styles.progressBar, { backgroundColor: color }, animatedStyle]} />
+}
+
+// Animated Course Card Component
+function CourseCard({
+  item,
+  index,
+  colors,
+  onPress,
+}: {
+  item: any
+  index: number
+  colors: any
+  onPress: () => void
+}) {
+  const scale = useSharedValue(1)
+
+  const onPressIn = () => {
+    scale.value = withSpring(0.98, { damping: 15, stiffness: 400 })
+  }
+
+  const onPressOut = () => {
+    scale.value = withSpring(1, { damping: 15, stiffness: 400 })
+  }
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }))
+
+  const imageUrl = item.thumbnail_url || item.cover_url
+
+  return (
+    <Animated.View
+      entering={FadeInUp.delay(100 + index * 80).duration(500).springify()}
+      layout={Layout.springify()}
+    >
+      <AnimatedTouchable
+        style={[
+          styles.courseCard,
+          { backgroundColor: colors.card, borderColor: colors.border },
+          animatedStyle,
+        ]}
+        onPress={onPress}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+        activeOpacity={1}
+      >
+        {imageUrl ? (
+          <Animated.Image
+            entering={FadeIn.delay(200 + index * 80).duration(400)}
+            source={{ uri: imageUrl }}
+            style={[styles.courseCover, { backgroundColor: colors.border }]}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={[styles.courseCoverPlaceholder, { backgroundColor: colors.border }]}>
+            <Text style={styles.courseCoverPlaceholderText}>📚</Text>
+          </View>
+        )}
+        <View style={styles.courseInfo}>
+          <Text style={[styles.courseTitle, { color: colors.text }]} numberOfLines={2}>
+            {item.title}
+          </Text>
+          {item.description && (
+            <Text style={[styles.courseDescription, { color: colors.textSecondary }]} numberOfLines={2}>
+              {item.description}
+            </Text>
+          )}
+          <View style={styles.courseStats}>
+            <View style={[styles.progressContainer, { backgroundColor: colors.border }]}>
+              <AnimatedCourseProgress progress={item.progressPercent} color={colors.primary} />
+            </View>
+            <Text style={[styles.progressText, { color: colors.primary }]}>{item.progressPercent}%</Text>
+          </View>
+        </View>
+      </AnimatedTouchable>
+    </Animated.View>
+  )
+}
 
 export default function CoursesListScreen() {
   const navigation = useNavigation<CoursesScreenProps<'CoursesList'>['navigation']>()
@@ -41,79 +147,84 @@ export default function CoursesListScreen() {
     setIsRefreshing(false)
   }
 
-  const renderCourse = ({ item }: { item: typeof courses[0] }) => {
-    // Usar thumbnail_url com fallback para cover_url (igual ao web)
-    const imageUrl = item.thumbnail_url || item.cover_url
-
-    return (
-      <TouchableOpacity
-        style={[styles.courseCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-        onPress={() => navigation.navigate('CourseDetail', { courseId: item.id })}
-        activeOpacity={0.7}>
-        {imageUrl ? (
-          <Image
-            source={{ uri: imageUrl }}
-            style={[styles.courseCover, { backgroundColor: colors.border }]}
-            resizeMode="cover"
-          />
-        ) : (
-          <View style={[styles.courseCoverPlaceholder, { backgroundColor: colors.border }]}>
-            <Text style={styles.courseCoverPlaceholderText}>📚</Text>
-          </View>
-        )}
-      <View style={styles.courseInfo}>
-        <Text style={[styles.courseTitle, { color: colors.text }]} numberOfLines={2}>
-          {item.title}
-        </Text>
-        {item.description && (
-          <Text style={[styles.courseDescription, { color: colors.textSecondary }]} numberOfLines={2}>
-            {item.description}
-          </Text>
-        )}
-        <View style={styles.courseStats}>
-          <View style={[styles.progressContainer, { backgroundColor: colors.border }]}>
-            <View
-              style={[styles.progressBar, { width: `${item.progressPercent}%`, backgroundColor: colors.primary }]}
-            />
-          </View>
-          <Text style={[styles.progressText, { color: colors.primary }]}>{item.progressPercent}%</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-    )
-  }
+  const renderCourse = ({ item, index }: { item: typeof courses[0], index: number }) => (
+    <CourseCard
+      item={item}
+      index={index}
+      colors={colors}
+      onPress={() => navigation.navigate('CourseDetail', { courseId: item.id })}
+    />
+  )
 
   const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyIcon}>📚</Text>
-      <Text style={[styles.emptyTitle, { color: colors.text }]}>Nenhum curso disponivel</Text>
-      <Text style={[styles.emptyDescription, { color: colors.textSecondary }]}>
+    <Animated.View
+      entering={FadeIn.delay(300).duration(500)}
+      style={styles.emptyContainer}
+    >
+      <Animated.Text
+        entering={FadeInDown.delay(400).duration(400)}
+        style={styles.emptyIcon}
+      >
+        📚
+      </Animated.Text>
+      <Animated.Text
+        entering={FadeIn.delay(500).duration(400)}
+        style={[styles.emptyTitle, { color: colors.text }]}
+      >
+        Nenhum curso disponivel
+      </Animated.Text>
+      <Animated.Text
+        entering={FadeIn.delay(600).duration(400)}
+        style={[styles.emptyDescription, { color: colors.textSecondary }]}
+      >
         Em breve teremos novos cursos para voce
-      </Text>
-    </View>
+      </Animated.Text>
+    </Animated.View>
   )
 
   const renderHeader = () => (
-    <View style={styles.header}>
-      <Text style={[styles.headerTitle, { color: colors.text }]}>Cursos</Text>
-      <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+    <Animated.View
+      entering={FadeInDown.delay(100).duration(500)}
+      style={styles.header}
+    >
+      <Animated.Text
+        entering={FadeIn.delay(200).duration(400)}
+        style={[styles.headerTitle, { color: colors.text }]}
+      >
+        Cursos
+      </Animated.Text>
+      <Animated.Text
+        entering={FadeIn.delay(300).duration(400)}
+        style={[styles.headerSubtitle, { color: colors.textSecondary }]}
+      >
         {hasActiveSubscription
           ? 'Acesse todos os cursos disponiveis'
           : 'Assine para ter acesso completo'}
-      </Text>
-    </View>
+      </Animated.Text>
+    </Animated.View>
   )
 
   if (isLoading && courses.length === 0) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <Animated.View entering={FadeIn.duration(400)}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </Animated.View>
       </View>
     )
   }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+      {/* Background Glow */}
+      <Animated.View
+        entering={FadeIn.delay(50).duration(800)}
+        style={[
+          styles.glowOrb,
+          { backgroundColor: colors.primary },
+        ]}
+      />
+
       <FlatList
         data={courses}
         keyExtractor={item => item.id}
@@ -137,6 +248,15 @@ export default function CoursesListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  glowOrb: {
+    position: 'absolute',
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    top: -100,
+    right: -100,
+    opacity: 0.08,
   },
   loadingContainer: {
     flex: 1,

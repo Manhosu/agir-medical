@@ -10,6 +10,18 @@ import {
   Alert,
   Platform,
 } from 'react-native'
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
+  FadeInLeft,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  withDelay,
+  Easing,
+} from 'react-native-reanimated'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAuthStore } from '../../stores/authStore'
@@ -18,8 +30,119 @@ import { useTheme } from '../../hooks/useTheme'
 import type { CoursesScreenProps } from '../../navigation/types'
 import type { Course, Lesson, UserProgress } from '../../types/database'
 
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
+
 interface LessonWithProgress extends Lesson {
   progress?: UserProgress | null
+}
+
+// Animated Progress Bar
+function AnimatedProgressBar({ progress, color, delay = 0 }: { progress: number, color: string, delay?: number }) {
+  const width = useSharedValue(0)
+
+  useEffect(() => {
+    width.value = withDelay(delay, withTiming(progress, { duration: 1000, easing: Easing.out(Easing.cubic) }))
+  }, [progress])
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: `${width.value}%`,
+  }))
+
+  return <Animated.View style={[styles.progressBar, { backgroundColor: color }, animatedStyle]} />
+}
+
+// Animated Lesson Card
+function LessonCard({
+  lesson,
+  index,
+  colors,
+  onPress,
+}: {
+  lesson: LessonWithProgress
+  index: number
+  colors: any
+  onPress: () => void
+}) {
+  const scale = useSharedValue(1)
+
+  const onPressIn = () => {
+    scale.value = withSpring(0.98, { damping: 15, stiffness: 400 })
+  }
+
+  const onPressOut = () => {
+    scale.value = withSpring(1, { damping: 15, stiffness: 400 })
+  }
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }))
+
+  return (
+    <Animated.View
+      entering={FadeInUp.delay(400 + index * 80).duration(500).springify()}
+    >
+      <AnimatedTouchable
+        style={[
+          styles.lessonCard,
+          { backgroundColor: colors.card, borderColor: colors.border },
+          lesson.progress?.is_completed && { borderColor: `${colors.primary}50` },
+          animatedStyle,
+        ]}
+        onPress={onPress}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+        activeOpacity={1}
+      >
+        <View
+          style={[
+            styles.lessonNumber,
+            { backgroundColor: colors.border },
+            lesson.progress?.is_completed && { backgroundColor: colors.primary },
+          ]}>
+          <Text
+            style={[
+              styles.lessonNumberText,
+              { color: colors.textSecondary },
+              lesson.progress?.is_completed && { color: colors.text },
+            ]}>
+            {lesson.progress?.is_completed ? '✓' : String(index + 1).padStart(2, '0')}
+          </Text>
+        </View>
+        <View style={styles.lessonInfo}>
+          <Text
+            style={[
+              styles.lessonTitle,
+              { color: colors.text },
+              lesson.progress?.is_completed && { color: colors.textSecondary },
+            ]}
+            numberOfLines={2}>
+            {lesson.title}
+          </Text>
+          <View style={styles.lessonMeta}>
+            {lesson.estimated_time && (
+              <Text style={[styles.lessonDuration, { color: colors.textTertiary }]}>
+                {lesson.estimated_time} min
+              </Text>
+            )}
+            {lesson.progress && !lesson.progress.is_completed && (
+              <Animated.Text
+                entering={FadeIn.delay(600 + index * 80)}
+                style={[styles.lessonProgress, { color: colors.primary }]}
+              >
+                {lesson.progress.progress_percent}% lido
+              </Animated.Text>
+            )}
+          </View>
+        </View>
+        <Animated.Text
+          entering={FadeInLeft.delay(500 + index * 80).duration(300)}
+          style={[styles.lessonArrow, { color: colors.textTertiary }]}
+        >
+          →
+        </Animated.Text>
+      </AnimatedTouchable>
+    </Animated.View>
+  )
 }
 
 export default function CourseDetailScreen() {
@@ -31,7 +154,6 @@ export default function CourseDetailScreen() {
   const colors = useTheme()
   const insets = useSafeAreaInsets()
 
-  // Padding extra para Android que nao tem safe area no bottom
   const bottomPadding = Platform.OS === 'android' ? Math.max(insets.bottom, 16) : insets.bottom
 
   const [course, setCourse] = useState<Course | null>(null)
@@ -75,7 +197,9 @@ export default function CourseDetailScreen() {
   if (isLoading) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <Animated.View entering={FadeIn.duration(400)}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </Animated.View>
       </View>
     )
   }
@@ -83,8 +207,10 @@ export default function CourseDetailScreen() {
   if (!course) {
     return (
       <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
-        <Text style={styles.errorIcon}>⚠️</Text>
-        <Text style={[styles.errorText, { color: colors.textSecondary }]}>Curso nao encontrado</Text>
+        <Animated.Text entering={FadeIn.duration(400)} style={styles.errorIcon}>⚠️</Animated.Text>
+        <Animated.Text entering={FadeIn.delay(200).duration(400)} style={[styles.errorText, { color: colors.textSecondary }]}>
+          Curso nao encontrado
+        </Animated.Text>
       </View>
     )
   }
@@ -95,25 +221,42 @@ export default function CourseDetailScreen() {
       contentContainerStyle={[styles.content, { paddingBottom: 32 + bottomPadding }]}>
       {/* Course Header */}
       {course.cover_url ? (
-        <Image
+        <Animated.Image
+          entering={FadeIn.duration(500)}
           source={{ uri: course.cover_url }}
           style={[styles.cover, { backgroundColor: colors.border }]}
           resizeMode="cover"
         />
       ) : (
-        <View style={[styles.coverPlaceholder, { backgroundColor: colors.border }]}>
+        <Animated.View
+          entering={FadeIn.duration(500)}
+          style={[styles.coverPlaceholder, { backgroundColor: colors.border }]}
+        >
           <Text style={styles.coverPlaceholderText}>📚</Text>
-        </View>
+        </Animated.View>
       )}
 
       <View style={styles.info}>
-        <Text style={[styles.title, { color: colors.text }]}>{course.title}</Text>
+        <Animated.Text
+          entering={FadeInUp.delay(100).duration(500)}
+          style={[styles.title, { color: colors.text }]}
+        >
+          {course.title}
+        </Animated.Text>
         {course.description && (
-          <Text style={[styles.description, { color: colors.textSecondary }]}>{course.description}</Text>
+          <Animated.Text
+            entering={FadeIn.delay(200).duration(500)}
+            style={[styles.description, { color: colors.textSecondary }]}
+          >
+            {course.description}
+          </Animated.Text>
         )}
 
         {/* Progress Card */}
-        <View style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Animated.View
+          entering={FadeInUp.delay(250).duration(500).springify()}
+          style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+        >
           <View style={styles.progressInfo}>
             <Text style={[styles.progressLabel, { color: colors.textSecondary }]}>Progresso</Text>
             <Text style={[styles.progressValue, { color: colors.text }]}>
@@ -121,16 +264,22 @@ export default function CourseDetailScreen() {
             </Text>
           </View>
           <View style={[styles.progressBarContainer, { backgroundColor: colors.border }]}>
-            <View
-              style={[styles.progressBar, { width: `${progressPercent}%`, backgroundColor: colors.primary }]}
-            />
+            <AnimatedProgressBar progress={progressPercent} color={colors.primary} delay={400} />
           </View>
-          <Text style={[styles.progressPercent, { color: colors.primary }]}>{progressPercent}% completo</Text>
-        </View>
+          <Animated.Text
+            entering={FadeIn.delay(600).duration(400)}
+            style={[styles.progressPercent, { color: colors.primary }]}
+          >
+            {progressPercent}% completo
+          </Animated.Text>
+        </Animated.View>
 
         {/* Subscription Warning */}
         {!hasActiveSubscription && (
-          <View style={[styles.warningCard, { backgroundColor: `${colors.error}15`, borderColor: `${colors.error}50` }]}>
+          <Animated.View
+            entering={FadeIn.delay(350).duration(500).springify()}
+            style={[styles.warningCard, { backgroundColor: `${colors.error}15`, borderColor: `${colors.error}50` }]}
+          >
             <Text style={styles.warningIcon}>⚠️</Text>
             <View style={styles.warningInfo}>
               <Text style={[styles.warningTitle, { color: colors.text }]}>Assinatura Necessaria</Text>
@@ -138,61 +287,24 @@ export default function CourseDetailScreen() {
                 Assine para acessar o conteudo completo
               </Text>
             </View>
-          </View>
+          </Animated.View>
         )}
 
         {/* Lessons List */}
-        <Text style={[styles.lessonsTitle, { color: colors.text }]}>Aulas</Text>
+        <Animated.Text
+          entering={FadeInUp.delay(400).duration(400)}
+          style={[styles.lessonsTitle, { color: colors.text }]}
+        >
+          Aulas
+        </Animated.Text>
         {lessons.map((lesson, index) => (
-          <TouchableOpacity
+          <LessonCard
             key={lesson.id}
-            style={[
-              styles.lessonCard,
-              { backgroundColor: colors.card, borderColor: colors.border },
-              lesson.progress?.is_completed && { borderColor: `${colors.primary}50` },
-            ]}
+            lesson={lesson}
+            index={index}
+            colors={colors}
             onPress={() => handleLessonPress(lesson)}
-            activeOpacity={0.7}>
-            <View
-              style={[
-                styles.lessonNumber,
-                { backgroundColor: colors.border },
-                lesson.progress?.is_completed && { backgroundColor: colors.primary },
-              ]}>
-              <Text
-                style={[
-                  styles.lessonNumberText,
-                  { color: colors.textSecondary },
-                  lesson.progress?.is_completed && { color: colors.text },
-                ]}>
-                {lesson.progress?.is_completed ? '✓' : String(index + 1).padStart(2, '0')}
-              </Text>
-            </View>
-            <View style={styles.lessonInfo}>
-              <Text
-                style={[
-                  styles.lessonTitle,
-                  { color: colors.text },
-                  lesson.progress?.is_completed && { color: colors.textSecondary },
-                ]}
-                numberOfLines={2}>
-                {lesson.title}
-              </Text>
-              <View style={styles.lessonMeta}>
-                {lesson.estimated_time && (
-                  <Text style={[styles.lessonDuration, { color: colors.textTertiary }]}>
-                    {lesson.estimated_time} min
-                  </Text>
-                )}
-                {lesson.progress && !lesson.progress.is_completed && (
-                  <Text style={[styles.lessonProgress, { color: colors.primary }]}>
-                    {lesson.progress.progress_percent}% lido
-                  </Text>
-                )}
-              </View>
-            </View>
-            <Text style={[styles.lessonArrow, { color: colors.textTertiary }]}>→</Text>
-          </TouchableOpacity>
+          />
         ))}
       </View>
     </ScrollView>
@@ -204,7 +316,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    // paddingBottom is set dynamically based on safe area
   },
   loadingContainer: {
     flex: 1,

@@ -7,16 +7,102 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from 'react-native'
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeInLeft, FadeInRight, useAnimatedStyle, useSharedValue, withTiming, withDelay, Easing } from 'react-native-reanimated'
 import { useNavigation } from '@react-navigation/native'
 import { useAuthStore } from '../../stores/authStore'
 import { supabase } from '../../lib/supabase'
 import { useTheme } from '../../hooks/useTheme'
+import { useCardAnimation, useFloatingAnimation } from '../../hooks/useAnimations'
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
 
 interface DashboardStats {
   availableCourses: number
   completedLessons: number
   totalLessons: number
   overallProgress: number
+}
+
+// Animated Progress Bar Component
+function AnimatedProgressBar({ progress, delay, color }: { progress: number, delay: number, color: string }) {
+  const width = useSharedValue(0)
+
+  useEffect(() => {
+    width.value = withDelay(delay, withTiming(progress, { duration: 1000, easing: Easing.out(Easing.cubic) }))
+  }, [progress])
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: `${width.value}%`,
+  }))
+
+  return (
+    <Animated.View style={[styles.progressBarFill, { backgroundColor: color }, animatedStyle]} />
+  )
+}
+
+// Animated Stat Card Component
+function StatCard({
+  label,
+  value,
+  index,
+  colors,
+  progress,
+  badge,
+  badgeActive,
+}: {
+  label: string
+  value: string | number
+  index: number
+  colors: any
+  progress?: number
+  badge?: string
+  badgeActive?: boolean
+}) {
+  const { animatedStyle, onPressIn, onPressOut } = useCardAnimation()
+
+  return (
+    <Animated.View
+      entering={FadeInUp.delay(300 + index * 100).duration(500).springify()}
+      style={styles.statCard}
+    >
+      <AnimatedTouchable
+        style={[
+          styles.statCardInner,
+          { backgroundColor: colors.card, borderColor: colors.border },
+          animatedStyle,
+        ]}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+        activeOpacity={1}
+      >
+        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{label}</Text>
+        {badge ? (
+          <View
+            style={[
+              styles.subscriptionBadge,
+              badgeActive
+                ? { backgroundColor: `${colors.primary}20` }
+                : { backgroundColor: `${colors.textSecondary}20` },
+            ]}>
+            <Text
+              style={[
+                styles.subscriptionBadgeText,
+                { color: badgeActive ? colors.primary : colors.textSecondary },
+              ]}>
+              {badge}
+            </Text>
+          </View>
+        ) : (
+          <Text style={[styles.statValue, { color: colors.text }]}>{value}</Text>
+        )}
+        {progress !== undefined && (
+          <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
+            <AnimatedProgressBar progress={progress} delay={600 + index * 100} color={colors.primary} />
+          </View>
+        )}
+      </AnimatedTouchable>
+    </Animated.View>
+  )
 }
 
 export default function DashboardScreen() {
@@ -32,11 +118,13 @@ export default function DashboardScreen() {
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  const { animatedStyle: quickActionStyle, onPressIn, onPressOut } = useCardAnimation()
+  const floatingStyle = useFloatingAnimation(6, 3500)
+
   const loadStats = async () => {
     if (!user) return
 
     try {
-      // Usar a funcao RPC do Supabase
       const { data, error } = await supabase.rpc('get_user_dashboard_stats', {
         p_user_id: user.id,
       })
@@ -89,84 +177,102 @@ export default function DashboardScreen() {
           tintColor={colors.primary}
         />
       }>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={[styles.greeting, { color: colors.textSecondary }]}>{greeting()},</Text>
-        <Text style={[styles.userName, { color: colors.text }]}>
-          {profile?.full_name || 'Estudante'}
-        </Text>
-      </View>
+      {/* Background Glow Effects */}
+      <Animated.View
+        style={[
+          styles.glowOrb,
+          styles.glowOrb1,
+          { backgroundColor: colors.primary },
+          floatingStyle,
+        ]}
+      />
+      <Animated.View
+        style={[
+          styles.glowOrb,
+          styles.glowOrb2,
+          { backgroundColor: colors.accent },
+        ]}
+      />
 
-      {/* Stats Grid - igual desktop */}
+      {/* Header */}
+      <Animated.View
+        entering={FadeInDown.delay(100).duration(500)}
+        style={styles.header}
+      >
+        <Text style={[styles.greeting, { color: colors.textSecondary }]}>{greeting()},</Text>
+        <Animated.Text
+          entering={FadeInLeft.delay(200).duration(500)}
+          style={[styles.userName, { color: colors.text }]}
+        >
+          {profile?.full_name || 'Estudante'}
+        </Animated.Text>
+      </Animated.View>
+
+      {/* Stats Grid */}
       <View style={styles.statsGrid}>
-        {/* Cursos Disponiveis */}
-        <View style={styles.statCard}>
-          <View style={[styles.statCardInner, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Cursos Disponiveis</Text>
-            <Text style={[styles.statValue, { color: colors.text }]}>{stats.availableCourses}</Text>
-          </View>
-        </View>
-        {/* Aulas Concluidas */}
-        <View style={styles.statCard}>
-          <View style={[styles.statCardInner, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Aulas Concluidas</Text>
-            <Text style={[styles.statValue, { color: colors.text }]}>
-              {stats.completedLessons}/{stats.totalLessons}
-            </Text>
-          </View>
-        </View>
-        {/* Progresso Geral */}
-        <View style={styles.statCard}>
-          <View style={[styles.statCardInner, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Progresso Geral</Text>
-            <Text style={[styles.statValue, { color: colors.text }]}>{stats.overallProgress}%</Text>
-            <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
-              <View
-                style={[
-                  styles.progressBarFill,
-                  { width: `${stats.overallProgress}%`, backgroundColor: colors.primary },
-                ]}
-              />
-            </View>
-          </View>
-        </View>
-        {/* Status da Assinatura */}
-        <View style={styles.statCard}>
-          <View style={[styles.statCardInner, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Status da Assinatura</Text>
-            <View
-              style={[
-                styles.subscriptionBadge,
-                hasActiveSubscription
-                  ? { backgroundColor: `${colors.primary}20` }
-                  : { backgroundColor: `${colors.textSecondary}20` },
-              ]}>
-              <Text
-                style={[
-                  styles.subscriptionBadgeText,
-                  { color: hasActiveSubscription ? colors.primary : colors.textSecondary },
-                ]}>
-                {hasActiveSubscription ? '✓ Ativa' : 'Inativa'}
-              </Text>
-            </View>
-          </View>
-        </View>
+        <StatCard
+          label="Cursos Disponiveis"
+          value={stats.availableCourses}
+          index={0}
+          colors={colors}
+        />
+        <StatCard
+          label="Aulas Concluidas"
+          value={`${stats.completedLessons}/${stats.totalLessons}`}
+          index={1}
+          colors={colors}
+        />
+        <StatCard
+          label="Progresso Geral"
+          value={`${stats.overallProgress}%`}
+          index={2}
+          colors={colors}
+          progress={stats.overallProgress}
+        />
+        <StatCard
+          label="Status da Assinatura"
+          value=""
+          index={3}
+          colors={colors}
+          badge={hasActiveSubscription ? '✓ Ativa' : 'Inativa'}
+          badgeActive={hasActiveSubscription}
+        />
       </View>
 
       {/* Quick Actions */}
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>Acesso Rapido</Text>
-      <TouchableOpacity
-        style={[styles.quickAction, { backgroundColor: colors.card, borderColor: colors.border }]}
-        onPress={() => navigation.navigate('Courses')}>
-        <Text style={styles.quickActionIcon}>📚</Text>
+      <Animated.Text
+        entering={FadeIn.delay(700).duration(400)}
+        style={[styles.sectionTitle, { color: colors.text }]}
+      >
+        Acesso Rapido
+      </Animated.Text>
+
+      <AnimatedTouchable
+        entering={FadeInUp.delay(800).duration(500).springify()}
+        style={[
+          styles.quickAction,
+          { backgroundColor: colors.card, borderColor: colors.border },
+          quickActionStyle,
+        ]}
+        onPress={() => navigation.navigate('Courses')}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+        activeOpacity={1}
+      >
+        <Animated.Text entering={FadeIn.delay(900)} style={styles.quickActionIcon}>📚</Animated.Text>
         <View style={styles.quickActionInfo}>
           <Text style={[styles.quickActionTitle, { color: colors.text }]}>Continuar Estudando</Text>
           <Text style={[styles.quickActionDescription, { color: colors.textSecondary }]}>
             Acesse seus cursos e aulas
           </Text>
         </View>
-        <Text style={[styles.quickActionArrow, { color: colors.primary }]}>→</Text>
-      </TouchableOpacity>
+        <Animated.Text
+          entering={FadeInRight.delay(1000).duration(400)}
+          style={[styles.quickActionArrow, { color: colors.primary }]}
+        >
+          →
+        </Animated.Text>
+      </AnimatedTouchable>
     </ScrollView>
   )
 }
@@ -177,6 +283,25 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  glowOrb: {
+    position: 'absolute',
+    borderRadius: 999,
+    opacity: 0.1,
+  },
+  glowOrb1: {
+    width: 250,
+    height: 250,
+    top: -50,
+    right: -80,
+  },
+  glowOrb2: {
+    width: 200,
+    height: 200,
+    bottom: 50,
+    left: -80,
   },
   header: {
     marginBottom: 24,
@@ -254,6 +379,7 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 3,
     marginTop: 8,
+    overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',

@@ -11,9 +11,13 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native'
+import Animated, { FadeIn, FadeInDown, FadeInUp, SlideInUp } from 'react-native-reanimated'
 import { useAuthStore } from '../../stores/authStore'
 import { useTheme } from '../../hooks/useTheme'
+import { useButtonAnimation, usePulseGlow, useFloatingAnimation } from '../../hooks/useAnimations'
 import type { AuthScreenProps } from '../../navigation/types'
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
 
 export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const [email, setEmail] = useState('')
@@ -22,6 +26,9 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const colors = useTheme()
 
   const { signIn } = useAuthStore()
+  const { animatedStyle: buttonStyle, onPressIn, onPressOut } = useButtonAnimation()
+  const pulseStyle = usePulseGlow()
+  const floatingStyle = useFloatingAnimation(8, 4000)
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -49,21 +56,57 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      {/* Background Glow Effects */}
+      <Animated.View
+        style={[
+          styles.glowOrb,
+          styles.glowOrb1,
+          { backgroundColor: colors.primary },
+          floatingStyle,
+        ]}
+      />
+      <Animated.View
+        style={[
+          styles.glowOrb,
+          styles.glowOrb2,
+          { backgroundColor: colors.accent },
+        ]}
+      />
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
-          <Text style={[styles.logo, { color: colors.primary }]}>AGIR</Text>
+        <Animated.View
+          entering={FadeInDown.delay(100).duration(600).springify()}
+          style={styles.header}
+        >
+          <Animated.Text style={[styles.logo, { color: colors.primary }, pulseStyle]}>
+            AGIR
+          </Animated.Text>
           <Text style={[styles.subtitle, { color: colors.textTertiary }]}>E-Learning Medico</Text>
-        </View>
+        </Animated.View>
 
-        <View style={[styles.form, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.title, { color: colors.text }]}>Entrar</Text>
-          <Text style={[styles.description, { color: colors.textSecondary }]}>
+        <Animated.View
+          entering={SlideInUp.delay(200).duration(500).springify()}
+          style={[styles.form, { backgroundColor: colors.card, borderColor: colors.border }]}
+        >
+          <Animated.Text
+            entering={FadeIn.delay(400).duration(400)}
+            style={[styles.title, { color: colors.text }]}
+          >
+            Entrar
+          </Animated.Text>
+          <Animated.Text
+            entering={FadeIn.delay(500).duration(400)}
+            style={[styles.description, { color: colors.textSecondary }]}
+          >
             Acesse sua conta para continuar seus estudos
-          </Text>
+          </Animated.Text>
 
-          <View style={styles.inputGroup}>
+          <Animated.View
+            entering={FadeInUp.delay(600).duration(400)}
+            style={styles.inputGroup}
+          >
             <Text style={[styles.label, { color: colors.text }]}>Email</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.border, color: colors.text, borderColor: colors.textTertiary }]}
@@ -75,9 +118,12 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
               keyboardType="email-address"
               editable={!isSubmitting}
             />
-          </View>
+          </Animated.View>
 
-          <View style={styles.inputGroup}>
+          <Animated.View
+            entering={FadeInUp.delay(700).duration(400)}
+            style={styles.inputGroup}
+          >
             <Text style={[styles.label, { color: colors.text }]}>Senha</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.border, color: colors.text, borderColor: colors.textTertiary }]}
@@ -88,34 +134,47 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
               secureTextEntry
               editable={!isSubmitting}
             />
-          </View>
+          </Animated.View>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ForgotPassword')}
-            disabled={isSubmitting}>
-            <Text style={[styles.forgotPassword, { color: colors.primary }]}>Esqueceu a senha?</Text>
-          </TouchableOpacity>
+          <Animated.View entering={FadeIn.delay(800).duration(400)}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ForgotPassword')}
+              disabled={isSubmitting}>
+              <Text style={[styles.forgotPassword, { color: colors.primary }]}>Esqueceu a senha?</Text>
+            </TouchableOpacity>
+          </Animated.View>
 
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.primary }, isSubmitting && styles.buttonDisabled]}
+          <AnimatedTouchable
+            entering={FadeInUp.delay(900).duration(500).springify()}
+            style={[
+              styles.button,
+              { backgroundColor: colors.primary },
+              isSubmitting && styles.buttonDisabled,
+              buttonStyle,
+            ]}
             onPress={handleLogin}
+            onPressIn={onPressIn}
+            onPressOut={onPressOut}
             disabled={isSubmitting}>
             {isSubmitting ? (
-              <ActivityIndicator color={colors.text} />
+              <ActivityIndicator color={colors.primaryForeground} />
             ) : (
-              <Text style={[styles.buttonText, { color: colors.text }]}>Entrar</Text>
+              <Text style={[styles.buttonText, { color: colors.primaryForeground }]}>Entrar</Text>
             )}
-          </TouchableOpacity>
-        </View>
+          </AnimatedTouchable>
+        </Animated.View>
 
-        <View style={styles.footer}>
+        <Animated.View
+          entering={FadeIn.delay(1000).duration(500)}
+          style={styles.footer}
+        >
           <Text style={[styles.footerText, { color: colors.textSecondary }]}>Nao tem uma conta?</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Register')}
             disabled={isSubmitting}>
             <Text style={[styles.footerLink, { color: colors.primary }]}>Criar conta</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   )
@@ -124,6 +183,23 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  glowOrb: {
+    position: 'absolute',
+    borderRadius: 999,
+    opacity: 0.15,
+  },
+  glowOrb1: {
+    width: 300,
+    height: 300,
+    top: -100,
+    right: -100,
+  },
+  glowOrb2: {
+    width: 250,
+    height: 250,
+    bottom: 100,
+    left: -100,
   },
   scrollContent: {
     flexGrow: 1,
@@ -180,6 +256,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
+    shadowColor: '#1ae8cc',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   buttonDisabled: {
     opacity: 0.6,

@@ -10,12 +10,16 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native'
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeInLeft, FadeInRight } from 'react-native-reanimated'
 import * as ImagePicker from 'expo-image-picker'
 import * as ImageManipulator from 'expo-image-manipulator'
 import { useAuthStore } from '../../stores/authStore'
 import { useThemeStore, themes } from '../../stores/themeStore'
 import { ThemeToggle } from '../../components/ThemeToggle'
 import { supabase } from '../../lib/supabase'
+import { useButtonAnimation, useCardAnimation, useFloatingAnimation } from '../../hooks/useAnimations'
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
 
 export default function ProfileScreen() {
   const { user, profile, hasActiveSubscription, signOut, updateProfile } =
@@ -27,6 +31,10 @@ export default function ProfileScreen() {
   const [phone, setPhone] = useState(profile?.phone || '')
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
+
+  const { animatedStyle: saveButtonStyle, onPressIn: onSavePressIn, onPressOut: onSavePressOut } = useButtonAnimation()
+  const { animatedStyle: cardStyle, onPressIn: onCardPressIn, onPressOut: onCardPressOut } = useCardAnimation()
+  const floatingStyle = useFloatingAnimation(6, 3500)
 
   const handlePickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -53,20 +61,17 @@ export default function ProfileScreen() {
 
     setIsUploadingAvatar(true)
     try {
-      // Resize and crop image
       const manipulated = await ImageManipulator.manipulateAsync(
         uri,
         [{ resize: { width: 200, height: 200 } }],
         { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
       )
 
-      // Convert to blob
       const response = await fetch(manipulated.uri)
       const blob = await response.blob()
 
       const fileName = `${user.id}-${Date.now()}.jpg`
 
-      // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, blob, {
@@ -76,12 +81,10 @@ export default function ProfileScreen() {
 
       if (uploadError) throw uploadError
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(fileName)
 
-      // Update profile
       await updateProfile({ avatar_url: publicUrl })
       Alert.alert('Sucesso', 'Foto atualizada com sucesso!')
     } catch (error: any) {
@@ -124,20 +127,44 @@ export default function ProfileScreen() {
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.content}
     >
+      {/* Background Glow Effects */}
+      <Animated.View
+        style={[
+          styles.glowOrb,
+          styles.glowOrb1,
+          { backgroundColor: colors.primary },
+          floatingStyle,
+        ]}
+      />
+      <Animated.View
+        style={[
+          styles.glowOrb,
+          styles.glowOrb2,
+          { backgroundColor: colors.accent },
+        ]}
+      />
+
       {/* Profile Header */}
-      <View style={styles.header}>
+      <Animated.View
+        entering={FadeInDown.delay(100).duration(500)}
+        style={styles.header}
+      >
         <TouchableOpacity onPress={handlePickImage} disabled={isUploadingAvatar}>
           {profile?.avatar_url ? (
-            <Image
+            <Animated.Image
+              entering={FadeIn.delay(200).duration(400)}
               source={{ uri: profile.avatar_url }}
               style={styles.avatarImage}
             />
           ) : (
-            <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
+            <Animated.View
+              entering={FadeIn.delay(200).duration(400)}
+              style={[styles.avatar, { backgroundColor: colors.primary }]}
+            >
               <Text style={[styles.avatarText, { color: colors.primaryForeground }]}>
                 {(profile?.full_name || user?.email || 'U')[0].toUpperCase()}
               </Text>
-            </View>
+            </Animated.View>
           )}
           {isUploadingAvatar && (
             <View style={styles.avatarLoading}>
@@ -145,14 +172,27 @@ export default function ProfileScreen() {
             </View>
           )}
         </TouchableOpacity>
-        <TouchableOpacity onPress={handlePickImage} disabled={isUploadingAvatar}>
-          <Text style={[styles.changePhotoText, { color: colors.primary }]}>
-            {isUploadingAvatar ? 'Enviando...' : 'Alterar Foto'}
-          </Text>
-        </TouchableOpacity>
-        <Text style={[styles.name, { color: colors.text }]}>{profile?.full_name || 'Usuario'}</Text>
-        <Text style={[styles.email, { color: colors.textSecondary }]}>{user?.email}</Text>
-        <View
+        <Animated.View entering={FadeIn.delay(300).duration(400)}>
+          <TouchableOpacity onPress={handlePickImage} disabled={isUploadingAvatar}>
+            <Text style={[styles.changePhotoText, { color: colors.primary }]}>
+              {isUploadingAvatar ? 'Enviando...' : 'Alterar Foto'}
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+        <Animated.Text
+          entering={FadeInUp.delay(400).duration(400)}
+          style={[styles.name, { color: colors.text }]}
+        >
+          {profile?.full_name || 'Usuario'}
+        </Animated.Text>
+        <Animated.Text
+          entering={FadeIn.delay(500).duration(400)}
+          style={[styles.email, { color: colors.textSecondary }]}
+        >
+          {user?.email}
+        </Animated.Text>
+        <Animated.View
+          entering={FadeIn.delay(600).duration(400).springify()}
           style={[
             styles.badge,
             hasActiveSubscription ? styles.badgeActive : styles.badgeInactive,
@@ -160,11 +200,14 @@ export default function ProfileScreen() {
           <Text style={[styles.badgeText, { color: colors.text }]}>
             {hasActiveSubscription ? 'Assinante' : 'Sem Assinatura'}
           </Text>
-        </View>
-      </View>
+        </Animated.View>
+      </Animated.View>
 
       {/* Profile Info */}
-      <View style={styles.section}>
+      <Animated.View
+        entering={FadeInUp.delay(500).duration(500)}
+        style={styles.section}
+      >
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Informacoes Pessoais</Text>
           {!isEditing && (
@@ -220,7 +263,10 @@ export default function ProfileScreen() {
           </View>
 
           {isEditing && (
-            <View style={styles.editActions}>
+            <Animated.View
+              entering={FadeIn.duration(300)}
+              style={styles.editActions}
+            >
               <TouchableOpacity
                 style={[styles.cancelButton, { backgroundColor: colors.input }]}
                 onPress={() => {
@@ -230,47 +276,69 @@ export default function ProfileScreen() {
                 }}>
                 <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.saveButton, { backgroundColor: colors.primary }, isSaving && styles.buttonDisabled]}
+              <AnimatedTouchable
+                style={[
+                  styles.saveButton,
+                  { backgroundColor: colors.primary },
+                  isSaving && styles.buttonDisabled,
+                  saveButtonStyle,
+                ]}
                 onPress={handleSave}
+                onPressIn={onSavePressIn}
+                onPressOut={onSavePressOut}
                 disabled={isSaving}>
                 {isSaving ? (
                   <ActivityIndicator color={colors.primaryForeground} size="small" />
                 ) : (
                   <Text style={[styles.saveButtonText, { color: colors.primaryForeground }]}>Salvar</Text>
                 )}
-              </TouchableOpacity>
-            </View>
+              </AnimatedTouchable>
+            </Animated.View>
           )}
         </View>
-      </View>
+      </Animated.View>
 
       {/* Preferences */}
-      <View style={styles.section}>
+      <Animated.View
+        entering={FadeInUp.delay(600).duration(500)}
+        style={styles.section}
+      >
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Preferencias</Text>
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.field}>
             <ThemeToggle />
           </View>
         </View>
-      </View>
+      </Animated.View>
 
       {/* Account Actions */}
-      <View style={styles.section}>
+      <Animated.View
+        entering={FadeInUp.delay(700).duration(500)}
+        style={styles.section}
+      >
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Conta</Text>
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <TouchableOpacity style={styles.actionItem} onPress={handleLogout}>
+        <AnimatedTouchable
+          style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }, cardStyle]}
+          onPress={handleLogout}
+          onPressIn={onCardPressIn}
+          onPressOut={onCardPressOut}
+          activeOpacity={1}
+        >
+          <View style={styles.actionItem}>
             <Text style={styles.actionItemText}>Sair da Conta</Text>
             <Text style={[styles.actionItemIcon, { color: colors.textMuted }]}>→</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+          </View>
+        </AnimatedTouchable>
+      </Animated.View>
 
       {/* App Info */}
-      <View style={styles.footer}>
+      <Animated.View
+        entering={FadeIn.delay(800).duration(500)}
+        style={styles.footer}
+      >
         <Text style={[styles.footerText, { color: colors.textMuted }]}>AGIR - E-Learning Medico</Text>
         <Text style={[styles.footerVersion, { color: colors.textMuted }]}>Versao 1.0.0</Text>
-      </View>
+      </Animated.View>
     </ScrollView>
   )
 }
@@ -282,6 +350,23 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
+  },
+  glowOrb: {
+    position: 'absolute',
+    borderRadius: 999,
+    opacity: 0.1,
+  },
+  glowOrb1: {
+    width: 250,
+    height: 250,
+    top: -50,
+    right: -80,
+  },
+  glowOrb2: {
+    width: 200,
+    height: 200,
+    bottom: 100,
+    left: -80,
   },
   header: {
     alignItems: 'center',
@@ -362,6 +447,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#FAFAFA',
+    marginBottom: 12,
   },
   editButton: {
     fontSize: 14,

@@ -1,24 +1,24 @@
 import type { Metadata } from "next"
-import { Work_Sans, Lora } from "next/font/google"
+import { Inter, Space_Grotesk } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
 
-const workSans = Work_Sans({
-  variable: "--font-work-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 })
 
-const lora = Lora({
-  variable: "--font-lora",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 })
 
 export const metadata: Metadata = {
-  title: "AGIR - E-Learning Médico",
-  description: "Plataforma de E-Learning focada em guidelines médicos e educação continuada",
-  keywords: ["e-learning", "médico", "medicina", "guidelines", "educação médica"],
+  title: "A.G.I.R. - Programa de Formacao Medica",
+  description: "Abdome Agudo Guiado por Investigacao e Raciocinio - Programa de formacao medica para atendimento seguro",
+  keywords: ["agir", "medicina", "abdome agudo", "formacao medica", "plantao", "cirurgia"],
 }
 
 export default function RootLayout({
@@ -27,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${workSans.variable} ${lora.variable} antialiased`}>
+    <html lang="pt-BR" suppressHydrationWarning className="dark">
+      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>
