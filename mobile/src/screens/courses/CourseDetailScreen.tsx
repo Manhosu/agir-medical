@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  Linking,
 } from 'react-native'
 import Animated, {
   FadeIn,
@@ -29,8 +30,24 @@ import { useCourses } from '../../hooks/useCourses'
 import { useTheme } from '../../hooks/useTheme'
 import type { CoursesScreenProps } from '../../navigation/types'
 import type { Course, Lesson, UserProgress } from '../../types/database'
+import { URLS } from '../../config/urls'
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
+
+// Funcao para abrir pagina de planos no navegador
+const openPlansPage = async () => {
+  try {
+    const canOpen = await Linking.canOpenURL(URLS.PLANS)
+    if (canOpen) {
+      await Linking.openURL(URLS.PLANS)
+    } else {
+      Alert.alert('Erro', 'Nao foi possivel abrir o navegador.')
+    }
+  } catch (error) {
+    console.error('Error opening plans URL:', error)
+    Alert.alert('Erro', 'Nao foi possivel abrir a pagina de planos.')
+  }
+}
 
 interface LessonWithProgress extends Lesson {
   progress?: UserProgress | null
@@ -178,8 +195,15 @@ export default function CourseDetailScreen() {
     if (!hasActiveSubscription) {
       Alert.alert(
         'Assinatura Necessaria',
-        'Voce precisa de uma assinatura ativa para acessar o conteudo.',
-        [{ text: 'OK' }],
+        'Voce precisa de uma assinatura ativa para acessar o conteudo completo do Programa A.G.I.R.',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Assinar Agora',
+            onPress: openPlansPage,
+            style: 'default',
+          },
+        ],
       )
       return
     }
@@ -276,18 +300,21 @@ export default function CourseDetailScreen() {
 
         {/* Subscription Warning */}
         {!hasActiveSubscription && (
-          <Animated.View
-            entering={FadeIn.delay(350).duration(500).springify()}
-            style={[styles.warningCard, { backgroundColor: `${colors.error}15`, borderColor: `${colors.error}50` }]}
-          >
-            <Text style={styles.warningIcon}>⚠️</Text>
-            <View style={styles.warningInfo}>
-              <Text style={[styles.warningTitle, { color: colors.text }]}>Assinatura Necessaria</Text>
-              <Text style={[styles.warningText, { color: colors.textSecondary }]}>
-                Assine para acessar o conteudo completo
-              </Text>
-            </View>
-          </Animated.View>
+          <TouchableOpacity onPress={openPlansPage} activeOpacity={0.8}>
+            <Animated.View
+              entering={FadeIn.delay(350).duration(500).springify()}
+              style={[styles.warningCard, { backgroundColor: `${colors.primary}15`, borderColor: `${colors.primary}50` }]}
+            >
+              <Text style={styles.warningIcon}>🔒</Text>
+              <View style={styles.warningInfo}>
+                <Text style={[styles.warningTitle, { color: colors.text }]}>Assinatura Necessaria</Text>
+                <Text style={[styles.warningText, { color: colors.textSecondary }]}>
+                  Toque aqui para assinar e liberar o conteudo
+                </Text>
+              </View>
+              <Text style={[styles.warningArrow, { color: colors.primary }]}>→</Text>
+            </Animated.View>
+          </TouchableOpacity>
         )}
 
         {/* Lessons List */}
@@ -414,6 +441,10 @@ const styles = StyleSheet.create({
   warningText: {
     fontSize: 12,
     marginTop: 2,
+  },
+  warningArrow: {
+    fontSize: 20,
+    fontWeight: '600',
   },
   lessonsTitle: {
     fontSize: 18,

@@ -124,6 +124,17 @@
   --gradient-start: 220 60% 15%;
   --gradient-end: 200 50% 10%;
 
+  /* Premium gold accent */
+  --premium: 45 93% 58%;
+  --premium-foreground: 220 30% 6%;
+
+  /* Success */
+  --success: 142 76% 36%;
+  --success-foreground: 210 40% 98%;
+
+  /* Error */
+  --error: 0 70% 55%;
+
   /* Charts - Teal/Cyan palette */
   --chart-1: 175 80% 50%;
   --chart-2: 160 70% 45%;
@@ -282,6 +293,57 @@
   /* Font display utility */
   .font-display {
     font-family: var(--font-display);
+  }
+
+  /* Glass morphism effects */
+  .glass {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glass-strong {
+    background: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--primary) / 0.2);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(175 80% 60%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Premium gold color */
+  .text-premium {
+    color: hsl(var(--premium));
+  }
+
+  .bg-premium {
+    background-color: hsl(var(--premium));
+  }
+
+  .border-premium {
+    border-color: hsl(var(--premium));
+  }
+
+  .glow-premium {
+    box-shadow: 0 0 20px hsl(var(--premium) / 0.3),
+                0 0 40px hsl(var(--premium) / 0.15);
+  }
+
+  /* Pulse glow animation */
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Text balance utility */
+  .text-balance {
+    text-wrap: balance;
   }
 }
 

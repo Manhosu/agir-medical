@@ -8,6 +8,7 @@ import {
   RefreshControl,
   Image,
   ActivityIndicator,
+  Linking,
 } from 'react-native'
 import Animated, {
   FadeIn,
@@ -27,8 +28,18 @@ import { useAuthStore } from '../../stores/authStore'
 import { useCourses } from '../../hooks/useCourses'
 import { useTheme } from '../../hooks/useTheme'
 import type { CoursesScreenProps } from '../../navigation/types'
+import { URLS } from '../../config/urls'
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
+
+// Funcao para abrir pagina de planos no navegador
+const openPlansPage = async () => {
+  try {
+    await Linking.openURL(URLS.PLANS)
+  } catch (error) {
+    console.error('Error opening plans URL:', error)
+  }
+}
 
 // Animated Progress Bar for Course Cards
 function AnimatedCourseProgress({ progress, color }: { progress: number, color: string }) {
@@ -201,6 +212,26 @@ export default function CoursesListScreen() {
           ? 'Acesse todos os cursos disponiveis'
           : 'Assine para ter acesso completo'}
       </Animated.Text>
+
+      {/* Subscription CTA Banner */}
+      {!hasActiveSubscription && (
+        <TouchableOpacity onPress={openPlansPage} activeOpacity={0.8}>
+          <Animated.View
+            entering={FadeInUp.delay(400).duration(500).springify()}
+            style={[styles.subscriptionBanner, { backgroundColor: colors.primary }]}
+          >
+            <View style={styles.subscriptionBannerContent}>
+              <Text style={[styles.subscriptionBannerTitle, { color: colors.primaryForeground }]}>
+                Desbloqueie todo o conteudo
+              </Text>
+              <Text style={[styles.subscriptionBannerText, { color: colors.primaryForeground }]}>
+                Assine agora e tenha acesso completo ao metodo A.G.I.R.
+              </Text>
+            </View>
+            <Text style={[styles.subscriptionBannerArrow, { color: colors.primaryForeground }]}>→</Text>
+          </Animated.View>
+        </TouchableOpacity>
+      )}
     </Animated.View>
   )
 
@@ -277,6 +308,30 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 14,
     marginTop: 4,
+  },
+  subscriptionBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+  },
+  subscriptionBannerContent: {
+    flex: 1,
+  },
+  subscriptionBannerTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  subscriptionBannerText: {
+    fontSize: 13,
+    opacity: 0.9,
+  },
+  subscriptionBannerArrow: {
+    fontSize: 24,
+    fontWeight: '600',
+    marginLeft: 12,
   },
   courseCard: {
     borderRadius: 16,
