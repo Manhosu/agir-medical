@@ -72,9 +72,9 @@ export async function processInfinitePayPayment(
       console.warn('Invoice ID nao mapeado para um plano:', invoiceId)
       // Fallback: usar o valor para determinar o plano
       const amount = payload.paid_amount || payload.amount
-      // Premium: R$ 1.147,00 = 114700 centavos, Standard: R$ 697,00 = 69700 centavos
-      // Usar threshold de R$ 900,00 = 90000 centavos
-      const determinedPlan: PlanType = amount >= 90000 ? 'premium' : 'standard'
+      // Premium: R$ 958,80 = 95880 centavos, Standard: R$ 598,80 = 59880 centavos
+      // Usar threshold de R$ 780,00 = 78000 centavos
+      const determinedPlan: PlanType = amount >= 78000 ? 'premium' : 'standard'
       console.log(`Plano determinado pelo valor (${amount}): ${determinedPlan}`)
     }
 

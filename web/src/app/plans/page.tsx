@@ -27,12 +27,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 
-// Plan data
+// Plan data - Valores conforme InfinitePay
 const standardPlan = {
   name: "STANDARD",
   description: "Acesso completo ao metodo A.G.I.R.",
-  pricePerMonth: "59,90",
-  pricePerDay: "R$ 2,00",
+  pricePerMonth: "49,90",
+  pricePerDay: "R$ 1,66",
   features: [
     "12 meses de acesso completo",
     "Acesso a todo o conteudo pelo App",
@@ -43,20 +43,15 @@ const standardPlan = {
     "Atualizacoes cientificas recorrentes",
   ],
   paymentOptions: [
-    { method: "Pix (a vista)", value: "R$ 697,00", highlight: true },
-    { method: "Debito", value: "R$ 699,00" },
-    { method: "Credito a vista", value: "R$ 719,00" },
-    { method: "Credito 3x", value: "3x de R$ 239,00" },
-    { method: "Credito 6x", value: "6x de R$ 119,00" },
-    { method: "Credito 12x", value: "12x de R$ 59,90" },
+    { method: "Pix ou Cartao", value: "R$ 598,80", highlight: true },
   ],
 }
 
 const premiumPlan = {
   name: "PREMIUM",
   description: "Metodo A.G.I.R. + suporte clinico avancado",
-  pricePerMonth: "99,90",
-  pricePerDay: "R$ 3,40",
+  pricePerMonth: "79,90",
+  pricePerDay: "R$ 2,66",
   features: [
     "Tudo do Plano Standard",
     "Suporte personalizado por WhatsApp",
@@ -65,12 +60,7 @@ const premiumPlan = {
     "Atendimento prioritario",
   ],
   paymentOptions: [
-    { method: "Pix (a vista)", value: "R$ 1.147,00", highlight: true },
-    { method: "Debito", value: "R$ 1.149,00" },
-    { method: "Credito a vista", value: "R$ 1.179,00" },
-    { method: "Credito 3x", value: "3x de R$ 399,00" },
-    { method: "Credito 6x", value: "6x de R$ 199,00" },
-    { method: "Credito 12x", value: "12x de R$ 99,90" },
+    { method: "Pix ou Cartao", value: "R$ 958,80", highlight: true },
   ],
 }
 
