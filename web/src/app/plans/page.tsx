@@ -298,10 +298,15 @@ function PlanCard({
   )
 }
 
+// Links de pagamento InfinitePay
+const PAYMENT_LINKS = {
+  standard: 'https://invoice.infinitepay.io/programa-agir/79t6sJUR6R/',
+  premium: 'https://invoice.infinitepay.io/programa-agir/1myI0LkHxv/',
+}
+
 export default function PlansPage() {
-  const handlePlanSelect = (planName: string) => {
-    console.log(`Selected plan: ${planName}`)
-    // TODO: Integrate with payment gateway
+  const handlePlanSelect = (planName: 'standard' | 'premium') => {
+    window.open(PAYMENT_LINKS[planName], '_blank')
   }
 
   return (

@@ -4,6 +4,12 @@
 // URL base do site web
 export const WEB_BASE_URL = 'https://programa-agir.com.br'
 
+// Links de pagamento InfinitePay
+export const PAYMENT_LINKS = {
+  STANDARD: 'https://invoice.infinitepay.io/programa-agir/79t6sJUR6R/',
+  PREMIUM: 'https://invoice.infinitepay.io/programa-agir/1myI0LkHxv/',
+}
+
 // Paginas especificas
 export const URLS = {
   // Pagina de planos/precos
