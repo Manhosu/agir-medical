@@ -232,27 +232,44 @@ export default function LessonViewerScreen() {
           bottom: 0;
           pointer-events: none;
           z-index: 1000;
-          opacity: 0.03;
           overflow: hidden;
         }
         .watermark-text {
           position: absolute;
           white-space: nowrap;
-          font-size: 12px;
-          color: ${colors.text};
+          font-size: 11px;
+          font-weight: 600;
+          color: rgba(128, 128, 128, 0.45);
+          text-shadow: 0 0 2px rgba(255,255,255,0.3), 0 0 2px rgba(0,0,0,0.3);
           transform: rotate(-30deg);
+          opacity: 0.85;
+        }
+        .watermark-center {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) rotate(-30deg);
+          font-size: 14px;
+          font-weight: 700;
+          color: rgba(128, 128, 128, 0.5);
+          text-shadow: 0 0 3px rgba(255,255,255,0.4), 0 0 3px rgba(0,0,0,0.4);
+          white-space: nowrap;
+          pointer-events: none;
+          z-index: 1001;
+          opacity: 0.9;
         }
       </style>
     </head>
     <body>
       <div class="watermark">
-        ${Array.from({ length: 20 })
+        ${Array.from({ length: 30 })
           .map(
             (_, i) =>
-              `<div class="watermark-text" style="top: ${(i * 5) % 100}%; left: ${(i * 7) % 100}%;">${watermarkEmail}</div>`,
+              `<div class="watermark-text" style="top: ${(i * 3.5) % 100}%; left: ${(i * 5) % 100}%;">${watermarkEmail}</div>`,
           )
           .join('')}
       </div>
+      <div class="watermark-center">${watermarkEmail}</div>
       <div class="content">
         ${content}
       </div>

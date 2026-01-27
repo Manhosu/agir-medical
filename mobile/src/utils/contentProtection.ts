@@ -54,6 +54,7 @@ export function addScreenshotListener(
 
 /**
  * Gera o CSS para watermark no conteúdo
+ * Atualizado para maior visibilidade em temas claros e escuros
  */
 export function generateWatermarkCSS(email: string): string {
   return `
@@ -65,28 +66,44 @@ export function generateWatermarkCSS(email: string): string {
       bottom: 0;
       pointer-events: none;
       z-index: 1000;
-      opacity: 0.03;
       overflow: hidden;
     }
-    .watermark::before {
-      content: '${email}';
+    .watermark-text {
       position: absolute;
       white-space: nowrap;
-      font-size: 12px;
-      color: currentColor;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(128, 128, 128, 0.45);
+      text-shadow: 0 0 2px rgba(255,255,255,0.3), 0 0 2px rgba(0,0,0,0.3);
       transform: rotate(-30deg);
+      opacity: 0.85;
+    }
+    .watermark-center {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(128, 128, 128, 0.5);
+      text-shadow: 0 0 3px rgba(255,255,255,0.4), 0 0 3px rgba(0,0,0,0.4);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 1001;
+      opacity: 0.9;
     }
   `
 }
 
 /**
  * Gera HTML de watermarks repetidos
+ * Aumentado para 30 watermarks para melhor cobertura
  */
-export function generateWatermarkHTML(email: string, count: number = 20): string {
+export function generateWatermarkHTML(email: string, count: number = 30): string {
   return Array.from({ length: count })
     .map(
       (_, i) =>
-        `<div class="watermark-text" style="top: ${(i * 5) % 100}%; left: ${(i * 7) % 100}%;">${email}</div>`,
+        `<div class="watermark-text" style="top: ${(i * 3.5) % 100}%; left: ${(i * 5) % 100}%;">${email}</div>`,
     )
     .join('')
 }

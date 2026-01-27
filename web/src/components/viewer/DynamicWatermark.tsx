@@ -76,7 +76,7 @@ export function DynamicWatermark({
       positions.push({
         left: `${Math.max(0, Math.min(95, baseX + offsetX))}%`,
         top: `${Math.max(0, Math.min(95, baseY + offsetY))}%`,
-        opacity: 0.03 + (Math.sin(i) * 0.01), // Variação sutil de opacidade
+        opacity: 0.08 + (Math.sin(i) * 0.02), // Opacidade mais visível (0.06-0.10)
         rotation: -30 + (Math.sin(i * 0.3) * 5), // Variação sutil de rotação
       })
     }
@@ -96,16 +96,17 @@ export function DynamicWatermark({
         {watermarkPositions.map((pos, index) => (
           <span
             key={index}
-            className="absolute whitespace-nowrap font-mono text-foreground select-none"
+            className="absolute whitespace-nowrap font-mono select-none"
             style={{
               left: pos.left,
               top: pos.top,
               fontSize: '11px',
-              fontWeight: 500,
+              fontWeight: 600,
+              color: 'rgba(128, 128, 128, 0.5)', // Cinza neutro que funciona em fundo claro e escuro
               opacity: pos.opacity,
               transform: `rotate(${pos.rotation}deg)`,
               letterSpacing: '0.5px',
-              textShadow: '0 0 1px rgba(0,0,0,0.1)',
+              textShadow: '0 0 2px rgba(255,255,255,0.3), 0 0 2px rgba(0,0,0,0.3)', // Sombra para contraste
               pointerEvents: 'none',
               userSelect: 'none',
               WebkitUserSelect: 'none',
@@ -127,16 +128,18 @@ export function DynamicWatermark({
       >
         {/* Watermark central grande (mais visível) */}
         <div
-          className="absolute font-mono text-foreground select-none"
+          className="absolute font-mono select-none"
           style={{
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%) rotate(-30deg)',
-            fontSize: '16px',
-            fontWeight: 600,
-            opacity: 0.04,
+            fontSize: '18px',
+            fontWeight: 700,
+            color: 'rgba(128, 128, 128, 0.5)',
+            opacity: 0.12,
             whiteSpace: 'nowrap',
             letterSpacing: '1px',
+            textShadow: '0 0 3px rgba(255,255,255,0.4), 0 0 3px rgba(0,0,0,0.4)',
             pointerEvents: 'none',
           }}
         >
@@ -147,15 +150,17 @@ export function DynamicWatermark({
         {['top-left', 'top-right', 'bottom-left', 'bottom-right'].map((corner, idx) => (
           <div
             key={corner}
-            className="absolute font-mono text-foreground select-none"
+            className="absolute font-mono select-none"
             style={{
               ...(corner.includes('top') ? { top: '5%' } : { bottom: '5%' }),
               ...(corner.includes('left') ? { left: '5%' } : { right: '5%' }),
               transform: `rotate(${-30 + (idx * 5)}deg)`,
-              fontSize: '10px',
-              fontWeight: 500,
-              opacity: 0.035,
+              fontSize: '11px',
+              fontWeight: 600,
+              color: 'rgba(128, 128, 128, 0.5)',
+              opacity: 0.10,
               whiteSpace: 'nowrap',
+              textShadow: '0 0 2px rgba(255,255,255,0.3), 0 0 2px rgba(0,0,0,0.3)',
               pointerEvents: 'none',
             }}
           >
