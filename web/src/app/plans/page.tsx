@@ -27,12 +27,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 
-// Plan data - Valores conforme InfinitePay
+// Plan data - Valores com promocao de lancamento
 const standardPlan = {
   name: "STANDARD",
   description: "Acesso completo ao metodo A.G.I.R.",
-  pricePerMonth: "49,90",
-  pricePerDay: "R$ 1,66",
+  pricePerMonth: "59,90",
+  promoPrice: "49,90",
+  promoLabel: "Oferta exclusiva de lancamento",
+  pricePerDay: "R$ 1,70",
   features: [
     "12 meses de acesso completo",
     "Acesso a todo o conteudo pelo App",
@@ -43,15 +45,19 @@ const standardPlan = {
     "Atualizacoes cientificas recorrentes",
   ],
   paymentOptions: [
-    { method: "Pix ou Cartao", value: "R$ 598,80", highlight: true },
+    { method: "Pix", highlight: true },
+    { method: "Debito" },
+    { method: "Credito - em ate 12 vezes" },
   ],
 }
 
 const premiumPlan = {
   name: "PREMIUM",
   description: "Metodo A.G.I.R. + suporte clinico avancado",
-  pricePerMonth: "79,90",
-  pricePerDay: "R$ 2,66",
+  pricePerMonth: "99,90",
+  promoPrice: "79,90",
+  promoLabel: "Oferta exclusiva de lancamento",
+  pricePerDay: "R$ 2,70",
   features: [
     "Tudo do Plano Standard",
     "Suporte personalizado por WhatsApp",
@@ -60,7 +66,9 @@ const premiumPlan = {
     "Atendimento prioritario",
   ],
   paymentOptions: [
-    { method: "Pix ou Cartao", value: "R$ 958,80", highlight: true },
+    { method: "Pix", highlight: true },
+    { method: "Debito" },
+    { method: "Credito - em ate 12 vezes" },
   ],
 }
 
@@ -121,7 +129,7 @@ const faqs = [
 // PlanCard Component
 interface PaymentOption {
   method: string
-  value: string
+  value?: string
   highlight?: boolean
 }
 
@@ -129,6 +137,8 @@ interface PlanCardProps {
   name: string
   description: string
   pricePerMonth: string
+  promoPrice?: string
+  promoLabel?: string
   pricePerDay: string
   features: string[]
   paymentOptions: PaymentOption[]
@@ -141,6 +151,8 @@ function PlanCard({
   name,
   description,
   pricePerMonth,
+  promoPrice,
+  promoLabel,
   pricePerDay,
   features,
   paymentOptions,
@@ -195,15 +207,39 @@ function PlanCard({
 
         {/* Price */}
         <div className="text-center mb-6">
-          <div className="flex items-baseline justify-center gap-1">
-            <span className="text-muted-foreground text-lg">R$</span>
-            <span className="text-4xl font-bold text-foreground">
-              {pricePerMonth.split(",")[0]}
-            </span>
-            <span className="text-lg text-muted-foreground">
-              ,{pricePerMonth.split(",")[1]}/mes
-            </span>
-          </div>
+          {promoLabel && (
+            <div className="mb-3">
+              <span className="bg-gradient-to-r from-primary to-cyan-400 text-primary-foreground px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                {promoLabel}
+              </span>
+            </div>
+          )}
+          {promoPrice ? (
+            <>
+              <div className="flex items-baseline justify-center gap-1 mb-1">
+                <span className="text-muted-foreground text-sm line-through">R$ {pricePerMonth}/mes</span>
+              </div>
+              <div className="flex items-baseline justify-center gap-1">
+                <span className="text-primary text-lg">R$</span>
+                <span className="text-4xl font-bold text-primary">
+                  {promoPrice.split(",")[0]}
+                </span>
+                <span className="text-lg text-primary">
+                  ,{promoPrice.split(",")[1]}/mes
+                </span>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-muted-foreground text-lg">R$</span>
+              <span className="text-4xl font-bold text-foreground">
+                {pricePerMonth.split(",")[0]}
+              </span>
+              <span className="text-lg text-muted-foreground">
+                ,{pricePerMonth.split(",")[1]}/mes
+              </span>
+            </div>
+          )}
           <p className="text-xs text-muted-foreground mt-1">
             Menos de <span className="text-primary font-medium">{pricePerDay}</span> por dia
           </p>
@@ -232,14 +268,14 @@ function PlanCard({
 
         {/* Payment Options */}
         <div className="bg-secondary/50 rounded-xl p-4 mb-6">
-          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 text-center">
             Formas de Pagamento
           </h4>
-          <div className="space-y-2">
+          <div className="space-y-2 flex flex-col items-center">
             {paymentOptions.map((option, index) => (
               <div
                 key={index}
-                className={`flex justify-between items-center py-2 px-3 rounded-lg text-sm ${
+                className={`flex justify-center items-center py-2 px-4 rounded-lg text-sm ${
                   option.highlight
                     ? isPremium
                       ? "bg-[hsl(45,93%,58%)]/10 border border-[hsl(45,93%,58%)]/20"
@@ -258,13 +294,15 @@ function PlanCard({
                 >
                   {option.method}
                 </span>
-                <span
-                  className={`font-semibold ${
-                    option.highlight ? "text-foreground" : "text-foreground/80"
-                  }`}
-                >
-                  {option.value}
-                </span>
+                {option.value && (
+                  <span
+                    className={`font-semibold ml-2 ${
+                      option.highlight ? "text-foreground" : "text-foreground/80"
+                    }`}
+                  >
+                    {option.value}
+                  </span>
+                )}
               </div>
             ))}
           </div>

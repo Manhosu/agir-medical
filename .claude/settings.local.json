@@ -74,7 +74,16 @@
       "Bash(npm start)",
       "Read(//c/**)",
       "Bash(npx tsc:*)",
-      "Bash(git clone:*)"
+      "Bash(git clone:*)",
+      "Bash(npx eas:*)",
+      "WebFetch(domain:expo.dev)",
+      "Bash(npx expo-doctor@latest)",
+      "Bash(npm uninstall:*)",
+      "Bash(npx expo prebuild:*)",
+      "WebFetch(domain:docs.infinitepay.io)",
+      "WebFetch(domain:infinitepay.io)",
+      "Bash(gh repo view:*)",
+      "Bash(gh api:*)"
     ]
   }
 }

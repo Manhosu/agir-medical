@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "A.G.I.R.",
+    "name": "AGIR",
     "slug": "agir-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,8 +17,6 @@
       "adaptiveIcon": {
         "backgroundColor": "#0d1117"
       },
-      "navigationBarColor": "#0d1117",
-      "navigationBarStyle": "light",
       "softwareKeyboardLayoutMode": "pan",
       "newArchEnabled": false
     },
