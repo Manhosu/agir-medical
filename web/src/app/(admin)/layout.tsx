@@ -22,12 +22,14 @@ import {
   LogOut,
   Menu,
   ChevronRight,
-  Home
+  Home,
+  CreditCard
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
 
 const adminNavItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/subscriptions', label: 'Assinaturas', icon: CreditCard },
   { href: '/admin/users', label: 'Usuários', icon: Users },
   { href: '/admin/courses', label: 'Cursos', icon: BookOpen },
   { href: '/admin/reports', label: 'Relatórios', icon: BarChart3 },
