@@ -201,19 +201,30 @@ export default function AdminSubscriptionsPage() {
     }
   }
 
+  const getPlanDisplayName = (plan: string) => {
+    const planNames: Record<string, string> = {
+      'standard': 'STANDARD',
+      'premium': 'PREMIUM',
+      'annual': 'STANDARD', // Legado - mapear para standard
+      'semestral': 'STANDARD',
+    }
+    return planNames[plan.toLowerCase()] || plan.toUpperCase()
+  }
+
   const getSubscriptionStatus = (profile: Profile) => {
     const sub = profile.subscriptions?.[0]
     if (!sub) return { status: 'none', label: 'Sem assinatura', color: 'text-amber-500' }
 
     const now = new Date()
     const expires = new Date(sub.expires_at)
+    const planName = getPlanDisplayName(sub.plan)
 
     if (sub.status === 'active' && expires > now) {
       return {
         status: 'active',
-        label: `${sub.plan.toUpperCase()} ativo`,
+        label: `${planName} ativo`,
         expires: expires,
-        color: 'text-green-500'
+        color: planName === 'PREMIUM' ? 'text-[hsl(45,93%,58%)]' : 'text-green-500'
       }
     } else if (sub.status === 'active' && expires <= now) {
       return { status: 'expired', label: 'Expirado', expires: expires, color: 'text-red-500' }

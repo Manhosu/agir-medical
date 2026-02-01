@@ -260,15 +260,33 @@ export default function AdminUsersPage() {
     })
   }
 
+  const getPlanDisplayName = (plan: string) => {
+    const planNames: Record<string, string> = {
+      'standard': 'STANDARD',
+      'premium': 'PREMIUM',
+      'annual': 'STANDARD',
+      'semestral': 'STANDARD',
+    }
+    return planNames[plan?.toLowerCase()] || plan?.toUpperCase() || 'STANDARD'
+  }
+
   const getSubscriptionBadge = (status: string, subscription?: Subscription | null) => {
     const expiresAt = subscription?.expires_at ? new Date(subscription.expires_at) : null
     const expiresFormatted = expiresAt ? expiresAt.toLocaleDateString('pt-BR') : ''
+    const planName = subscription?.plan ? getPlanDisplayName(subscription.plan) : ''
+    const isPremium = planName === 'PREMIUM'
 
     switch (status) {
       case 'active':
         return (
           <div className="space-y-1">
-            <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">Ativo</span>
+            <span className={`px-2 py-1 text-xs rounded-full ${
+              isPremium
+                ? 'bg-[hsl(45,93%,58%)]/20 text-[hsl(45,93%,48%)]'
+                : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+            }`}>
+              {planName}
+            </span>
             {expiresFormatted && (
               <p className="text-xs text-muted-foreground">Expira: {expiresFormatted}</p>
             )}
@@ -373,7 +391,6 @@ export default function AdminUsersPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Usuário</TableHead>
-                  <TableHead>CPF/CRM</TableHead>
                   <TableHead>Assinatura</TableHead>
                   <TableHead>Função</TableHead>
                   <TableHead>Cadastro</TableHead>
@@ -398,13 +415,6 @@ export default function AdminUsersPage() {
                           <p className="font-medium">{user.full_name || 'Sem nome'}</p>
                           <p className="text-sm text-muted-foreground">{user.email}</p>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {user.cpf && <p>CPF: {user.cpf}</p>}
-                        {user.crm && <p>CRM: {user.crm}</p>}
-                        {!user.cpf && !user.crm && <span className="text-muted-foreground">-</span>}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -493,7 +503,7 @@ export default function AdminUsersPage() {
 
                 {filteredUsers.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                       Nenhum usuário encontrado
                     </TableCell>
                   </TableRow>
