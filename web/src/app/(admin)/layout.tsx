@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
+import { useAuthStore } from '@/stores/authStore'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -43,24 +44,29 @@ export default function AdminLayout({
   const router = useRouter()
   const pathname = usePathname()
   const { user, profile, isAdmin, isLoading, signOut } = useAuth()
+  const initialized = useAuthStore((state) => state.initialized)
 
-  // Verificar se é admin - redireciona para dashboard se não for admin
+  // Verificar se é admin - só redireciona depois que o auth foi completamente inicializado
   useEffect(() => {
-    if (!isLoading && user && !isAdmin) {
+    // Esperar o auth inicializar completamente
+    if (!initialized || isLoading) return
+
+    if (user && !isAdmin) {
       // Usuário logado mas não é admin - vai para dashboard normal
       window.location.href = '/dashboard'
-    } else if (!isLoading && !user) {
+    } else if (!user) {
       // Não está logado - vai para login
       window.location.href = '/login'
     }
-  }, [isAdmin, isLoading, user])
+  }, [isAdmin, isLoading, user, initialized])
 
   const handleSignOut = async () => {
     await signOut()
     window.location.href = '/login'
   }
 
-  if (isLoading) {
+  // Mostrar loading enquanto não inicializou
+  if (!initialized || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
