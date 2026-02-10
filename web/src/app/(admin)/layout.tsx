@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/hooks/use-auth'
 import { useAuthStore } from '@/stores/authStore'
 import { Button } from '@/components/ui/button'
@@ -88,12 +89,16 @@ export default function AdminLayout({
       <aside className="hidden lg:flex lg:flex-col w-64 border-r bg-card">
         {/* Logo */}
         <div className="p-6 border-b">
-          <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">A</span>
-            </div>
+          <Link href="/admin" className="flex items-center gap-3">
+            <Image
+              src="/logo-circular-white.png"
+              alt="A.G.I.R."
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-full"
+            />
             <div>
-              <span className="font-serif font-bold text-lg">AGIR</span>
+              <span className="font-display font-bold text-lg">A.G.I.R.</span>
               <span className="text-xs text-muted-foreground block">Painel Admin</span>
             </div>
           </Link>

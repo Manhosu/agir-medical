@@ -1,10 +1,17 @@
+'use client'
+
 import Link from 'next/link'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft } from 'lucide-react'
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const router = useRouter()
+
   return (
     <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
       {/* Background effects */}
@@ -14,12 +21,23 @@ export default function AuthLayout({
 
       {/* Header */}
       <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-lg py-4">
-        <div className="container mx-auto px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
-              <span className="font-display text-xl font-bold text-primary">A</span>
-            </div>
-            <span className="font-display font-bold text-foreground">A.G.I.R.</span>
+        <div className="container mx-auto px-4 flex items-center gap-4">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Voltar
+          </button>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo-horizontal-white.png"
+              alt="A.G.I.R."
+              width={160}
+              height={45}
+              className="h-10 w-auto"
+              priority
+            />
           </Link>
         </div>
       </header>

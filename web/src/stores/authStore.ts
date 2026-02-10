@@ -19,7 +19,8 @@ interface AuthState {
 interface AuthActions {
   initialize: () => Promise<void>
   signIn: (email: string, password: string) => Promise<any>
-  signUp: (email: string, password: string, fullName?: string) => Promise<any>
+  signUp: (email: string, password: string, fullName?: string, phone?: string) => Promise<any>
+  sendMagicLink: (email: string) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
   updatePassword: (newPassword: string) => Promise<void>
@@ -225,7 +226,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   // Sign up
-  signUp: async (email: string, password: string, fullName?: string) => {
+  signUp: async (email: string, password: string, fullName?: string, phone?: string) => {
     set({ isLoading: true })
 
     try {
@@ -235,6 +236,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         options: {
           data: {
             full_name: fullName,
+            phone: phone,
           },
         },
       })
@@ -244,12 +246,32 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         throw error
       }
 
+      // Save phone to profile after signup
+      if (phone && data.user) {
+        await supabase
+          .from('profiles')
+          .update({ phone })
+          .eq('id', data.user.id)
+      }
+
       set({ isLoading: false })
       return data
     } catch (error) {
       set({ isLoading: false })
       throw error
     }
+  },
+
+  // Send magic link for passwordless login
+  sendMagicLink: async (email: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+
+    if (error) throw error
   },
 
   // Sign out

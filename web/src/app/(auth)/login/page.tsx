@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
@@ -12,11 +11,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from 'sonner'
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { signIn, signOut, isLoading, user, isAdmin } = useAuth()
+  const { signOut, isLoading, user, isAdmin } = useAuth()
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [linkSent, setLinkSent] = useState(false)
   const [showLoggedInState, setShowLoggedInState] = useState(false)
 
   // Mostrar estado "já logado" apenas depois que confirmar que há usuário
@@ -67,56 +65,64 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!email || !password) {
-      toast.error('Preencha todos os campos')
+    if (!email) {
+      toast.error('Digite seu email')
       return
     }
 
     setIsSubmitting(true)
 
-    // Login direto com Supabase (sem usar o hook)
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
 
-    if (error) {
-      if (error.message?.includes('Invalid login credentials')) {
-        toast.error('Email ou senha incorretos')
-      } else if (error.message?.includes('Email not confirmed')) {
-        toast.error('Confirme seu email antes de fazer login')
-      } else {
-        toast.error('Erro ao fazer login. Tente novamente.')
+      if (error) {
+        toast.error('Erro ao enviar link. Tente novamente.')
+        setIsSubmitting(false)
+        return
       }
+
+      setLinkSent(true)
+      toast.success('Link de acesso enviado!')
+    } catch (error) {
+      toast.error('Erro ao enviar link. Tente novamente.')
+    } finally {
       setIsSubmitting(false)
-      return
     }
+  }
 
-    if (!data.user) {
-      toast.error('Erro ao fazer login. Tente novamente.')
-      setIsSubmitting(false)
-      return
-    }
-
-    toast.success('Login realizado com sucesso!')
-
-    // Buscar perfil para verificar se é admin
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', data.user.id)
-      .single()
-
-    console.log('Profile query result:', { profile, profileError, userId: data.user.id })
-
-    // Redirecionar baseado no role
-    if (profile?.role === 'admin') {
-      console.log('Redirecting to /admin')
-      window.location.href = '/admin'
-    } else {
-      console.log('Redirecting to /dashboard, role:', profile?.role)
-      window.location.href = '/dashboard'
-    }
+  // Link enviado - mostrar confirmacao
+  if (linkSent) {
+    return (
+      <Card>
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-serif">Verifique seu Email</CardTitle>
+          <CardDescription>
+            Enviamos um link de acesso para <strong>{email}</strong>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-center text-muted-foreground">
+            Clique no link que enviamos para seu email para acessar sua conta.
+            Verifique também a pasta de spam.
+          </p>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => {
+              setLinkSent(false)
+              setEmail('')
+            }}
+          >
+            Usar outro email
+          </Button>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
@@ -124,7 +130,7 @@ export default function LoginPage() {
       <CardHeader className="space-y-1 text-center">
         <CardTitle className="text-2xl font-serif">Entrar</CardTitle>
         <CardDescription>
-          Digite seu email e senha para acessar sua conta
+          Digite seu email para receber um link de acesso
         </CardDescription>
       </CardHeader>
 
@@ -142,27 +148,6 @@ export default function LoginPage() {
               required
             />
           </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Senha</Label>
-              <Link
-                href="/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
-                Esqueceu a senha?
-              </Link>
-            </div>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isSubmitting}
-              required
-            />
-          </div>
         </CardContent>
 
         <CardFooter className="flex flex-col gap-4 pt-2">
@@ -171,7 +156,7 @@ export default function LoginPage() {
             className="w-full"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Entrando...' : 'Entrar'}
+            {isSubmitting ? 'Enviando...' : 'Enviar Link de Acesso'}
           </Button>
 
           <p className="text-sm text-center text-muted-foreground">

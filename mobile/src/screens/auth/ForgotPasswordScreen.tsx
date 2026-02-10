@@ -10,6 +10,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native'
 import { useAuthStore } from '../../stores/authStore'
 import { useTheme } from '../../hooks/useTheme'
@@ -54,8 +55,11 @@ export default function ForgotPasswordScreen({
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Text style={[styles.logo, { color: colors.primary }]}>AGIR</Text>
-          <Text style={[styles.subtitle, { color: colors.textTertiary }]}>E-Learning Medico</Text>
+          <Image
+            source={require('../../../assets/logo-circular-white.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
 
         <View style={[styles.form, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -115,14 +119,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },
-  logo: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    letterSpacing: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    marginTop: 4,
+  logoImage: {
+    width: 140,
+    height: 140,
   },
   form: {
     borderRadius: 16,

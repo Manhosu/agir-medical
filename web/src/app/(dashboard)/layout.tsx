@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase'
@@ -108,10 +109,14 @@ export default function DashboardLayout({
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-sidebar-border">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
-                <span className="font-display text-xl font-bold text-primary">A</span>
-              </div>
+            <Link href="/dashboard" className="flex items-center gap-3">
+              <Image
+                src="/logo-circular-white.png"
+                alt="A.G.I.R."
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full"
+              />
               <span className="font-display font-bold text-foreground">A.G.I.R.</span>
             </Link>
           </div>
@@ -191,9 +196,13 @@ export default function DashboardLayout({
         {/* Mobile header */}
         <header className="md:hidden border-b border-border bg-card/80 backdrop-blur-lg p-4 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
-              <span className="font-display text-lg font-bold text-primary">A</span>
-            </div>
+            <Image
+              src="/logo-circular-white.png"
+              alt="A.G.I.R."
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-full"
+            />
             <span className="font-display font-bold text-foreground">A.G.I.R.</span>
           </Link>
           <div className="flex items-center gap-2">

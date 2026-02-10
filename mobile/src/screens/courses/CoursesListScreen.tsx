@@ -99,6 +99,9 @@ function CourseCard({
         onPressIn={onPressIn}
         onPressOut={onPressOut}
         activeOpacity={1}
+        accessibilityRole="button"
+        accessibilityLabel={`Curso: ${item.title}`}
+        accessibilityHint={`Progresso: ${item.progressPercent}%. Toque para abrir o curso`}
       >
         {imageUrl ? (
           <Animated.Image
@@ -215,7 +218,12 @@ export default function CoursesListScreen() {
 
       {/* Subscription CTA Banner */}
       {!hasActiveSubscription && (
-        <TouchableOpacity onPress={openPlansPage} activeOpacity={0.8}>
+        <TouchableOpacity
+          onPress={openPlansPage}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Assinar plano"
+          accessibilityHint="Toque para ver os planos de assinatura">
           <Animated.View
             entering={FadeInUp.delay(400).duration(500).springify()}
             style={[styles.subscriptionBanner, { backgroundColor: colors.primary }]}

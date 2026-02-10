@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,13 +11,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from 'sonner'
 
 export default function RegisterPage() {
-  const router = useRouter()
   const { signUp, isLoading } = useAuth()
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    password: '',
-    confirmPassword: '',
+    phone: '',
   })
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -33,18 +30,8 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!formData.fullName || !formData.email || !formData.password) {
+    if (!formData.fullName || !formData.email || !formData.phone) {
       toast.error('Preencha todos os campos')
-      return
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('As senhas não coincidem')
-      return
-    }
-
-    if (formData.password.length < 6) {
-      toast.error('A senha deve ter pelo menos 6 caracteres')
       return
     }
 
@@ -56,10 +43,12 @@ export default function RegisterPage() {
     setIsSubmitting(true)
 
     try {
-      await signUp(formData.email, formData.password, formData.fullName)
-      toast.success('Conta criada com sucesso! Bem-vindo!')
-      // Redirecionar para dashboard (usuario ja esta logado)
-      window.location.href = '/dashboard'
+      // Generate random password (Supabase requires one)
+      const randomPassword = crypto.randomUUID() + 'Aa1!'
+      await signUp(formData.email, randomPassword, formData.fullName, formData.phone)
+      toast.success('Conta criada com sucesso!')
+      // Redirect to plans/payment page
+      window.location.href = '/plans'
     } catch (error: any) {
       console.error('Register error:', error)
 
@@ -111,25 +100,12 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Senha</Label>
+            <Label htmlFor="phone">Telefone</Label>
             <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              disabled={isSubmitting}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              value={formData.confirmPassword}
+              id="phone"
+              type="tel"
+              placeholder="(00) 00000-0000"
+              value={formData.phone}
               onChange={handleChange}
               disabled={isSubmitting}
               required

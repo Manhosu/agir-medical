@@ -51,7 +51,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
   },
 }))
 
-// Cores do tema - Dark Futuristic Medical Tech
+// Cores do tema - A.G.I.R. Brand Green
 export const themes = {
   dark: {
     // Background colors
@@ -69,14 +69,14 @@ export const themes = {
     border: '#252d3a',          // Border (220 30% 18%)
     input: '#252d3a',           // Input background
 
-    // Primary - Cyan/Teal (medical tech feel)
-    primary: '#1ae8cc',         // Primary (175 80% 50%)
-    primaryForeground: '#0d1117',
-    primaryMuted: '#1ae8cc20',  // Primary with opacity
+    // Primary - Verde A.G.I.R.
+    primary: '#02884a',         // Brand green (lighter for UI contrast)
+    primaryForeground: '#ffffff',
+    primaryMuted: '#02884a20',  // Primary with opacity
 
-    // Accent - Emerald green
-    accent: '#22c55e',          // Accent (160 70% 45%)
-    accentForeground: '#0d1117',
+    // Accent - Verde escuro A.G.I.R.
+    accent: '#103312',          // Dark green (#103312)
+    accentForeground: '#ffffff',
 
     // Secondary - Deep blue
     secondary: '#1a365d',       // Secondary (220 60% 20%)
@@ -86,9 +86,9 @@ export const themes = {
     destructive: '#dc2626',     // Destructive (0 70% 55%)
     error: '#dc2626',
 
-    // Glow effects (for reference)
-    glowPrimary: '#1ae8cc',
-    glowAccent: '#22c55e',
+    // Glow effects
+    glowPrimary: '#02884a',
+    glowAccent: '#103312',
   },
   light: {
     // Light mode (same as dark - app is always dark)
@@ -101,17 +101,17 @@ export const themes = {
     textMuted: '#6e7681',
     border: '#252d3a',
     input: '#252d3a',
-    primary: '#1ae8cc',
-    primaryForeground: '#0d1117',
-    primaryMuted: '#1ae8cc20',
-    accent: '#22c55e',
-    accentForeground: '#0d1117',
+    primary: '#02884a',
+    primaryForeground: '#ffffff',
+    primaryMuted: '#02884a20',
+    accent: '#103312',
+    accentForeground: '#ffffff',
     secondary: '#1a365d',
     secondaryForeground: '#e6edf3',
     destructive: '#dc2626',
     error: '#dc2626',
-    glowPrimary: '#1ae8cc',
-    glowAccent: '#22c55e',
+    glowPrimary: '#02884a',
+    glowAccent: '#103312',
   },
 }
 

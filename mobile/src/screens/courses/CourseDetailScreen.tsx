@@ -109,6 +109,9 @@ function LessonCard({
         onPressIn={onPressIn}
         onPressOut={onPressOut}
         activeOpacity={1}
+        accessibilityRole="button"
+        accessibilityLabel={`Aula ${index + 1}: ${lesson.title}`}
+        accessibilityHint={lesson.progress?.is_completed ? 'Aula concluida. Toque para revisar' : 'Toque para abrir a aula'}
       >
         <View
           style={[

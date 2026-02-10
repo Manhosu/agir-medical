@@ -17,7 +17,9 @@ interface AuthState {
 interface AuthActions {
   initialize: () => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, fullName?: string) => Promise<void>
+  signUp: (email: string, password: string, fullName?: string, phone?: string) => Promise<void>
+  sendOtp: (email: string) => Promise<void>
+  verifyOtp: (email: string, token: string) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
   updateProfile: (updates: Partial<Profile>) => Promise<void>
@@ -205,17 +207,53 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   // Cadastro
-  signUp: async (email: string, password: string, fullName?: string) => {
+  signUp: async (email: string, password: string, fullName?: string, phone?: string) => {
     set({ isLoading: true })
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
+          phone: phone,
         },
       },
+    })
+
+    if (error) {
+      set({ isLoading: false })
+      throw error
+    }
+
+    // Save phone to profile after signup
+    if (phone && data.user) {
+      await supabase
+        .from('profiles')
+        .update({ phone })
+        .eq('id', data.user.id)
+    }
+
+    // Nao setar isLoading false aqui - deixar o onAuthStateChange fazer
+  },
+
+  // Enviar OTP por email
+  sendOtp: async (email: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+    })
+
+    if (error) throw error
+  },
+
+  // Verificar OTP
+  verifyOtp: async (email: string, token: string) => {
+    set({ isLoading: true })
+
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'email',
     })
 
     if (error) {

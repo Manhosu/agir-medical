@@ -1,20 +1,33 @@
 {
   "expo": {
-    "name": "AGIR",
+    "name": "A.G.I.R.",
     "slug": "agir-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
       "backgroundColor": "#0d1117"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.agir.elearning"
+      "bundleIdentifier": "com.agir.elearning",
+      "icon": "./assets/icon.png",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Precisamos de acesso a camera para que voce possa tirar uma foto de perfil.",
+        "NSPhotoLibraryUsageDescription": "Precisamos de acesso a sua galeria para que voce possa escolher uma foto de perfil.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.agir.elearning",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0d1117"
       },
       "softwareKeyboardLayoutMode": "pan",

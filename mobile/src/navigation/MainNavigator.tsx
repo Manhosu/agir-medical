@@ -79,6 +79,7 @@ export function MainNavigator() {
         options={{
           title: 'Inicio',
           tabBarIcon: ({ focused }) => <TabIcon name="Dashboard" focused={focused} />,
+          tabBarAccessibilityLabel: 'Tela inicial',
         }}
       />
       <Tab.Screen
@@ -113,6 +114,7 @@ export function MainNavigator() {
         options={{
           title: 'Perfil',
           tabBarIcon: ({ focused }) => <TabIcon name="Profile" focused={focused} />,
+          tabBarAccessibilityLabel: 'Meu perfil',
         }}
       />
     </Tab.Navigator>

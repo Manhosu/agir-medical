@@ -149,7 +149,12 @@ export default function ProfileScreen() {
         entering={FadeInDown.delay(100).duration(500)}
         style={styles.header}
       >
-        <TouchableOpacity onPress={handlePickImage} disabled={isUploadingAvatar}>
+        <TouchableOpacity
+          onPress={handlePickImage}
+          disabled={isUploadingAvatar}
+          accessibilityRole="button"
+          accessibilityLabel="Foto de perfil"
+          accessibilityHint="Toque para alterar sua foto de perfil">
           {profile?.avatar_url ? (
             <Animated.Image
               entering={FadeIn.delay(200).duration(400)}
@@ -211,7 +216,10 @@ export default function ProfileScreen() {
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Informacoes Pessoais</Text>
           {!isEditing && (
-            <TouchableOpacity onPress={() => setIsEditing(true)}>
+            <TouchableOpacity
+              onPress={() => setIsEditing(true)}
+              accessibilityRole="button"
+              accessibilityLabel="Editar perfil">
               <Text style={[styles.editButton, { color: colors.primary }]}>Editar</Text>
             </TouchableOpacity>
           )}
@@ -227,6 +235,7 @@ export default function ProfileScreen() {
                 onChangeText={setFullName}
                 placeholder="Seu nome"
                 placeholderTextColor={colors.textMuted}
+                accessibilityLabel="Nome completo"
               />
             ) : (
               <Text style={[styles.fieldValue, { color: colors.text }]}>
@@ -254,6 +263,7 @@ export default function ProfileScreen() {
                 placeholder="(00) 00000-0000"
                 placeholderTextColor={colors.textMuted}
                 keyboardType="phone-pad"
+                accessibilityLabel="Telefone"
               />
             ) : (
               <Text style={[styles.fieldValue, { color: colors.text }]}>
@@ -323,9 +333,12 @@ export default function ProfileScreen() {
           onPressIn={onCardPressIn}
           onPressOut={onCardPressOut}
           activeOpacity={1}
+          accessibilityRole="button"
+          accessibilityLabel="Sair da conta"
+          accessibilityHint="Toque para desconectar da sua conta"
         >
           <View style={styles.actionItem}>
-            <Text style={styles.actionItemText}>Sair da Conta</Text>
+            <Text style={[styles.actionItemText, { color: colors.destructive }]}>Sair da Conta</Text>
             <Text style={[styles.actionItemIcon, { color: colors.textMuted }]}>→</Text>
           </View>
         </AnimatedTouchable>
@@ -336,7 +349,11 @@ export default function ProfileScreen() {
         entering={FadeIn.delay(800).duration(500)}
         style={styles.footer}
       >
-        <Text style={[styles.footerText, { color: colors.textMuted }]}>AGIR - E-Learning Medico</Text>
+        <Image
+          source={require('../../../assets/logo-horizontal-white.png')}
+          style={styles.footerLogo}
+          resizeMode="contain"
+        />
         <Text style={[styles.footerVersion, { color: colors.textMuted }]}>Versao 1.0.0</Text>
       </Animated.View>
     </ScrollView>
@@ -346,7 +363,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0B',
   },
   content: {
     padding: 16,
@@ -376,7 +392,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#22C55E',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -399,7 +414,6 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#FAFAFA',
   },
   changePhotoText: {
     fontSize: 14,
@@ -410,11 +424,9 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FAFAFA',
   },
   email: {
     fontSize: 14,
-    color: '#A1A1AA',
     marginTop: 4,
   },
   badge: {
@@ -432,7 +444,6 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#FAFAFA',
   },
   section: {
     marginBottom: 24,
@@ -446,19 +457,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FAFAFA',
     marginBottom: 12,
   },
   editButton: {
     fontSize: 14,
-    color: '#22C55E',
     fontWeight: '500',
   },
   card: {
-    backgroundColor: '#18181B',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#27272A',
     overflow: 'hidden',
   },
   field: {
@@ -466,24 +473,19 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize: 12,
-    color: '#71717A',
     marginBottom: 4,
   },
   fieldValue: {
     fontSize: 16,
-    color: '#FAFAFA',
   },
   input: {
     fontSize: 16,
-    color: '#FAFAFA',
-    backgroundColor: '#27272A',
     borderRadius: 8,
     padding: 12,
     marginTop: 4,
   },
   divider: {
     height: 1,
-    backgroundColor: '#27272A',
   },
   editActions: {
     flexDirection: 'row',
@@ -492,7 +494,6 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#27272A',
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
@@ -500,11 +501,9 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#A1A1AA',
   },
   saveButton: {
     flex: 1,
-    backgroundColor: '#22C55E',
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
@@ -515,7 +514,6 @@ const styles = StyleSheet.create({
   saveButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FAFAFA',
   },
   actionItem: {
     flexDirection: 'row',
@@ -525,24 +523,22 @@ const styles = StyleSheet.create({
   },
   actionItemText: {
     fontSize: 16,
-    color: '#EF4444',
   },
   actionItemIcon: {
     fontSize: 16,
-    color: '#71717A',
   },
   footer: {
     alignItems: 'center',
     marginTop: 16,
     marginBottom: 32,
   },
-  footerText: {
-    fontSize: 14,
-    color: '#71717A',
+  footerLogo: {
+    width: 160,
+    height: 45,
+    marginBottom: 4,
   },
   footerVersion: {
     fontSize: 12,
-    color: '#52525B',
     marginTop: 4,
   },
 })

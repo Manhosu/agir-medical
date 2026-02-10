@@ -29,6 +29,7 @@ export function useAuth() {
     hasActiveSubscription: store.hasActiveSubscription,
     signIn: store.signIn,
     signUp: store.signUp,
+    sendMagicLink: store.sendMagicLink,
     signOut,
     resetPassword: store.resetPassword,
     updatePassword: store.updatePassword,

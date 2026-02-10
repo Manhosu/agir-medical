@@ -10,6 +10,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native'
 import Animated, { FadeIn, FadeInDown, FadeInUp, SlideInUp } from 'react-native-reanimated'
 import { useAuthStore } from '../../stores/authStore'
@@ -22,8 +23,7 @@ const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
 export default function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [phone, setPhone] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const colors = useTheme()
 
@@ -33,25 +33,17 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
   const floatingStyle = useFloatingAnimation(8, 4000)
 
   const handleRegister = async () => {
-    if (!fullName || !email || !password || !confirmPassword) {
+    if (!fullName || !email || !phone) {
       Alert.alert('Erro', 'Preencha todos os campos')
-      return
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert('Erro', 'As senhas nao conferem')
-      return
-    }
-
-    if (password.length < 6) {
-      Alert.alert('Erro', 'A senha deve ter pelo menos 6 caracteres')
       return
     }
 
     setIsSubmitting(true)
 
     try {
-      await signUp(email.trim().toLowerCase(), password, fullName.trim())
+      // Generate random password (Supabase requires one)
+      const randomPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2) + 'Aa1!'
+      await signUp(email.trim().toLowerCase(), randomPassword, fullName.trim(), phone.trim())
       Alert.alert(
         'Conta Criada',
         'Bem-vindo ao AGIR! Sua conta foi criada com sucesso.',
@@ -91,10 +83,13 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
           entering={FadeInDown.delay(100).duration(600).springify()}
           style={styles.header}
         >
-          <Animated.Text style={[styles.logo, { color: colors.primary }, pulseStyle]}>
-            AGIR
-          </Animated.Text>
-          <Text style={[styles.subtitle, { color: colors.textTertiary }]}>E-Learning Medico</Text>
+          <Animated.View style={pulseStyle}>
+            <Image
+              source={require('../../../assets/logo-circular-white.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
         </Animated.View>
 
         <Animated.View
@@ -126,6 +121,7 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
               value={fullName}
               onChangeText={setFullName}
               editable={!isSubmitting}
+              accessibilityLabel="Nome completo"
             />
           </Animated.View>
 
@@ -143,6 +139,7 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
               autoCapitalize="none"
               keyboardType="email-address"
               editable={!isSubmitting}
+              accessibilityLabel="Campo de email"
             />
           </Animated.View>
 
@@ -150,36 +147,21 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
             entering={FadeInUp.delay(700).duration(400)}
             style={styles.inputGroup}
           >
-            <Text style={[styles.label, { color: colors.text }]}>Senha</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Telefone</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.border, color: colors.text, borderColor: colors.textTertiary }]}
-              placeholder="••••••••"
+              placeholder="(00) 00000-0000"
               placeholderTextColor={colors.textTertiary}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
+              value={phone}
+              onChangeText={setPhone}
+              keyboardType="phone-pad"
               editable={!isSubmitting}
-            />
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeInUp.delay(800).duration(400)}
-            style={styles.inputGroup}
-          >
-            <Text style={[styles.label, { color: colors.text }]}>Confirmar Senha</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: colors.border, color: colors.text, borderColor: colors.textTertiary }]}
-              placeholder="••••••••"
-              placeholderTextColor={colors.textTertiary}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-              editable={!isSubmitting}
+              accessibilityLabel="Campo de telefone"
             />
           </Animated.View>
 
           <AnimatedTouchable
-            entering={FadeInUp.delay(900).duration(500).springify()}
+            entering={FadeInUp.delay(800).duration(500).springify()}
             style={[
               styles.button,
               { backgroundColor: colors.primary },
@@ -189,7 +171,9 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
             onPress={handleRegister}
             onPressIn={onPressIn}
             onPressOut={onPressOut}
-            disabled={isSubmitting}>
+            disabled={isSubmitting}
+            accessibilityRole="button"
+            accessibilityLabel="Criar conta">
             {isSubmitting ? (
               <ActivityIndicator color={colors.primaryForeground} />
             ) : (
@@ -199,13 +183,16 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
         </Animated.View>
 
         <Animated.View
-          entering={FadeIn.delay(1000).duration(500)}
+          entering={FadeIn.delay(900).duration(500)}
           style={styles.footer}
         >
           <Text style={[styles.footerText, { color: colors.textSecondary }]}>Ja tem uma conta?</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
-            disabled={isSubmitting}>
+            disabled={isSubmitting}
+            accessibilityRole="button"
+            accessibilityLabel="Entrar"
+            accessibilityHint="Ja tem conta? Toque para fazer login">
             <Text style={[styles.footerLink, { color: colors.primary }]}>Entrar</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -244,14 +231,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },
-  logo: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    letterSpacing: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    marginTop: 4,
+  logoImage: {
+    width: 140,
+    height: 140,
   },
   form: {
     borderRadius: 16,
@@ -286,7 +268,7 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
     marginTop: 8,
-    shadowColor: '#1ae8cc',
+    shadowColor: '#02884a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

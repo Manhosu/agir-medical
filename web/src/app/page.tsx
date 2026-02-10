@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, useRef } from 'react'
 import Link from "next/link"
+import Image from "next/image"
 import { motion, useInView, useScroll, useTransform } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import {
@@ -99,16 +100,18 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <motion.div
-              className="flex items-center gap-2"
+              className="flex items-center"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              <div className="w-10 h-10 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
-                <span className="font-display text-xl font-bold text-primary">A</span>
-              </div>
-              <span className="font-display font-bold text-foreground hidden sm:block">
-                A.G.I.R.
-              </span>
+              <Image
+                src="/logo-horizontal-white.png"
+                alt="A.G.I.R."
+                width={160}
+                height={45}
+                className="h-10 w-auto"
+                priority
+              />
             </motion.div>
             <div className="flex items-center gap-4">
               <Link href="/login">
@@ -173,22 +176,23 @@ export default function Home() {
               <span className="text-sm text-muted-foreground">Programa de Formacao Medica</span>
             </motion.div>
 
-            {/* Main headline */}
-            <motion.h1
+            {/* Main headline with logo */}
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+              className="mb-6 flex flex-col items-center"
             >
-              <span className="text-foreground">Programa </span>
-              <motion.span
-                className="text-primary text-glow"
-                animate={{ textShadow: ["0 0 10px hsl(175 80% 50% / 0.5)", "0 0 20px hsl(175 80% 50% / 0.8)", "0 0 10px hsl(175 80% 50% / 0.5)"] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                A.G.I.R.
-              </motion.span>
-            </motion.h1>
+              <span className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4">Programa</span>
+              <Image
+                src="/logo-horizontal-white.png"
+                alt="A.G.I.R. - Abdome Agudo Guiado por Investigacao e Raciocinio"
+                width={500}
+                height={140}
+                className="h-20 md:h-28 lg:h-32 w-auto"
+                priority
+              />
+            </motion.div>
 
             {/* Subtitle */}
             <motion.p
@@ -1005,7 +1009,7 @@ export default function Home() {
                   Nao quero mais improvisar na{" "}
                   <motion.span
                     className="text-primary"
-                    animate={{ textShadow: ["0 0 10px hsl(175 80% 50% / 0.5)", "0 0 30px hsl(175 80% 50% / 0.8)", "0 0 10px hsl(175 80% 50% / 0.5)"] }}
+                    animate={{ textShadow: ["0 0 10px hsl(150 97% 27% / 0.5)", "0 0 30px hsl(150 97% 27% / 0.8)", "0 0 10px hsl(150 97% 27% / 0.5)"] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
                     dor abdominal
@@ -1076,20 +1080,16 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Logo */}
             <motion.div
-              className="flex items-center gap-2"
+              className="flex items-center"
               whileHover={{ scale: 1.05 }}
             >
-              <div className="w-10 h-10 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
-                <span className="font-display text-xl font-bold text-primary">A</span>
-              </div>
-              <div>
-                <span className="font-display font-bold text-foreground block">
-                  Programa A.G.I.R.
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  Abdome Agudo Guiado por Investigacao e Raciocinio
-                </span>
-              </div>
+              <Image
+                src="/logo-horizontal-white.png"
+                alt="A.G.I.R. - Abdome Agudo Guiado por Investigacao e Raciocinio"
+                width={200}
+                height={56}
+                className="h-12 w-auto"
+              />
             </motion.div>
 
             {/* Links */}

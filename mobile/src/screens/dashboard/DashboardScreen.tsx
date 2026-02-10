@@ -258,6 +258,9 @@ export default function DashboardScreen() {
         onPressIn={onPressIn}
         onPressOut={onPressOut}
         activeOpacity={1}
+        accessibilityRole="button"
+        accessibilityLabel="Continuar Estudando"
+        accessibilityHint="Toque para acessar seus cursos e aulas"
       >
         <Animated.Text entering={FadeIn.delay(900)} style={styles.quickActionIcon}>📚</Animated.Text>
         <View style={styles.quickActionInfo}>

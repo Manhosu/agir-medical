@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Inter, Space_Grotesk } from "next/font/google"
+import { Inter, Space_Grotesk, Cuprum } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
 
@@ -11,6 +11,12 @@ const inter = Inter({
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+})
+
+const cuprum = Cuprum({
+  variable: "--font-cuprum",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 })
@@ -28,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning className="dark">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${cuprum.variable} antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -24,7 +24,7 @@ const buttonVariants = cva(
         // Secondary hero button
         heroOutline: "border-2 border-primary/50 bg-transparent text-foreground hover:bg-primary/10 hover:border-primary shadow-lg shadow-primary/10",
         // CTA button - checkout/plans
-        cta: "bg-gradient-to-r from-[hsl(175,80%,50%)] to-[hsl(175,80%,60%)] text-[hsl(220,30%,6%)] font-bold shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300",
+        cta: "bg-gradient-to-r from-[hsl(150,97%,27%)] to-[hsl(150,97%,35%)] text-white font-bold shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300",
         // Premium CTA button with gold gradient
         ctaPremium: "bg-gradient-to-r from-[hsl(45,93%,58%)] to-[hsl(35,93%,55%)] text-[hsl(220,30%,6%)] font-bold shadow-lg shadow-[hsl(45,93%,58%)]/40 hover:shadow-[hsl(45,93%,58%)]/60 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300",
       },
