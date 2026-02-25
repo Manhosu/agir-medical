@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
       setStep('otp')
       Alert.alert(
         'Codigo Enviado',
-        'Enviamos um codigo de 6 digitos para seu email. Verifique tambem a pasta de spam.',
+        'Enviamos um codigo de 8 digitos para seu email. Verifique tambem a pasta de spam.',
       )
       setTimeout(() => otpInputRef.current?.focus(), 500)
     } catch (error: any) {
@@ -60,8 +60,8 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   }
 
   const handleVerifyOtp = async () => {
-    if (!otpCode || otpCode.length !== 6) {
-      Alert.alert('Erro', 'Digite o codigo de 6 digitos')
+    if (!otpCode || otpCode.length !== 8) {
+      Alert.alert('Erro', 'Digite o codigo de 8 digitos')
       return
     }
 
@@ -164,15 +164,15 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
               <TextInput
                 ref={otpInputRef}
                 style={[styles.otpInput, { backgroundColor: colors.border, color: colors.text, borderColor: colors.textTertiary }]}
-                placeholder="000000"
+                placeholder="00000000"
                 placeholderTextColor={colors.textTertiary}
                 value={otpCode}
-                onChangeText={(text) => setOtpCode(text.replace(/[^0-9]/g, '').slice(0, 6))}
+                onChangeText={(text) => setOtpCode(text.replace(/[^0-9]/g, '').slice(0, 8))}
                 keyboardType="number-pad"
-                maxLength={6}
+                maxLength={8}
                 editable={!isSubmitting}
                 accessibilityLabel="Campo de codigo OTP"
-                accessibilityHint="Digite o codigo de 6 digitos enviado para seu email"
+                accessibilityHint="Digite o codigo de 8 digitos enviado para seu email"
               />
             </Animated.View>
           )}
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     padding: 16,
     fontSize: 28,
     fontWeight: 'bold',
-    letterSpacing: 12,
+    letterSpacing: 8,
     textAlign: 'center',
     borderWidth: 1,
   },

@@ -86,8 +86,8 @@ export default function LoginPage() {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!otpCode || otpCode.length !== 6) {
-      toast.error('Digite o código de 6 dígitos')
+    if (!otpCode || otpCode.length !== 8) {
+      toast.error('Digite o código de 8 dígitos')
       return
     }
 
@@ -125,7 +125,7 @@ export default function LoginPage() {
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-serif">Verificar Código</CardTitle>
           <CardDescription>
-            Enviamos um código de 6 dígitos para <strong>{email}</strong>
+            Enviamos um código de 8 dígitos para <strong>{email}</strong>
           </CardDescription>
         </CardHeader>
 
@@ -138,12 +138,12 @@ export default function LoginPage() {
                 id="otpCode"
                 type="text"
                 inputMode="numeric"
-                placeholder="000000"
+                placeholder="00000000"
                 value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
+                onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, '').slice(0, 8))}
                 disabled={isSubmitting}
-                maxLength={6}
-                className="text-center text-2xl tracking-[0.5em] font-bold"
+                maxLength={8}
+                className="text-center text-2xl tracking-[0.3em] font-bold"
                 required
               />
             </div>
@@ -157,7 +157,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={isSubmitting || otpCode.length !== 6}
+              disabled={isSubmitting || otpCode.length !== 8}
             >
               {isSubmitting ? 'Verificando...' : 'Verificar Código'}
             </Button>
