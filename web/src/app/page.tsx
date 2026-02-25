@@ -227,7 +227,7 @@ export default function Home() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Button variant="hero" size="xl" className="group">
+                  <Button variant="hero" size="xl" className="group text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-10">
                     Quero seguranca para decidir no plantao
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
