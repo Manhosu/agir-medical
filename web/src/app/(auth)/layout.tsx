@@ -16,8 +16,8 @@ export default function AuthLayout({
     <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
       {/* Background effects */}
       <div className="absolute inset-0 bg-grid opacity-20" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/10 blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent/10 blur-3xl" />
+      <div className="absolute top-1/4 left-1/4 w-48 sm:w-72 md:w-96 h-48 sm:h-72 md:h-96 rounded-full bg-primary/10 blur-3xl" />
+      <div className="absolute bottom-1/4 right-1/4 w-40 sm:w-64 md:w-80 h-40 sm:h-64 md:h-80 rounded-full bg-accent/10 blur-3xl" />
 
       {/* Header */}
       <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-lg py-4">
@@ -35,7 +35,7 @@ export default function AuthLayout({
               alt="A.G.I.R."
               width={160}
               height={45}
-              className="h-10 w-auto"
+              className="h-8 sm:h-10 w-auto"
               priority
             />
           </Link>

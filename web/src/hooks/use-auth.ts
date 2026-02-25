@@ -30,6 +30,8 @@ export function useAuth() {
     signIn: store.signIn,
     signUp: store.signUp,
     sendMagicLink: store.sendMagicLink,
+    sendOtp: store.sendOtp,
+    verifyOtp: store.verifyOtp,
     signOut,
     resetPassword: store.resetPassword,
     updatePassword: store.updatePassword,

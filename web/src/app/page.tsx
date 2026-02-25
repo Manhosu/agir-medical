@@ -109,17 +109,17 @@ export default function Home() {
                 alt="A.G.I.R."
                 width={160}
                 height={45}
-                className="h-10 w-auto"
+                className="h-8 sm:h-10 w-auto"
                 priority
               />
             </motion.div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link href="/login">
-                <Button variant="ghost" size="sm">Entrar</Button>
+                <Button variant="ghost" size="sm" className="text-xs sm:text-sm">Entrar</Button>
               </Link>
               <Link href="/register">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button variant="hero" size="sm">Inscreva-se</Button>
+                  <Button variant="hero" size="sm" className="text-xs sm:text-sm">Inscreva-se</Button>
                 </motion.div>
               </Link>
             </div>
@@ -140,7 +140,7 @@ export default function Home() {
 
         {/* Animated orbs */}
         <motion.div
-          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/20 blur-3xl"
+          className="absolute top-1/4 left-1/4 w-48 sm:w-72 md:w-96 h-48 sm:h-72 md:h-96 rounded-full bg-primary/20 blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.4, 0.6, 0.4],
@@ -148,7 +148,7 @@ export default function Home() {
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent/15 blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-40 sm:w-64 md:w-80 h-40 sm:h-64 md:h-80 rounded-full bg-accent/15 blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             opacity: [0.3, 0.5, 0.3],
@@ -166,14 +166,14 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted border border-border mb-8"
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-muted border border-border mb-4 sm:mb-8"
             >
               <motion.span
                 className="w-2 h-2 rounded-full bg-primary"
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
-              <span className="text-sm text-muted-foreground">Programa de Formacao Medica</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">Programa de Formacao Medica</span>
             </motion.div>
 
             {/* Main headline with logo */}
@@ -183,13 +183,13 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mb-6 flex flex-col items-center"
             >
-              <span className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4">Programa</span>
+              <span className="font-display text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-3 sm:mb-4">Programa</span>
               <Image
                 src="/logo-horizontal-white.png"
                 alt="A.G.I.R. - Abdome Agudo Guiado por Investigacao e Raciocinio"
                 width={500}
                 height={140}
-                className="h-20 md:h-28 lg:h-32 w-auto"
+                className="h-14 sm:h-20 md:h-28 lg:h-32 w-auto"
                 priority
               />
             </motion.div>
@@ -199,7 +199,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-lg md:text-xl text-primary/80 font-medium mb-4"
+              className="text-sm sm:text-lg md:text-xl text-primary/80 font-medium mb-4"
             >
               Abdome Agudo Guiado por Investigacao e Raciocinio
             </motion.p>
@@ -209,7 +209,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto"
+              className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-2"
             >
               Nao enfrente o plantao sozinho. Tenha respaldo para decidir,
               <span className="text-foreground font-medium"> mesmo nos plantoes sem cirurgiao.</span>
@@ -273,7 +273,7 @@ export default function Home() {
       </section>
 
       {/* Problem Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-card/50 to-background" />
 
         <div className="container mx-auto px-4 relative z-10">
@@ -286,7 +286,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               className="text-center mb-16"
             >
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="font-display text-xl sm:text-2xl md:text-4xl font-bold mb-6">
                 Atender dor abdominal no pronto-socorro e{" "}
                 <span className="text-primary">diferente de qualquer outro atendimento</span>
               </h2>
@@ -347,7 +347,7 @@ export default function Home() {
       </section>
 
       {/* Method Section - 4 Pillars */}
-      <section id="metodo" className="py-24 relative overflow-hidden">
+      <section id="metodo" className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-20" />
 
         <div className="container mx-auto px-4 relative z-10">
@@ -361,7 +361,7 @@ export default function Home() {
             <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
               Metodologia
             </span>
-            <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
+            <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
               O Metodo <span className="text-primary text-glow">A.G.I.R.</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -462,7 +462,7 @@ export default function Home() {
       </section>
 
       {/* For Who Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-card/50 via-background to-card/50" />
 
         <div className="container mx-auto px-4 relative z-10">
@@ -477,7 +477,7 @@ export default function Home() {
               <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
                 Publico-Alvo
               </span>
-              <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
                 Para quem e o <span className="text-primary">A.G.I.R.</span>
               </h2>
               <p className="text-lg text-muted-foreground">
@@ -537,7 +537,7 @@ export default function Home() {
       </section>
 
       {/* What You Learn Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-20" />
 
         <div className="container mx-auto px-4 relative z-10">
@@ -552,7 +552,7 @@ export default function Home() {
               <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
                 Conteudo Programatico
               </span>
-              <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
                 O que voce vai <span className="text-primary">aprender</span>
               </h2>
               <p className="text-lg text-muted-foreground">
@@ -623,7 +623,7 @@ export default function Home() {
       </section>
 
       {/* Differentials Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-card/50 to-background" />
 
         <div className="container mx-auto px-4 relative z-10">
@@ -638,7 +638,7 @@ export default function Home() {
               <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
                 Diferenciais
               </span>
-              <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
                 Por que o A.G.I.R. e <span className="text-primary">diferente?</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
@@ -732,7 +732,7 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true, margin: "-50px" }}
               variants={staggerContainer}
-              className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4"
             >
               {[
                 { icon: Users, text: "Grupo exclusivo no Telegram" },
@@ -763,7 +763,7 @@ export default function Home() {
       </section>
 
       {/* Transformation Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-20" />
         <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent" />
 
@@ -779,7 +779,7 @@ export default function Home() {
               <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
                 Transformacao
               </span>
-              <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
                 Com o A.G.I.R., voce <span className="text-primary">transforma</span> sua pratica
               </h2>
             </motion.div>
@@ -895,7 +895,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-card/50 via-background to-card/50" />
 
         <div className="container mx-auto px-4 relative z-10">
@@ -910,7 +910,7 @@ export default function Home() {
               <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
                 Duvidas
               </span>
-              <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
                 Perguntas <span className="text-primary">Frequentes</span>
               </h2>
             </motion.div>
@@ -968,13 +968,13 @@ export default function Home() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30" />
         <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent" />
 
         {/* Animated orbs */}
         <motion.div
-          className="absolute top-1/2 left-1/4 w-96 h-96 rounded-full bg-primary/10 blur-3xl"
+          className="absolute top-1/2 left-1/4 w-48 sm:w-72 md:w-96 h-48 sm:h-72 md:h-96 rounded-full bg-primary/10 blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -982,7 +982,7 @@ export default function Home() {
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute top-1/2 right-1/4 w-80 h-80 rounded-full bg-accent/10 blur-3xl"
+          className="absolute top-1/2 right-1/4 w-40 sm:w-64 md:w-80 h-40 sm:h-64 md:h-80 rounded-full bg-accent/10 blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             opacity: [0.3, 0.5, 0.3],
@@ -1003,9 +1003,9 @@ export default function Home() {
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="p-12 rounded-3xl bg-card/80 backdrop-blur-sm border border-primary/30 glow-primary"
+                className="p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl bg-card/80 backdrop-blur-sm border border-primary/30 glow-primary"
               >
-                <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
+                <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
                   Nao quero mais improvisar na{" "}
                   <motion.span
                     className="text-primary"

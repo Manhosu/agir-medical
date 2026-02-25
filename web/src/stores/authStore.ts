@@ -21,6 +21,8 @@ interface AuthActions {
   signIn: (email: string, password: string) => Promise<any>
   signUp: (email: string, password: string, fullName?: string, phone?: string) => Promise<any>
   sendMagicLink: (email: string) => Promise<void>
+  sendOtp: (email: string) => Promise<void>
+  verifyOtp: (email: string, token: string) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
   updatePassword: (newPassword: string) => Promise<void>
@@ -272,6 +274,41 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     })
 
     if (error) throw error
+  },
+
+  // Send OTP code (also sends magic link via email template)
+  sendOtp: async (email: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+
+    if (error) throw error
+  },
+
+  // Verify OTP code
+  verifyOtp: async (email: string, token: string) => {
+    set({ isLoading: true })
+
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'email',
+      })
+
+      if (error) {
+        set({ isLoading: false })
+        throw error
+      }
+
+      // onAuthStateChange handles setting the user state
+    } catch (error) {
+      set({ isLoading: false })
+      throw error
+    }
   },
 
   // Sign out

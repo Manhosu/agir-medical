@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import {
   Check,
   X,
@@ -44,11 +45,6 @@ const standardPlan = {
     "Discussao de casos clinicos reais",
     "Atualizacoes cientificas recorrentes",
   ],
-  paymentOptions: [
-    { method: "Pix", highlight: true },
-    { method: "Debito" },
-    { method: "Credito - em ate 12 vezes" },
-  ],
 }
 
 const premiumPlan = {
@@ -64,11 +60,6 @@ const premiumPlan = {
     "Mentoria clinica com especialistas",
     "Respaldo para casos complexos",
     "Atendimento prioritario",
-  ],
-  paymentOptions: [
-    { method: "Pix", highlight: true },
-    { method: "Debito" },
-    { method: "Credito - em ate 12 vezes" },
   ],
 }
 
@@ -127,12 +118,6 @@ const faqs = [
 ]
 
 // PlanCard Component
-interface PaymentOption {
-  method: string
-  value?: string
-  highlight?: boolean
-}
-
 interface PlanCardProps {
   name: string
   description: string
@@ -141,7 +126,6 @@ interface PlanCardProps {
   promoLabel?: string
   pricePerDay: string
   features: string[]
-  paymentOptions: PaymentOption[]
   isPremium?: boolean
   ctaText?: string
   onSelect?: () => void
@@ -155,7 +139,6 @@ function PlanCard({
   promoLabel,
   pricePerDay,
   features,
-  paymentOptions,
   isPremium = false,
   ctaText = "Quero esse plano",
   onSelect,
@@ -174,7 +157,7 @@ function PlanCard({
     >
       {isPremium && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-          <span className="bg-[hsl(45,93%,58%)] text-[hsl(220,30%,6%)] px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+          <span className="bg-[hsl(45,93%,58%)] text-[hsl(220,30%,6%)] px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 whitespace-nowrap">
             <Crown className="w-3 h-3" />
             Mais completo
           </span>
@@ -182,34 +165,34 @@ function PlanCard({
       )}
 
       <div
-        className={`h-full rounded-2xl p-6 md:p-8 ${
+        className={`h-full rounded-2xl p-5 sm:p-6 md:p-8 flex flex-col ${
           isPremium ? "glass-strong" : "glass"
         }`}
       >
         {/* Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-5">
           <div className="flex items-center justify-center gap-2 mb-2">
             {isPremium ? (
-              <Crown className="w-6 h-6 text-[hsl(45,93%,58%)]" />
+              <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-[hsl(45,93%,58%)]" />
             ) : (
-              <Zap className="w-6 h-6 text-primary" />
+              <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
             )}
             <h3
-              className={`text-2xl font-bold ${
+              className={`text-xl sm:text-2xl font-bold ${
                 isPremium ? "text-[hsl(45,93%,58%)]" : "gradient-text"
               }`}
             >
               {name}
             </h3>
           </div>
-          <p className="text-muted-foreground text-sm">{description}</p>
+          <p className="text-muted-foreground text-xs sm:text-sm">{description}</p>
         </div>
 
         {/* Price */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-5">
           {promoLabel && (
             <div className="mb-3">
-              <span className="bg-gradient-to-r from-primary to-cyan-400 text-primary-foreground px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+              <span className="bg-gradient-to-r from-primary to-[hsl(150,97%,35%)] text-primary-foreground px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                 {promoLabel}
               </span>
             </div>
@@ -220,22 +203,22 @@ function PlanCard({
                 <span className="text-muted-foreground text-sm line-through">R$ {pricePerMonth}/mes</span>
               </div>
               <div className="flex items-baseline justify-center gap-1">
-                <span className="text-primary text-lg">R$</span>
-                <span className="text-4xl font-bold text-primary">
+                <span className="text-primary text-base sm:text-lg">R$</span>
+                <span className="text-3xl sm:text-4xl font-bold text-primary">
                   {promoPrice.split(",")[0]}
                 </span>
-                <span className="text-lg text-primary">
+                <span className="text-base sm:text-lg text-primary">
                   ,{promoPrice.split(",")[1]}/mes
                 </span>
               </div>
             </>
           ) : (
             <div className="flex items-baseline justify-center gap-1">
-              <span className="text-muted-foreground text-lg">R$</span>
-              <span className="text-4xl font-bold text-foreground">
+              <span className="text-muted-foreground text-base sm:text-lg">R$</span>
+              <span className="text-3xl sm:text-4xl font-bold text-foreground">
                 {pricePerMonth.split(",")[0]}
               </span>
-              <span className="text-lg text-muted-foreground">
+              <span className="text-base sm:text-lg text-muted-foreground">
                 ,{pricePerMonth.split(",")[1]}/mes
               </span>
             </div>
@@ -246,7 +229,7 @@ function PlanCard({
         </div>
 
         {/* Features */}
-        <ul className="space-y-3 mb-6">
+        <ul className="space-y-2.5 mb-6 flex-1">
           {features.map((feature, index) => (
             <motion.li
               key={index}
@@ -254,65 +237,23 @@ function PlanCard({
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="flex items-start gap-3"
+              className="flex items-start gap-2.5"
             >
               <Check
-                className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
+                className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0 ${
                   isPremium ? "text-[hsl(45,93%,58%)]" : "text-primary"
                 }`}
               />
-              <span className="text-sm text-foreground/90">{feature}</span>
+              <span className="text-xs sm:text-sm text-foreground/90">{feature}</span>
             </motion.li>
           ))}
         </ul>
 
-        {/* Payment Options */}
-        <div className="bg-secondary/50 rounded-xl p-4 mb-6">
-          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 text-center">
-            Formas de Pagamento
-          </h4>
-          <div className="space-y-2 flex flex-col items-center">
-            {paymentOptions.map((option, index) => (
-              <div
-                key={index}
-                className={`flex justify-center items-center py-2 px-4 rounded-lg text-sm ${
-                  option.highlight
-                    ? isPremium
-                      ? "bg-[hsl(45,93%,58%)]/10 border border-[hsl(45,93%,58%)]/20"
-                      : "bg-primary/10 border border-primary/20"
-                    : ""
-                }`}
-              >
-                <span
-                  className={
-                    option.highlight
-                      ? isPremium
-                        ? "text-[hsl(45,93%,58%)] font-medium"
-                        : "text-primary font-medium"
-                      : "text-muted-foreground"
-                  }
-                >
-                  {option.method}
-                </span>
-                {option.value && (
-                  <span
-                    className={`font-semibold ml-2 ${
-                      option.highlight ? "text-foreground" : "text-foreground/80"
-                    }`}
-                  >
-                    {option.value}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* CTA */}
         <Button
           variant={isPremium ? "ctaPremium" : "cta"}
-          size="xl"
-          className="w-full"
+          size="lg"
+          className="w-full text-sm sm:text-base"
           onClick={onSelect}
         >
           {ctaText}
@@ -341,33 +282,33 @@ export default function PlansPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
+        <div className="w-full max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between h-14 sm:h-16">
             <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm">Voltar</span>
+              <span className="text-sm hidden sm:inline">Voltar</span>
             </Link>
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
-                <span className="font-display text-xl font-bold text-primary">A</span>
-              </div>
-              <span className="font-display font-bold text-foreground hidden sm:block">
-                A.G.I.R.
-              </span>
-            </div>
+            <Image
+              src="/logo-horizontal-white.png"
+              alt="A.G.I.R."
+              width={120}
+              height={34}
+              className="h-8 sm:h-9 w-auto"
+              priority
+            />
             <Link href="/login">
-              <Button variant="ghost" size="sm">Ja sou aluno</Button>
+              <Button variant="ghost" size="sm" className="text-xs sm:text-sm">Ja sou aluno</Button>
             </Link>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-12 overflow-hidden">
+      <section className="relative pt-24 sm:pt-28 pb-8 sm:pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-20" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 blur-[120px] rounded-full" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] sm:w-[600px] lg:w-[800px] h-[200px] sm:h-[300px] lg:h-[400px] bg-primary/10 blur-[120px] rounded-full" />
 
-        <div className="container relative z-10">
+        <div className="w-full max-w-7xl mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -378,22 +319,22 @@ export default function PlansPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/5 mb-6"
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-primary/30 bg-primary/5 mb-4 sm:mb-6"
             >
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
-              <span className="text-sm text-primary font-medium">
+              <span className="text-xs sm:text-sm text-primary font-medium">
                 Ultimas vagas com condicao especial
               </span>
             </motion.div>
 
-            <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight font-display">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 leading-tight font-display">
               Escolha seu plano e tenha
               <span className="block gradient-text mt-1">
                 seguranca no plantao
               </span>
             </h1>
 
-            <p className="text-lg text-muted-foreground mb-8 text-balance">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 text-balance px-2">
               O metodo A.G.I.R. que voce precisa para avaliar dor abdominal com
               clareza, organizacao e respaldo cientifico.
             </p>
@@ -402,7 +343,7 @@ export default function PlansPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="flex flex-wrap items-center justify-center gap-4 md:gap-6"
+              className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6"
             >
               {[
                 { icon: Shield, text: "Metodo validado" },
@@ -411,10 +352,10 @@ export default function PlansPage() {
               ].map((badge, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 text-muted-foreground"
+                  className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground"
                 >
-                  <badge.icon className="w-4 h-4 text-primary" />
-                  <span className="text-sm">{badge.text}</span>
+                  <badge.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                  <span className="text-xs sm:text-sm">{badge.text}</span>
                 </div>
               ))}
             </motion.div>
@@ -423,9 +364,9 @@ export default function PlansPage() {
       </section>
 
       {/* Plans Section */}
-      <section className="py-12">
-        <div className="container">
-          <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
+      <section className="py-8 sm:py-12">
+        <div className="w-full max-w-5xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             <PlanCard
               {...standardPlan}
               ctaText="Comecar com Standard"
@@ -442,18 +383,18 @@ export default function PlansPage() {
       </section>
 
       {/* Plans Comparison */}
-      <section className="py-16">
-        <div className="container">
+      <section className="py-12 sm:py-16">
+        <div className="w-full max-w-7xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-10"
+            className="text-center mb-8 sm:mb-10"
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-3 font-display">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 font-display">
               Compare os planos
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground">
               O conteudo base e o mesmo. O que muda e o nivel de acompanhamento.
             </p>
           </motion.div>
@@ -464,17 +405,17 @@ export default function PlansPage() {
             viewport={{ once: true }}
             className="glass rounded-2xl overflow-hidden max-w-3xl mx-auto"
           >
-            <div className="grid grid-cols-3 gap-4 p-4 bg-secondary/50 border-b border-border">
-              <div className="text-sm font-medium text-muted-foreground">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4 bg-secondary/50 border-b border-border">
+              <div className="text-xs sm:text-sm font-medium text-muted-foreground">
                 Recurso
               </div>
               <div className="text-center">
-                <span className="text-sm font-semibold gradient-text">
+                <span className="text-xs sm:text-sm font-semibold gradient-text">
                   Standard
                 </span>
               </div>
               <div className="text-center">
-                <span className="text-sm font-semibold text-[hsl(45,93%,58%)]">
+                <span className="text-xs sm:text-sm font-semibold text-[hsl(45,93%,58%)]">
                   Premium
                 </span>
               </div>
@@ -488,21 +429,21 @@ export default function PlansPage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
-                  className="grid grid-cols-3 gap-4 p-4 items-center hover:bg-secondary/30 transition-colors"
+                  className="grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4 items-center hover:bg-secondary/30 transition-colors"
                 >
-                  <div className="text-sm text-foreground/90">{item.feature}</div>
+                  <div className="text-xs sm:text-sm text-foreground/90">{item.feature}</div>
                   <div className="flex justify-center">
                     {item.standard ? (
-                      <Check className="w-5 h-5 text-primary" />
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     ) : (
-                      <X className="w-5 h-5 text-muted-foreground/40" />
+                      <X className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground/40" />
                     )}
                   </div>
                   <div className="flex justify-center">
                     {item.premium ? (
-                      <Check className="w-5 h-5 text-[hsl(45,93%,58%)]" />
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-[hsl(45,93%,58%)]" />
                     ) : (
-                      <X className="w-5 h-5 text-muted-foreground/40" />
+                      <X className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground/40" />
                     )}
                   </div>
                 </motion.div>
@@ -513,37 +454,37 @@ export default function PlansPage() {
       </section>
 
       {/* Plan Recommendation */}
-      <section className="py-16">
-        <div className="container">
+      <section className="py-12 sm:py-16">
+        <div className="w-full max-w-7xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-10"
+            className="text-center mb-8 sm:mb-10"
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-3 font-display">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 font-display">
               Qual plano escolher?
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
               Ambos os planos oferecem acesso completo ao metodo A.G.I.R. A
               diferenca esta no nivel de acompanhamento e suporte clinico.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="glass rounded-2xl p-6"
+              className="glass rounded-2xl p-5 sm:p-6"
             >
-              <h3 className="text-xl font-bold gradient-text mb-2 font-display">
+              <h3 className="text-lg sm:text-xl font-bold gradient-text mb-2 font-display">
                 Escolha Standard se voce:
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-4">
                 Ideal para quem quer metodo, organizacao e decisao segura.
               </p>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5 sm:space-y-3">
                 {standardReasons.map((item, index) => (
                   <motion.li
                     key={index}
@@ -551,10 +492,10 @@ export default function PlansPage() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex items-start gap-3"
+                    className="flex items-start gap-2.5 sm:gap-3"
                   >
-                    <item.icon className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-foreground/90">{item.text}</span>
+                    <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-foreground/90">{item.text}</span>
                   </motion.li>
                 ))}
               </ul>
@@ -564,15 +505,15 @@ export default function PlansPage() {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="glass-strong rounded-2xl p-6 border border-[hsl(45,93%,58%)]/20"
+              className="glass-strong rounded-2xl p-5 sm:p-6 border border-[hsl(45,93%,58%)]/20"
             >
-              <h3 className="text-xl font-bold text-[hsl(45,93%,58%)] mb-2 font-display">
+              <h3 className="text-lg sm:text-xl font-bold text-[hsl(45,93%,58%)] mb-2 font-display">
                 Escolha Premium se voce:
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-4">
                 Ideal para quem quer metodo + acompanhamento proximo.
               </p>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5 sm:space-y-3">
                 {premiumReasons.map((item, index) => (
                   <motion.li
                     key={index}
@@ -580,10 +521,10 @@ export default function PlansPage() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex items-start gap-3"
+                    className="flex items-start gap-2.5 sm:gap-3"
                   >
-                    <item.icon className="w-5 h-5 text-[hsl(45,93%,58%)] mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-foreground/90">{item.text}</span>
+                    <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-[hsl(45,93%,58%)] mt-0.5 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-foreground/90">{item.text}</span>
                   </motion.li>
                 ))}
               </ul>
@@ -593,18 +534,18 @@ export default function PlansPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16">
-        <div className="container max-w-3xl">
+      <section className="py-12 sm:py-16">
+        <div className="w-full max-w-3xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-10"
+            className="text-center mb-8 sm:mb-10"
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-3 font-display">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 font-display">
               Perguntas frequentes
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground">
               Tire suas duvidas sobre os planos
             </p>
           </motion.div>
@@ -619,12 +560,12 @@ export default function PlansPage() {
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
-                  className="glass rounded-xl border-none px-6"
+                  className="glass rounded-xl border-none px-4 sm:px-6"
                 >
-                  <AccordionTrigger className="text-left text-foreground hover:text-primary hover:no-underline py-4">
+                  <AccordionTrigger className="text-left text-sm sm:text-base text-foreground hover:text-primary hover:no-underline py-4">
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pb-4">
+                  <AccordionContent className="text-sm text-muted-foreground pb-4">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>
@@ -635,30 +576,30 @@ export default function PlansPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-border/50">
-        <div className="container">
+      <footer className="py-8 sm:py-12 border-t border-border/50">
+        <div className="w-full max-w-7xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex flex-wrap items-center justify-center gap-8 mb-8"
+            className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mb-6 sm:mb-8"
           >
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Lock className="w-5 h-5 text-primary" />
-              <span className="text-sm">Pagamento 100% seguro</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground">
+              <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <span className="text-xs sm:text-sm">Pagamento 100% seguro</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <CreditCard className="w-5 h-5 text-primary" />
-              <span className="text-sm">Parcelamento em ate 12x</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground">
+              <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <span className="text-xs sm:text-sm">Parcelamento em ate 12x</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <ShieldCheck className="w-5 h-5 text-primary" />
-              <span className="text-sm">Garantia de 7 dias</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground">
+              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <span className="text-xs sm:text-sm">Garantia de 7 dias</span>
             </div>
           </motion.div>
 
           <div className="text-center">
-            <p className="text-sm text-muted-foreground mb-2">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2">
               Programa A.G.I.R. &copy; {new Date().getFullYear()} - Todos os direitos reservados
             </p>
             <p className="text-xs text-muted-foreground/60">

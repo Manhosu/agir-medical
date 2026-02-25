@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
-import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,20 +10,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from 'sonner'
 
 export default function LoginPage() {
-  const { signOut, isLoading, user, isAdmin } = useAuth()
+  const { signOut, isLoading, user, isAdmin, sendOtp, verifyOtp } = useAuth()
   const [email, setEmail] = useState('')
+  const [otpCode, setOtpCode] = useState('')
+  const [step, setStep] = useState<'email' | 'otp'>('email')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [linkSent, setLinkSent] = useState(false)
   const [showLoggedInState, setShowLoggedInState] = useState(false)
+  const otpInputRef = useRef<HTMLInputElement>(null)
 
-  // Mostrar estado "já logado" apenas depois que confirmar que há usuário
   useEffect(() => {
     if (!isLoading && user) {
       setShowLoggedInState(true)
     }
   }, [isLoading, user])
 
-  // Se já está logado e já carregou, mostrar opção de continuar ou trocar conta
   if (showLoggedInState && user) {
     return (
       <Card>
@@ -62,7 +61,7 @@ export default function LoginPage() {
     )
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!email) {
@@ -73,68 +72,134 @@ export default function LoginPage() {
     setIsSubmitting(true)
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        toast.error('Erro ao enviar link. Tente novamente.')
-        setIsSubmitting(false)
-        return
-      }
-
-      setLinkSent(true)
-      toast.success('Link de acesso enviado!')
-    } catch (error) {
-      toast.error('Erro ao enviar link. Tente novamente.')
+      await sendOtp(email.trim().toLowerCase())
+      setStep('otp')
+      toast.success('Código enviado! Verifique seu email.')
+      setTimeout(() => otpInputRef.current?.focus(), 300)
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao enviar código. Tente novamente.')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  // Link enviado - mostrar confirmacao
-  if (linkSent) {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!otpCode || otpCode.length !== 6) {
+      toast.error('Digite o código de 6 dígitos')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      await verifyOtp(email.trim().toLowerCase(), otpCode)
+      toast.success('Login realizado com sucesso!')
+    } catch (error: any) {
+      if (error.message === 'Token has expired or is invalid') {
+        toast.error('Código inválido ou expirado. Tente novamente.')
+      } else {
+        toast.error(error.message || 'Erro ao verificar código.')
+      }
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleResendOtp = async () => {
+    setIsSubmitting(true)
+    try {
+      await sendOtp(email.trim().toLowerCase())
+      toast.success('Código reenviado!')
+    } catch (error: any) {
+      toast.error('Erro ao reenviar código.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  // Step 2: OTP verification
+  if (step === 'otp') {
     return (
       <Card>
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-serif">Verifique seu Email</CardTitle>
+          <CardTitle className="text-2xl font-serif">Verificar Código</CardTitle>
           <CardDescription>
-            Enviamos um link de acesso para <strong>{email}</strong>
+            Enviamos um código de 6 dígitos para <strong>{email}</strong>
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-center text-muted-foreground">
-            Clique no link que enviamos para seu email para acessar sua conta.
-            Verifique também a pasta de spam.
-          </p>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => {
-              setLinkSent(false)
-              setEmail('')
-            }}
-          >
-            Usar outro email
-          </Button>
-        </CardContent>
+
+        <form onSubmit={handleVerifyOtp}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="otpCode">Código de Acesso</Label>
+              <Input
+                ref={otpInputRef}
+                id="otpCode"
+                type="text"
+                inputMode="numeric"
+                placeholder="000000"
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
+                disabled={isSubmitting}
+                maxLength={6}
+                className="text-center text-2xl tracking-[0.5em] font-bold"
+                required
+              />
+            </div>
+
+            <p className="text-xs text-center text-muted-foreground">
+              Verifique também a pasta de spam. Você também pode clicar no link enviado no email.
+            </p>
+          </CardContent>
+
+          <CardFooter className="flex flex-col gap-3 pt-2">
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isSubmitting || otpCode.length !== 6}
+            >
+              {isSubmitting ? 'Verificando...' : 'Verificar Código'}
+            </Button>
+
+            <div className="flex items-center justify-between w-full">
+              <button
+                type="button"
+                onClick={() => {
+                  setStep('email')
+                  setOtpCode('')
+                }}
+                disabled={isSubmitting}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                Usar outro email
+              </button>
+              <button
+                type="button"
+                onClick={handleResendOtp}
+                disabled={isSubmitting}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                Reenviar código
+              </button>
+            </div>
+          </CardFooter>
+        </form>
       </Card>
     )
   }
 
+  // Step 1: Email input
   return (
     <Card>
       <CardHeader className="space-y-1 text-center">
         <CardTitle className="text-2xl font-serif">Entrar</CardTitle>
         <CardDescription>
-          Digite seu email para receber um link de acesso
+          Digite seu email para receber um código de acesso
         </CardDescription>
       </CardHeader>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSendOtp}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -156,7 +221,7 @@ export default function LoginPage() {
             className="w-full"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Enviando...' : 'Enviar Link de Acesso'}
+            {isSubmitting ? 'Enviando...' : 'Enviar Código de Acesso'}
           </Button>
 
           <p className="text-sm text-center text-muted-foreground">
