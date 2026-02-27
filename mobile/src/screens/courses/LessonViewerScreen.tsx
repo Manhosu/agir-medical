@@ -50,23 +50,24 @@ export default function LessonViewerScreen() {
   const maxProgressRef = useRef(0) // Track max progress without causing re-renders
 
   // Habilitar protecao de tela ao entrar na aula
-  useEffect(() => {
-    enableScreenProtection()
-
-    // Monitorar tentativas de screenshot
-    const subscription = addScreenshotListener(() => {
-      Alert.alert(
-        'Aviso',
-        'A captura de tela nao e permitida nesta secao.',
-        [{ text: 'OK' }],
-      )
-    })
-
-    return () => {
-      disableScreenProtection()
-      subscription?.remove()
-    }
-  }, [])
+  // TODO: Reativar proteção após tirar prints para as lojas
+  // useEffect(() => {
+  //   enableScreenProtection()
+  //
+  //   // Monitorar tentativas de screenshot
+  //   const subscription = addScreenshotListener(() => {
+  //     Alert.alert(
+  //       'Aviso',
+  //       'A captura de tela nao e permitida nesta secao.',
+  //       [{ text: 'OK' }],
+  //     )
+  //   })
+  //
+  //   return () => {
+  //     disableScreenProtection()
+  //     subscription?.remove()
+  //   }
+  // }, [])
 
   // Verificar assinatura
   useEffect(() => {
@@ -261,7 +262,8 @@ export default function LessonViewerScreen() {
       </style>
     </head>
     <body>
-      <div class="watermark">
+      <!-- TODO: Reativar watermark após tirar prints para as lojas -->
+      <!-- <div class="watermark">
         ${Array.from({ length: 30 })
           .map(
             (_, i) =>
@@ -269,7 +271,7 @@ export default function LessonViewerScreen() {
           )
           .join('')}
       </div>
-      <div class="watermark-center">${watermarkEmail}</div>
+      <div class="watermark-center">${watermarkEmail}</div> -->
       <div class="content">
         ${content}
       </div>
@@ -298,15 +300,13 @@ export default function LessonViewerScreen() {
           }
         }, { passive: true });
 
-        // Bloquear menu de contexto
-        document.addEventListener('contextmenu', function(e) {
-          e.preventDefault();
-        });
-
-        // Bloquear copia
-        document.addEventListener('copy', function(e) {
-          e.preventDefault();
-        });
+        // TODO: Reativar bloqueios após tirar prints para as lojas
+        // document.addEventListener('contextmenu', function(e) {
+        //   e.preventDefault();
+        // });
+        // document.addEventListener('copy', function(e) {
+        //   e.preventDefault();
+        // });
       </script>
     </body>
     </html>

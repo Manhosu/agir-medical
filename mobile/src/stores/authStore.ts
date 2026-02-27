@@ -78,7 +78,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       supabase.auth.onAuthStateChange(async (event, session) => {
         console.log('Auth state change:', event)
 
-        if (event === 'SIGNED_IN' && session?.user) {
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
           // Buscar perfil com timeout
           const profileResult = await fetchWithTimeout(
             supabase

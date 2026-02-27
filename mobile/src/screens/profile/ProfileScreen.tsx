@@ -67,10 +67,17 @@ export default function ProfileScreen() {
         { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
       )
 
-      const response = await fetch(manipulated.uri)
-      const blob = await response.blob()
-
       const fileName = `${user.id}-${Date.now()}.jpg`
+
+      // Ler arquivo como blob via XMLHttpRequest (mais confiavel no React Native)
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        xhr.onload = () => resolve(xhr.response)
+        xhr.onerror = () => reject(new Error('Erro ao ler imagem'))
+        xhr.responseType = 'blob'
+        xhr.open('GET', manipulated.uri, true)
+        xhr.send(null)
+      })
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
