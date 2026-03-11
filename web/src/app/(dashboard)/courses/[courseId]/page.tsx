@@ -478,7 +478,7 @@ export default function CourseDetailPage() {
             </Button>
           </div>
           <iframe
-            src={`/api/guideline-proxy?url=${encodeURIComponent(course.guideline_url)}`}
+            src={`/api/gp/${new URL(course.guideline_url).host}`}
             className="w-full border-0"
             style={{ height: 'calc(100vh - 57px)' }}
             title={`Guideline - ${course.title}`}
