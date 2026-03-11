@@ -878,7 +878,7 @@ export default function Home() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Button variant="hero" size="xl" className="group">
+                  <Button variant="hero" size="xl" className="group text-sm sm:text-base md:text-lg px-5 sm:px-8 md:px-10 w-full sm:w-auto">
                     Quero decidir com metodo e confianca
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
@@ -1025,9 +1025,9 @@ export default function Home() {
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="inline-block mb-10"
+                    className="block sm:inline-block mb-10"
                   >
-                    <Button variant="hero" size="xl" className="group">
+                    <Button variant="hero" size="xl" className="group text-sm sm:text-base md:text-lg px-5 sm:px-8 md:px-10 w-full sm:w-auto">
                       Garantir minha vaga no A.G.I.R.
                       <motion.span
                         animate={{ x: [0, 5, 0] }}
@@ -1093,7 +1093,7 @@ export default function Home() {
             </motion.div>
 
             {/* Links */}
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <div className="flex items-center justify-center flex-wrap gap-4 sm:gap-6 text-sm text-muted-foreground">
               <Link href="/login" className="hover:text-foreground transition-colors">Entrar</Link>
               <Link href="/register" className="hover:text-foreground transition-colors">Criar Conta</Link>
               <Link href="/terms" className="hover:text-foreground transition-colors">Termos</Link>
