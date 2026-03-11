@@ -32,6 +32,30 @@ export default function LessonViewerScreen() {
   const { courseId, lessonId, type = 'clinical', guidelineUrl } = route.params
   const { user, profile, hasActiveSubscription } = useAuthStore()
 
+  // Script para substituir branding "MedPocketbook" por "AGIR" nos guidelines do Lovable
+  const brandingFixScript = `
+    (function() {
+      function fixBranding() {
+        var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        var node;
+        while (node = walker.nextNode()) {
+          if (node.textContent && node.textContent.indexOf('MedPocketbook') !== -1) {
+            node.textContent = node.textContent.replace(/MedPocketbook/g, 'AGIR');
+          }
+        }
+        if (document.title.indexOf('MedPocketbook') !== -1) {
+          document.title = document.title.replace(/MedPocketbook/g, 'AGIR');
+        }
+      }
+      fixBranding();
+      var observer = new MutationObserver(fixBranding);
+      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+      setTimeout(fixBranding, 1000);
+      setTimeout(fixBranding, 3000);
+    })();
+    true;
+  `
+
   // Guideline mode: load external URL directly in WebView
   if (type === 'guideline' && guidelineUrl) {
     return (
@@ -43,6 +67,7 @@ export default function LessonViewerScreen() {
           javaScriptEnabled={true}
           domStorageEnabled={true}
           startInLoadingState={true}
+          injectedJavaScript={brandingFixScript}
           renderLoading={() => (
             <View style={[styles.loadingContainer, { backgroundColor: '#0d1117', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }]}>
               <ActivityIndicator size="large" color="#02884a" />
