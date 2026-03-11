@@ -80,6 +80,11 @@ export async function GET(
     if (contentType.includes('text/html')) {
       let html = await res.text()
 
+      // Inject history.replaceState BEFORE any scripts load so the SPA's
+      // router sees "/" instead of "/api/gp/host" and renders correctly.
+      const routerFix = `<script>history.replaceState(null, '', '/');</script>`
+      html = html.replace(/<head([^>]*)>/, `<head$1>${routerFix}`)
+
       // Rewrite root-relative paths in src and href attributes
       html = html.replace(/(src|href)=(["'])\//g, `$1=$2${proxyBase}/`)
 
