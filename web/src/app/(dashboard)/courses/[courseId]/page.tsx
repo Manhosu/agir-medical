@@ -19,7 +19,9 @@ import {
   Play,
   Shield,
   Eye,
-  CheckCircle2
+  CheckCircle2,
+  Zap,
+  X,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -30,6 +32,7 @@ interface Course {
   cover_url: string | null
   thumbnail_url: string | null
   is_published: boolean
+  guideline_url: string | null
 }
 
 interface LessonWithContent {
@@ -53,6 +56,7 @@ export default function CourseDetailPage() {
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isGuidelineOpen, setIsGuidelineOpen] = useState(false)
 
   useEffect(() => {
     if (courseId && user?.id) {
@@ -144,6 +148,18 @@ export default function CourseDetailPage() {
       return
     }
     setIsModalOpen(true)
+  }
+
+  const handleOpenGuideline = () => {
+    if (!hasActiveSubscription) {
+      toast.error('Voce precisa de uma assinatura ativa para acessar o conteudo')
+      return
+    }
+    if (!course?.guideline_url) {
+      toast.error('Guideline nao disponivel')
+      return
+    }
+    setIsGuidelineOpen(true)
   }
 
   const handleProgressUpdate = (progress: number, completed: boolean) => {
@@ -323,8 +339,40 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
 
-                {/* Action Button */}
-                {lessonContent ? (
+                {/* Content Type Selection or Single Action */}
+                {course.guideline_url ? (
+                  <div className="space-y-3 mt-4">
+                    <p className="text-sm font-medium text-muted-foreground">Escolha o tipo de conteudo:</p>
+                    <button
+                      onClick={handleOpenGuideline}
+                      className="w-full flex items-center gap-4 p-4 rounded-lg border-2 border-primary/50 bg-primary/5 hover:bg-primary/10 transition-colors text-left"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+                        <Zap className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm">Conduta Rapida</p>
+                        <p className="text-xs text-muted-foreground">Guideline / Protocolo do Plantao</p>
+                      </div>
+                      <ArrowLeft className="h-4 w-4 text-primary rotate-180 shrink-0" />
+                    </button>
+                    {lessonContent && (
+                      <button
+                        onClick={handleOpenContent}
+                        className="w-full flex items-center gap-4 p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors text-left"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                          <BookOpen className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm">Fundamentacao Clinica</p>
+                          <p className="text-xs text-muted-foreground">Conteudo Completo</p>
+                        </div>
+                        <ArrowLeft className="h-4 w-4 text-muted-foreground rotate-180 shrink-0" />
+                      </button>
+                    )}
+                  </div>
+                ) : lessonContent ? (
                   <Button
                     size="lg"
                     className="w-full md:w-auto gap-2 mt-4"
@@ -408,6 +456,35 @@ export default function CourseDetailPage() {
           isCompleted={isCompleted}
           onProgressUpdate={handleProgressUpdate}
         />
+      )}
+
+      {/* Guideline Modal (iframe) */}
+      {isGuidelineOpen && course.guideline_url && (
+        <div className="fixed inset-0 z-50 bg-background">
+          <div className="flex items-center justify-between px-4 py-3 border-b bg-card">
+            <div className="flex items-center gap-3">
+              <Zap className="h-5 w-5 text-primary" />
+              <div>
+                <h3 className="font-semibold text-sm">{course.title}</h3>
+                <p className="text-xs text-muted-foreground">Conduta Rapida - Guideline</p>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsGuidelineOpen(false)}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+          <iframe
+            src={course.guideline_url}
+            className="w-full border-0"
+            style={{ height: 'calc(100vh - 57px)' }}
+            title={`Guideline - ${course.title}`}
+            allow="fullscreen"
+          />
+        </div>
       )}
     </>
   )

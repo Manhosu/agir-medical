@@ -29,8 +29,30 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window')
 export default function LessonViewerScreen() {
   const route = useRoute<CoursesScreenProps<'LessonViewer'>['route']>()
   const navigation = useNavigation<CoursesScreenProps<'LessonViewer'>['navigation']>()
-  const { courseId, lessonId } = route.params
+  const { courseId, lessonId, type = 'clinical', guidelineUrl } = route.params
   const { user, profile, hasActiveSubscription } = useAuthStore()
+
+  // Guideline mode: load external URL directly in WebView
+  if (type === 'guideline' && guidelineUrl) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#0d1117' }}>
+        <WebView
+          source={{ uri: guidelineUrl }}
+          style={{ flex: 1 }}
+          scrollEnabled={true}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          startInLoadingState={true}
+          renderLoading={() => (
+            <View style={[styles.loadingContainer, { backgroundColor: '#0d1117', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }]}>
+              <ActivityIndicator size="large" color="#02884a" />
+              <Text style={[styles.loadingText, { color: '#8b949e' }]}>Carregando guideline...</Text>
+            </View>
+          )}
+        />
+      </View>
+    )
+  }
   const { fetchLessonContent, saveProgress } = useCourses()
   const colors = useTheme()
   const insets = useSafeAreaInsets()

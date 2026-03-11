@@ -96,6 +96,7 @@ export interface Database {
           cover_url: string | null
           is_published: boolean
           order: number
+          guideline_url: string | null
         }
         Insert: {
           id?: string
@@ -107,6 +108,7 @@ export interface Database {
           cover_url?: string | null
           is_published?: boolean
           order?: number
+          guideline_url?: string | null
         }
         Update: {
           id?: string
@@ -118,6 +120,7 @@ export interface Database {
           cover_url?: string | null
           is_published?: boolean
           order?: number
+          guideline_url?: string | null
         }
       }
       lessons: {

@@ -19,7 +19,7 @@ export type MainTabParamList = {
 export type CoursesStackParamList = {
   CoursesList: undefined
   CourseDetail: { courseId: string }
-  LessonViewer: { courseId: string; lessonId: string }
+  LessonViewer: { courseId: string; lessonId: string; type?: 'clinical' | 'guideline'; guidelineUrl?: string }
 }
 
 // Tipos das rotas raiz

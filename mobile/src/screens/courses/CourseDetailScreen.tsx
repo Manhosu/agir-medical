@@ -301,6 +301,93 @@ export default function CourseDetailScreen() {
           </Animated.Text>
         </Animated.View>
 
+        {/* Content Type Selection */}
+        {course.guideline_url && (
+          <>
+            <Animated.Text
+              entering={FadeInUp.delay(300).duration(400)}
+              style={[styles.lessonsTitle, { color: colors.text, marginBottom: 12 }]}
+            >
+              Tipo de Conteudo
+            </Animated.Text>
+
+            <Animated.View entering={FadeInUp.delay(320).duration(500).springify()}>
+              <AnimatedTouchable
+                style={[styles.contentTypeCard, { backgroundColor: colors.card, borderColor: colors.primary }]}
+                onPress={() => {
+                  if (!hasActiveSubscription) {
+                    Alert.alert(
+                      'Assinatura Necessaria',
+                      'Voce precisa de uma assinatura ativa para acessar o conteudo.',
+                      [
+                        { text: 'Cancelar', style: 'cancel' },
+                        { text: 'Assinar Agora', onPress: openPlansPage },
+                      ],
+                    )
+                    return
+                  }
+                  navigation.navigate('LessonViewer', {
+                    courseId,
+                    lessonId: lessons[0]?.id || '',
+                    type: 'guideline',
+                    guidelineUrl: course.guideline_url!,
+                  })
+                }}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.contentTypeIcon, { backgroundColor: `${colors.primary}20` }]}>
+                  <Text style={{ fontSize: 22 }}>⚡</Text>
+                </View>
+                <View style={styles.contentTypeInfo}>
+                  <Text style={[styles.contentTypeTitle, { color: colors.text }]}>Conduta Rapida</Text>
+                  <Text style={[styles.contentTypeSubtitle, { color: colors.textSecondary }]}>
+                    Guideline / Protocolo do Plantao
+                  </Text>
+                </View>
+                <Text style={[styles.lessonArrow, { color: colors.primary }]}>→</Text>
+              </AnimatedTouchable>
+            </Animated.View>
+
+            <Animated.View entering={FadeInUp.delay(380).duration(500).springify()}>
+              <AnimatedTouchable
+                style={[styles.contentTypeCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+                onPress={() => {
+                  if (!hasActiveSubscription) {
+                    Alert.alert(
+                      'Assinatura Necessaria',
+                      'Voce precisa de uma assinatura ativa para acessar o conteudo.',
+                      [
+                        { text: 'Cancelar', style: 'cancel' },
+                        { text: 'Assinar Agora', onPress: openPlansPage },
+                      ],
+                    )
+                    return
+                  }
+                  if (lessons.length > 0) {
+                    navigation.navigate('LessonViewer', {
+                      courseId,
+                      lessonId: lessons[0].id,
+                      type: 'clinical',
+                    })
+                  }
+                }}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.contentTypeIcon, { backgroundColor: `${colors.border}` }]}>
+                  <Text style={{ fontSize: 22 }}>📖</Text>
+                </View>
+                <View style={styles.contentTypeInfo}>
+                  <Text style={[styles.contentTypeTitle, { color: colors.text }]}>Fundamentacao Clinica</Text>
+                  <Text style={[styles.contentTypeSubtitle, { color: colors.textSecondary }]}>
+                    Conteudo Completo
+                  </Text>
+                </View>
+                <Text style={[styles.lessonArrow, { color: colors.textTertiary }]}>→</Text>
+              </AnimatedTouchable>
+            </Animated.View>
+          </>
+        )}
+
         {/* Subscription Warning */}
         {!hasActiveSubscription && (
           <TouchableOpacity onPress={openPlansPage} activeOpacity={0.8}>
@@ -494,5 +581,32 @@ const styles = StyleSheet.create({
   },
   lessonArrow: {
     fontSize: 16,
+  },
+  contentTypeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1.5,
+  },
+  contentTypeIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  contentTypeInfo: {
+    flex: 1,
+  },
+  contentTypeTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  contentTypeSubtitle: {
+    fontSize: 12,
   },
 })
