@@ -218,21 +218,26 @@ export function ContentModal({
       >
         <SecureContentViewer userEmail={userEmail} className="min-h-full">
           <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
-            <article
-              className="prose prose-lg dark:prose-invert max-w-none
-                prose-headings:font-serif
-                prose-h1:text-2xl prose-h1:md:text-3xl
-                prose-h2:text-xl prose-h2:md:text-2xl
-                prose-h3:text-lg prose-h3:md:text-xl
-                prose-p:text-base prose-p:leading-relaxed
-                prose-li:text-base
-                prose-table:text-sm
-                [&_table]:w-full [&_table]:border-collapse
-                [&_th]:bg-muted [&_th]:p-3 [&_th]:text-left [&_th]:border [&_th]:border-border
-                [&_td]:p-3 [&_td]:border [&_td]:border-border
-                [&_img]:rounded-lg [&_img]:shadow-md"
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
+            {/* Container estilo documento/PDF */}
+            <div className="bg-white rounded-lg shadow-xl border border-gray-200 px-6 md:px-12 py-10">
+              <article
+                className="prose prose-lg max-w-none
+                  prose-headings:font-serif prose-headings:text-gray-900
+                  prose-h1:text-2xl prose-h1:md:text-3xl
+                  prose-h2:text-xl prose-h2:md:text-2xl
+                  prose-h3:text-lg prose-h3:md:text-xl
+                  prose-p:text-gray-800 prose-p:text-base prose-p:leading-relaxed
+                  prose-li:text-gray-800 prose-li:text-base
+                  prose-strong:text-gray-900
+                  prose-a:text-emerald-700
+                  prose-table:text-sm
+                  [&_table]:w-full [&_table]:border-collapse
+                  [&_th]:bg-gray-100 [&_th]:p-3 [&_th]:text-left [&_th]:border [&_th]:border-gray-300 [&_th]:text-gray-900
+                  [&_td]:p-3 [&_td]:border [&_td]:border-gray-300 [&_td]:text-gray-800
+                  [&_img]:rounded-lg [&_img]:shadow-md"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            </div>
 
             {/* Seção de conclusão */}
             {showCompletionButton && !isCompleted && (

@@ -242,18 +242,24 @@ export default function LessonViewerScreen() {
           -webkit-touch-callout: none;
           user-select: none;
         }
+        html {
+          background-color: ${colors.background};
+        }
         body {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          background-color: ${colors.background};
-          color: ${colors.text};
-          padding: 16px;
+          background-color: #ffffff;
+          color: #1a1a1a;
+          padding: 20px;
           padding-bottom: 100px;
-          margin: 0;
-          line-height: 1.6;
+          margin: 8px;
+          margin-top: 8px;
+          line-height: 1.7;
           font-size: 16px;
+          border-radius: 8px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.3);
         }
         h1, h2, h3 {
-          color: ${colors.text};
+          color: #111111;
           margin-top: 24px;
           margin-bottom: 12px;
         }
@@ -261,8 +267,15 @@ export default function LessonViewerScreen() {
         h2 { font-size: 20px; }
         h3 { font-size: 18px; }
         p {
+          color: #333333;
           margin-bottom: 16px;
           text-align: justify;
+        }
+        li {
+          color: #333333;
+        }
+        strong, b {
+          color: #111111;
         }
         img {
           max-width: 100%;
@@ -270,7 +283,23 @@ export default function LessonViewerScreen() {
           border-radius: 8px;
         }
         a {
-          color: ${colors.primary};
+          color: #02884a;
+        }
+        table {
+          border-collapse: collapse;
+          width: 100%;
+        }
+        th {
+          background-color: #f3f4f6;
+          color: #111111;
+          padding: 8px;
+          border: 1px solid #d1d5db;
+          text-align: left;
+        }
+        td {
+          padding: 8px;
+          border: 1px solid #d1d5db;
+          color: #333333;
         }
         .watermark {
           position: fixed;
