@@ -247,21 +247,12 @@ export default function CourseDetailScreen() {
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingBottom: 32 + bottomPadding }]}>
       {/* Course Header */}
-      {course.cover_url ? (
-        <Animated.Image
-          entering={FadeIn.duration(500)}
-          source={{ uri: course.cover_url }}
-          style={[styles.cover, { backgroundColor: colors.border }]}
-          resizeMode="cover"
-        />
-      ) : (
-        <Animated.View
-          entering={FadeIn.duration(500)}
-          style={[styles.coverPlaceholder, { backgroundColor: colors.border }]}
-        >
-          <Text style={styles.coverPlaceholderText}>📚</Text>
-        </Animated.View>
-      )}
+      <Animated.Image
+        entering={FadeIn.duration(500)}
+        source={course.cover_url ? { uri: course.cover_url } : require('../../../assets/course-cover.png')}
+        style={[styles.cover, { backgroundColor: colors.border }]}
+        resizeMode="cover"
+      />
 
       <View style={styles.info}>
         <Animated.Text

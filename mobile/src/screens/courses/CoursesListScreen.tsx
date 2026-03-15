@@ -103,18 +103,12 @@ function CourseCard({
         accessibilityLabel={`Curso: ${item.title}`}
         accessibilityHint={`Progresso: ${item.progressPercent}%. Toque para abrir o curso`}
       >
-        {imageUrl ? (
-          <Animated.Image
-            entering={FadeIn.delay(200 + index * 80).duration(400)}
-            source={{ uri: imageUrl }}
-            style={[styles.courseCover, { backgroundColor: colors.border }]}
-            resizeMode="cover"
-          />
-        ) : (
-          <View style={[styles.courseCoverPlaceholder, { backgroundColor: colors.border }]}>
-            <Text style={styles.courseCoverPlaceholderText}>📚</Text>
-          </View>
-        )}
+        <Animated.Image
+          entering={FadeIn.delay(200 + index * 80).duration(400)}
+          source={imageUrl ? { uri: imageUrl } : require('../../../assets/course-cover.png')}
+          style={[styles.courseCover, { backgroundColor: colors.border }]}
+          resizeMode="cover"
+        />
         <View style={styles.courseInfo}>
           <Text style={[styles.courseTitle, { color: colors.text }]} numberOfLines={2}>
             {item.title}

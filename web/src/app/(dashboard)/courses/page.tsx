@@ -90,16 +90,12 @@ export default function CoursesPage() {
           {filteredCourses.map((course) => (
             <Card key={course.id} className="overflow-hidden hover:border-primary transition-colors">
               {/* Cover Image */}
-              <div className="aspect-video bg-muted flex items-center justify-center">
-                {(course.thumbnail_url || course.cover_url) ? (
-                  <img
-                    src={course.thumbnail_url || course.cover_url || ''}
-                    alt={course.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <BookOpen className="w-12 h-12 text-muted-foreground" />
-                )}
+              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center overflow-hidden">
+                <img
+                  src={course.thumbnail_url || course.cover_url || '/course-cover.png'}
+                  alt={course.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               <CardHeader>

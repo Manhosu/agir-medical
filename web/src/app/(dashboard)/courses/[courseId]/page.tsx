@@ -215,9 +215,13 @@ export default function CourseDetailPage() {
         {/* Blocked Content Card */}
         <Card className="overflow-hidden">
           <div className="relative">
-            {/* Cover/Placeholder */}
-            <div className="h-64 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-              <BookOpen className="h-24 w-24 text-primary/30" />
+            {/* Cover */}
+            <div className="h-64 bg-gradient-to-br from-gray-800 to-gray-900">
+              <img
+                src={course.thumbnail_url || course.cover_url || '/course-cover.png'}
+                alt={course.title}
+                className="w-full h-full object-cover"
+              />
             </div>
 
             {/* Overlay */}
@@ -277,16 +281,12 @@ export default function CourseDetailPage() {
         <Card className="overflow-hidden">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Cover Image */}
-            <div className="h-64 md:h-auto bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center">
-              {(course.thumbnail_url || course.cover_url) ? (
-                <img
-                  src={course.thumbnail_url || course.cover_url || ''}
-                  alt={course.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <BookOpen className="h-24 w-24 text-primary/40" />
-              )}
+            <div className="h-64 md:h-auto bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden">
+              <img
+                src={course.thumbnail_url || course.cover_url || '/course-cover.png'}
+                alt={course.title}
+                className="w-full h-full object-cover"
+              />
             </div>
 
             {/* Info */}
