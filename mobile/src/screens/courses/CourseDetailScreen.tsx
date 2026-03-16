@@ -246,29 +246,42 @@ export default function CourseDetailScreen() {
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingBottom: 32 + bottomPadding }]}>
-      {/* Course Header */}
-      <Animated.Image
-        entering={FadeIn.duration(500)}
-        source={course.cover_url ? { uri: course.cover_url } : require('../../../assets/course-cover.png')}
-        style={[styles.cover, { backgroundColor: colors.border }]}
-        resizeMode="cover"
-      />
+      {/* Course Header with title overlay */}
+      <View style={styles.coverContainer}>
+        <Animated.Image
+          entering={FadeIn.duration(500)}
+          source={course.cover_url ? { uri: course.cover_url } : require('../../../assets/course-cover.png')}
+          style={[styles.cover, { backgroundColor: colors.border }]}
+          resizeMode="cover"
+        />
+        {/* Overlay layers */}
+        <View style={styles.coverOverlay} />
+        <View style={styles.coverOverlayBottom} />
+        {/* Accent line */}
+        <View style={[styles.coverAccentLine, { backgroundColor: colors.primary }]} />
+        {/* Title on image */}
+        <View style={styles.coverTitleContainer}>
+          <Animated.Text
+            entering={FadeInUp.delay(100).duration(500)}
+            style={styles.coverTitle}
+            numberOfLines={2}
+          >
+            {course.title}
+          </Animated.Text>
+          <Text style={styles.coverSubtitle}>Programa A.G.I.R.</Text>
+          {course.description && (
+            <Animated.Text
+              entering={FadeIn.delay(200).duration(500)}
+              style={styles.coverDescription}
+              numberOfLines={2}
+            >
+              {course.description}
+            </Animated.Text>
+          )}
+        </View>
+      </View>
 
       <View style={styles.info}>
-        <Animated.Text
-          entering={FadeInUp.delay(100).duration(500)}
-          style={[styles.title, { color: colors.text }]}
-        >
-          {course.title}
-        </Animated.Text>
-        {course.description && (
-          <Animated.Text
-            entering={FadeIn.delay(200).duration(500)}
-            style={[styles.description, { color: colors.textSecondary }]}
-          >
-            {course.description}
-          </Animated.Text>
-        )}
 
         {/* Progress Card */}
         <Animated.View
@@ -442,18 +455,68 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 16,
   },
+  coverContainer: {
+    position: 'relative' as const,
+    width: '100%',
+    height: 220,
+  },
   cover: {
     width: '100%',
-    height: 200,
+    height: '100%',
   },
-  coverPlaceholder: {
-    width: '100%',
-    height: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
+  coverOverlay: {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.35)',
   },
-  coverPlaceholderText: {
-    fontSize: 64,
+  coverOverlayBottom: {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '60%',
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  coverAccentLine: {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 3,
+    opacity: 0.7,
+  },
+  coverTitleContainer: {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  coverTitle: {
+    fontSize: 20,
+    fontWeight: '700' as const,
+    color: '#ffffff',
+    textShadowColor: 'rgba(0,0,0,0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  coverSubtitle: {
+    fontSize: 10,
+    fontWeight: '600' as const,
+    color: 'rgba(2,136,74,0.8)',
+    marginTop: 4,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase' as const,
+  },
+  coverDescription: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.75)',
+    marginTop: 4,
+    lineHeight: 16,
   },
   info: {
     padding: 16,

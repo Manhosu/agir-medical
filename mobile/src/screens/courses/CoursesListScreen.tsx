@@ -103,21 +103,28 @@ function CourseCard({
         accessibilityLabel={`Curso: ${item.title}`}
         accessibilityHint={`Progresso: ${item.progressPercent}%. Toque para abrir o curso`}
       >
-        <Animated.Image
-          entering={FadeIn.delay(200 + index * 80).duration(400)}
-          source={imageUrl ? { uri: imageUrl } : require('../../../assets/course-cover.png')}
-          style={[styles.courseCover, { backgroundColor: colors.border }]}
-          resizeMode="cover"
-        />
-        <View style={styles.courseInfo}>
-          <Text style={[styles.courseTitle, { color: colors.text }]} numberOfLines={2}>
-            {item.title}
-          </Text>
-          {item.description && (
-            <Text style={[styles.courseDescription, { color: colors.textSecondary }]} numberOfLines={2}>
-              {item.description}
+        {/* Cover com titulo overlay */}
+        <View style={styles.coverContainer}>
+          <Animated.Image
+            entering={FadeIn.delay(200 + index * 80).duration(400)}
+            source={imageUrl ? { uri: imageUrl } : require('../../../assets/course-cover.png')}
+            style={[styles.courseCover, { backgroundColor: colors.border }]}
+            resizeMode="cover"
+          />
+          {/* Gradient overlay (simulated with two layers) */}
+          <View style={styles.coverGradient} />
+          <View style={styles.coverGradientBottom} />
+          {/* Linha verde decorativa no topo */}
+          <View style={[styles.coverAccentLine, { backgroundColor: colors.primary }]} />
+          {/* Titulo sobre a imagem */}
+          <View style={styles.coverTitleContainer}>
+            <Text style={styles.coverTitle} numberOfLines={2}>
+              {item.title}
             </Text>
-          )}
+            <Text style={styles.coverSubtitle}>Programa A.G.I.R.</Text>
+          </View>
+        </View>
+        <View style={styles.courseInfo}>
           <View style={styles.courseStats}>
             <View style={[styles.progressContainer, { backgroundColor: colors.border }]}>
               <AnimatedCourseProgress progress={item.progressPercent} color={colors.primary} />
@@ -340,18 +347,62 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
   },
+  coverContainer: {
+    position: 'relative' as const,
+    width: '100%',
+    height: 180,
+  },
   courseCover: {
     width: '100%',
-    height: 160,
+    height: '100%',
   },
-  courseCoverPlaceholder: {
-    width: '100%',
-    height: 160,
-    alignItems: 'center',
-    justifyContent: 'center',
+  coverGradient: {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.35)',
   },
-  courseCoverPlaceholderText: {
-    fontSize: 48,
+  coverGradientBottom: {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '60%',
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  coverAccentLine: {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 3,
+    opacity: 0.7,
+  },
+  coverTitleContainer: {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 14,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
+  coverTitle: {
+    fontSize: 16,
+    fontWeight: '700' as const,
+    color: '#ffffff',
+    textShadowColor: 'rgba(0,0,0,0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  coverSubtitle: {
+    fontSize: 10,
+    fontWeight: '600' as const,
+    color: 'rgba(2,136,74,0.8)',
+    marginTop: 3,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase' as const,
   },
   courseInfo: {
     padding: 16,

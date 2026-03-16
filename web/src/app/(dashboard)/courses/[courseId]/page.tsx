@@ -215,16 +215,21 @@ export default function CourseDetailPage() {
         {/* Blocked Content Card */}
         <Card className="overflow-hidden">
           <div className="relative">
-            {/* Cover */}
-            <div className="h-64 bg-gradient-to-br from-gray-800 to-gray-900">
+            {/* Cover com titulo */}
+            <div className="relative h-64">
               <img
                 src={course.thumbnail_url || course.cover_url || '/course-cover.png'}
                 alt={course.title}
                 className="w-full h-full object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-60" />
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <h3 className="font-display text-xl font-bold text-white drop-shadow-lg">{course.title}</h3>
+              </div>
             </div>
 
-            {/* Overlay */}
+            {/* Overlay bloqueio */}
             <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-8">
               <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mb-4">
                 <Lock className="h-8 w-8 text-amber-600 dark:text-amber-400" />
@@ -280,13 +285,19 @@ export default function CourseDetailPage() {
         {/* Course Card */}
         <Card className="overflow-hidden">
           <div className="grid md:grid-cols-2 gap-0">
-            {/* Cover Image */}
-            <div className="h-64 md:h-auto bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden">
+            {/* Cover com titulo */}
+            <div className="relative h-64 md:h-auto md:min-h-[320px] overflow-hidden">
               <img
                 src={course.thumbnail_url || course.cover_url || '/course-cover.png'}
                 alt={course.title}
                 className="w-full h-full object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-60" />
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <h3 className="font-display text-xl md:text-2xl font-bold text-white drop-shadow-lg">{course.title}</h3>
+                <p className="text-xs text-primary/80 mt-1 font-medium tracking-wider uppercase">Programa A.G.I.R.</p>
+              </div>
             </div>
 
             {/* Info */}

@@ -88,33 +88,33 @@ export default function CoursesPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredCourses.map((course) => (
-            <Card key={course.id} className="overflow-hidden hover:border-primary transition-colors">
-              {/* Cover Image */}
-              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center overflow-hidden">
-                <img
-                  src={course.thumbnail_url || course.cover_url || '/course-cover.png'}
-                  alt={course.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <CardHeader>
-                <CardTitle className="font-serif">{course.title}</CardTitle>
-                {course.description && (
-                  <CardDescription className="line-clamp-2">
-                    {course.description}
-                  </CardDescription>
-                )}
-              </CardHeader>
-
-              <CardContent>
-                <Link href={`/courses/${course.id}`}>
-                  <Button className="w-full">
-                    Acessar Conteudo
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+            <Link key={course.id} href={`/courses/${course.id}`}>
+              <Card className="overflow-hidden hover:border-primary transition-all hover:shadow-lg hover:shadow-primary/10 group cursor-pointer h-full">
+                {/* Cover com titulo overlay */}
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <img
+                    src={course.thumbnail_url || course.cover_url || '/course-cover.png'}
+                    alt={course.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                  {/* Borda verde sutil no topo */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-60" />
+                  {/* Titulo */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 className="font-display text-lg font-bold text-white leading-tight drop-shadow-lg">
+                      {course.title}
+                    </h3>
+                    {course.description && (
+                      <p className="text-xs text-gray-300 mt-1.5 line-clamp-2 drop-shadow">
+                        {course.description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            </Link>
           ))}
         </div>
       )}
