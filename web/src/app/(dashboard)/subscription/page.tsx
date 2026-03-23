@@ -19,6 +19,8 @@ import {
   MessageCircle,
   BookOpen,
   ShieldCheck,
+  CreditCard,
+  QrCode,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import {
@@ -27,6 +29,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { PixPaymentModal } from '@/components/pix-payment-modal'
 
 // Links de pagamento InfinitePay
 const PAYMENT_LINKS = {
@@ -160,6 +163,7 @@ interface PlanCardProps {
   isPremium?: boolean
   ctaText?: string
   onSelect?: () => void
+  onPixSelect?: () => void
   disabled?: boolean
   isCurrentPlan?: boolean
 }
@@ -176,6 +180,7 @@ function PlanCard({
   isPremium = false,
   ctaText = 'Quero esse plano',
   onSelect,
+  onPixSelect,
   disabled = false,
   isCurrentPlan = false,
 }: PlanCardProps) {
@@ -343,8 +348,21 @@ function PlanCard({
           onClick={onSelect}
           disabled={disabled}
         >
+          <CreditCard className="w-4 h-4 mr-2" />
           {isCurrentPlan ? 'Plano Atual' : ctaText}
         </Button>
+
+        {!isCurrentPlan && (
+          <Button
+            variant="outline"
+            size="xl"
+            className="w-full mt-2 border-primary/30 hover:bg-primary/10"
+            onClick={onPixSelect}
+          >
+            <QrCode className="w-4 h-4 mr-2 text-primary" />
+            Pagar com PIX
+          </Button>
+        )}
 
         <p className="text-center text-xs text-muted-foreground mt-3">
           12 meses de acesso - Pagamento seguro
@@ -358,6 +376,8 @@ export default function SubscriptionPage() {
   const { user, hasActiveSubscription } = useAuth()
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [pixModalOpen, setPixModalOpen] = useState(false)
+  const [pixPlan, setPixPlan] = useState<'standard' | 'premium'>('standard')
 
   useEffect(() => {
     loadSubscription()
@@ -392,6 +412,11 @@ export default function SubscriptionPage() {
 
   const handlePlanSelect = (planName: 'standard' | 'premium') => {
     window.open(PAYMENT_LINKS[planName], '_blank')
+  }
+
+  const handlePixSelect = (planName: 'standard' | 'premium') => {
+    setPixPlan(planName)
+    setPixModalOpen(true)
   }
 
   const formatDate = (dateString: string) => {
@@ -519,6 +544,7 @@ export default function SubscriptionPage() {
           {...standardPlan}
           ctaText={hasActiveSubscription ? 'Renovar Standard' : 'Comecar com Standard'}
           onSelect={() => handlePlanSelect('standard')}
+          onPixSelect={() => handlePixSelect('standard')}
           isCurrentPlan={currentPlan === 'standard'}
         />
         <PlanCard
@@ -526,6 +552,7 @@ export default function SubscriptionPage() {
           isPremium
           ctaText={hasActiveSubscription ? 'Upgrade para Premium' : 'Quero o Premium'}
           onSelect={() => handlePlanSelect('premium')}
+          onPixSelect={() => handlePixSelect('premium')}
           isCurrentPlan={currentPlan === 'premium'}
         />
       </div>
@@ -709,6 +736,14 @@ export default function SubscriptionPage() {
           </Accordion>
         </motion.div>
       </section>
+
+      <PixPaymentModal
+        open={pixModalOpen}
+        onOpenChange={setPixModalOpen}
+        plan={pixPlan}
+        userId={user?.id}
+        userEmail={user?.email || undefined}
+      />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
@@ -19,6 +20,7 @@ import {
   MessageCircle,
   BookOpen,
   ArrowLeft,
+  QrCode,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -27,6 +29,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { PixPaymentModal } from "@/components/pix-payment-modal"
 
 // Plan data - Valores com promocao de lancamento
 const standardPlan = {
@@ -129,6 +132,7 @@ interface PlanCardProps {
   isPremium?: boolean
   ctaText?: string
   onSelect?: () => void
+  onPixSelect?: () => void
 }
 
 function PlanCard({
@@ -142,6 +146,7 @@ function PlanCard({
   isPremium = false,
   ctaText = "Quero esse plano",
   onSelect,
+  onPixSelect,
 }: PlanCardProps) {
   return (
     <motion.div
@@ -256,7 +261,18 @@ function PlanCard({
           className="w-full text-sm sm:text-base"
           onClick={onSelect}
         >
+          <CreditCard className="w-4 h-4 mr-2" />
           {ctaText}
+        </Button>
+
+        <Button
+          variant="outline"
+          size="lg"
+          className="w-full text-sm sm:text-base mt-2 border-primary/30 hover:bg-primary/10"
+          onClick={onPixSelect}
+        >
+          <QrCode className="w-4 h-4 mr-2 text-primary" />
+          Pagar com PIX
         </Button>
 
         <p className="text-center text-xs text-muted-foreground mt-3">
@@ -274,8 +290,16 @@ const PAYMENT_LINKS = {
 }
 
 export default function PlansPage() {
+  const [pixModalOpen, setPixModalOpen] = useState(false)
+  const [pixPlan, setPixPlan] = useState<'standard' | 'premium'>('standard')
+
   const handlePlanSelect = (planName: 'standard' | 'premium') => {
     window.open(PAYMENT_LINKS[planName], '_blank')
+  }
+
+  const handlePixSelect = (planName: 'standard' | 'premium') => {
+    setPixPlan(planName)
+    setPixModalOpen(true)
   }
 
   return (
@@ -371,12 +395,14 @@ export default function PlansPage() {
               {...standardPlan}
               ctaText="Comecar com Standard"
               onSelect={() => handlePlanSelect("standard")}
+              onPixSelect={() => handlePixSelect("standard")}
             />
             <PlanCard
               {...premiumPlan}
               isPremium
               ctaText="Quero o Premium"
               onSelect={() => handlePlanSelect("premium")}
+              onPixSelect={() => handlePixSelect("premium")}
             />
           </div>
         </div>
@@ -609,6 +635,12 @@ export default function PlansPage() {
           </div>
         </div>
       </footer>
+
+      <PixPaymentModal
+        open={pixModalOpen}
+        onOpenChange={setPixModalOpen}
+        plan={pixPlan}
+      />
     </div>
   )
 }
