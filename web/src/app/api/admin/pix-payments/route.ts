@@ -45,7 +45,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json({ payments: data })
+  // Sempre retornar contagem de pendentes para o badge
+  const { count: pendingCount } = await supabase
+    .from('pix_payments')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'pending')
+
+  return NextResponse.json({ payments: data, pendingCount: pendingCount || 0 })
 }
 
 // PATCH - aprovar ou rejeitar pagamento
@@ -128,7 +134,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: subError.message }, { status: 500 })
     }
 
-    // Registrar no historico
+    // Registrar no historico (ignora erro se tabela nao existir)
     await supabase
       .from('payment_history')
       .insert({
@@ -144,6 +150,7 @@ export async function PATCH(request: NextRequest) {
           full_name: payment.full_name,
         },
       })
+      .then(() => {}) // ignora resultado
 
     return NextResponse.json({ success: true, subscription_created: true })
   }

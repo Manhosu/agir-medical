@@ -54,6 +54,7 @@ export default function AdminPixPaymentsPage() {
   const [filter, setFilter] = useState<FilterStatus>('pending')
   const [selectedPayment, setSelectedPayment] = useState<PixPayment | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [pendingCount, setPendingCount] = useState(0)
 
   useEffect(() => {
     loadPayments()
@@ -66,6 +67,7 @@ export default function AdminPixPaymentsPage() {
       if (!res.ok) throw new Error('Erro ao carregar')
       const data = await res.json()
       setPayments(data.payments || [])
+      setPendingCount(data.pendingCount || 0)
     } catch (error) {
       console.error('Erro ao carregar pagamentos PIX:', error)
       toast.error('Erro ao carregar pagamentos')
@@ -177,8 +179,6 @@ export default function AdminPixPaymentsPage() {
         return <Badge variant="outline">{status}</Badge>
     }
   }
-
-  const pendingCount = payments.filter(p => p.status === 'pending').length
 
   return (
     <div className="space-y-6">
