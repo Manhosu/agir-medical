@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -63,19 +62,10 @@ export default function AdminPixPaymentsPage() {
   const loadPayments = async () => {
     setIsLoading(true)
     try {
-      let query = supabase
-        .from('pix_payments')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (filter !== 'all') {
-        query = query.eq('status', filter)
-      }
-
-      const { data, error } = await query.limit(50)
-
-      if (error) throw error
-      setPayments(data || [])
+      const res = await fetch(`/api/admin/pix-payments?status=${filter}`)
+      if (!res.ok) throw new Error('Erro ao carregar')
+      const data = await res.json()
+      setPayments(data.payments || [])
     } catch (error) {
       console.error('Erro ao carregar pagamentos PIX:', error)
       toast.error('Erro ao carregar pagamentos')
@@ -87,61 +77,20 @@ export default function AdminPixPaymentsPage() {
   const handleApprove = async (payment: PixPayment) => {
     setIsProcessing(true)
     try {
-      // Atualizar status do pagamento PIX
-      const { error: pixError } = await supabase
-        .from('pix_payments')
-        .update({
-          status: 'approved',
-          approved_at: new Date().toISOString(),
-        })
-        .eq('id', payment.id)
+      const res = await fetch('/api/admin/pix-payments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: payment.id, action: 'approve' }),
+      })
 
-      if (pixError) throw pixError
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Erro ao aprovar')
+      }
 
-      // Se tem user_id, criar assinatura automaticamente
-      if (payment.user_id) {
-        const now = new Date()
-        const expiresAt = new Date(now)
-        expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+      const result = await res.json()
 
-        // Cancelar assinatura anterior se existir
-        await supabase
-          .from('subscriptions')
-          .update({ status: 'canceled' })
-          .eq('user_id', payment.user_id)
-          .eq('status', 'active')
-
-        // Criar nova assinatura
-        const { error: subError } = await supabase
-          .from('subscriptions')
-          .insert({
-            user_id: payment.user_id,
-            status: 'active',
-            plan: payment.plan,
-            starts_at: now.toISOString(),
-            expires_at: expiresAt.toISOString(),
-            payment_gateway: 'pix_manual',
-          })
-
-        if (subError) throw subError
-
-        // Registrar no historico
-        await supabase
-          .from('payment_history')
-          .insert({
-            user_id: payment.user_id,
-            gateway: 'pix_manual',
-            plan: payment.plan,
-            amount: payment.amount,
-            status: 'completed',
-            paid_at: new Date().toISOString(),
-            metadata: {
-              pix_payment_id: payment.id,
-              cpf: payment.cpf,
-              full_name: payment.full_name,
-            }
-          })
-
+      if (result.subscription_created) {
         toast.success(`Pagamento aprovado e assinatura ${payment.plan.toUpperCase()} ativada!`)
       } else {
         toast.success('Pagamento aprovado! Usuario nao vinculado - ative a assinatura manualmente.')
@@ -151,7 +100,7 @@ export default function AdminPixPaymentsPage() {
       loadPayments()
     } catch (error) {
       console.error('Erro ao aprovar pagamento:', error)
-      toast.error('Erro ao aprovar pagamento')
+      toast.error(error instanceof Error ? error.message : 'Erro ao aprovar pagamento')
     } finally {
       setIsProcessing(false)
     }
@@ -160,14 +109,13 @@ export default function AdminPixPaymentsPage() {
   const handleReject = async (payment: PixPayment) => {
     setIsProcessing(true)
     try {
-      const { error } = await supabase
-        .from('pix_payments')
-        .update({
-          status: 'rejected',
-        })
-        .eq('id', payment.id)
+      const res = await fetch('/api/admin/pix-payments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: payment.id, action: 'reject' }),
+      })
 
-      if (error) throw error
+      if (!res.ok) throw new Error('Erro ao rejeitar')
 
       toast.success('Pagamento rejeitado')
       setSelectedPayment(null)

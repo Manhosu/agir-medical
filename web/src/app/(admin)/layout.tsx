@@ -1,18 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useAuth } from '@/hooks/use-auth'
-import { useAuthStore } from '@/stores/authStore'
 import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
@@ -24,11 +19,10 @@ import {
   LogOut,
   Menu,
   ChevronRight,
-  Home,
   CreditCard,
   QrCode,
+  Shield,
 } from 'lucide-react'
-import { ThemeToggle } from '@/components/theme-toggle'
 
 const adminNavItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -44,46 +38,13 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const router = useRouter()
   const pathname = usePathname()
-  const { user, profile, isAdmin, isLoading, signOut } = useAuth()
-  const initialized = useAuthStore((state) => state.initialized)
-
-  // Verificar se é admin - só redireciona depois que o auth foi completamente inicializado
-  useEffect(() => {
-    // Esperar o auth inicializar completamente
-    if (!initialized || isLoading) return
-
-    if (user && !isAdmin) {
-      // Usuário logado mas não é admin - vai para dashboard normal
-      window.location.href = '/dashboard'
-    } else if (!user) {
-      // Não está logado - vai para login
-      window.location.href = '/login'
-    }
-  }, [isAdmin, isLoading, user, initialized])
+  const router = useRouter()
 
   const handleSignOut = async () => {
-    await signOut()
-    window.location.href = '/login'
+    await fetch('/api/admin/logout', { method: 'POST' })
+    router.push('/admin-login')
   }
-
-  // Mostrar loading enquanto não inicializou
-  if (!initialized || isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
-  if (!user || !isAdmin) {
-    return null
-  }
-
-  const userInitials = profile?.full_name
-    ? profile.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
-    : user?.email?.charAt(0).toUpperCase() || 'A'
 
   return (
     <div className="flex h-screen bg-background">
@@ -130,21 +91,14 @@ export default function AdminLayout({
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t space-y-2">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Home className="h-5 w-5" />
-            <span>Voltar ao App</span>
-          </Link>
+        <div className="p-4 border-t">
           <Button
             variant="outline"
             className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={handleSignOut}
           >
             <LogOut className="h-4 w-4" />
-            Sair da conta
+            Sair
           </Button>
         </div>
       </aside>
@@ -171,11 +125,9 @@ export default function AdminLayout({
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard" className="flex items-center gap-2">
-                    <Home className="h-4 w-4" />
-                    <span>Voltar ao App</span>
-                  </Link>
+                <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -190,9 +142,12 @@ export default function AdminLayout({
             </div>
           </div>
 
-          {/* User Menu */}
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
+          {/* Admin badge + logout */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="hidden sm:inline">Admin</span>
+            </div>
             <Button
               variant="ghost"
               size="icon"
@@ -202,36 +157,6 @@ export default function AdminLayout({
             >
               <LogOut className="h-5 w-5" />
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8">
-                  <AvatarImage src={profile?.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                    {userInitials}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="hidden sm:inline font-medium">
-                  {profile?.full_name || user?.email}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/profile">Perfil</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings">Configurações</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />
-                Sair
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </header>
 

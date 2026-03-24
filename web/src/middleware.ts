@@ -1,12 +1,58 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+async function validateAdminToken(token: string): Promise<boolean> {
+  const secret = process.env.ADMIN_SECRET || 'agir-admin-secret-2026'
+  const parts = token.split('.')
+  if (parts.length !== 2) return false
+
+  const [timestamp, hash] = parts
+
+  // Web Crypto API (Edge Runtime compatible)
+  const encoder = new TextEncoder()
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  )
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(timestamp))
+  const expectedHash = Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+
+  if (hash !== expectedHash) return false
+
+  // Token valido por 24 horas
+  const age = Date.now() - parseInt(timestamp)
+  return age < 24 * 60 * 60 * 1000
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
     },
   })
+
+  const pathname = request.nextUrl.pathname
+
+  // Admin login page - sempre acessivel
+  if (pathname === '/admin-login') {
+    return response
+  }
+
+  // Rotas de admin - verificar cookie admin_token
+  if (pathname.startsWith('/admin')) {
+    const adminToken = request.cookies.get('admin_token')?.value
+
+    if (!adminToken || !(await validateAdminToken(adminToken))) {
+      return NextResponse.redirect(new URL('/admin-login', request.url))
+    }
+
+    return response
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -35,19 +81,13 @@ export async function middleware(request: NextRequest) {
   const { data: { user }, error: authError } = await supabase.auth.getUser()
 
   // Debug logs
-  console.log('[Middleware] Path:', request.nextUrl.pathname)
+  console.log('[Middleware] Path:', pathname)
   console.log('[Middleware] User:', user?.id || 'null')
   if (authError) console.log('[Middleware] Auth Error:', authError.message)
-
-  const pathname = request.nextUrl.pathname
 
   // Rotas protegidas que requerem autenticação
   const protectedRoutes = ['/dashboard', '/courses', '/profile', '/settings']
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
-
-  // Rotas de admin
-  const adminRoutes = ['/admin']
-  const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route))
 
   // Rotas de auth (login, register, etc)
   const authRoutes = ['/login', '/register', '/forgot-password', '/reset-password']
@@ -64,29 +104,6 @@ export async function middleware(request: NextRequest) {
   // Permitir acesso ao login para trocar de conta, mas redirecionar registro
   if (user && isAuthRoute && pathname !== '/login') {
     return NextResponse.redirect(new URL('/dashboard', request.url))
-  }
-
-  // Se tenta acessar rota de admin, verificar se é admin
-  if (isAdminRoute && user) {
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    console.log('[Middleware] Admin check - Profile:', profile, 'Error:', profileError?.message)
-
-    // Se houver erro na query, permitir acesso (a pagina fara verificacao adicional)
-    // Se profile existe e NAO e admin, redirecionar
-    if (!profileError && profile && profile.role !== 'admin') {
-      console.log('[Middleware] User is not admin, redirecting to dashboard')
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-  }
-
-  // Se nao esta logado e tenta acessar rota de admin
-  if (isAdminRoute && !user) {
-    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   return response
