@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -25,16 +24,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Search,
   MoreVertical,
-  UserCheck,
-  UserX,
-  Eye,
-  Mail,
   Shield,
   ShieldOff,
-  Calendar,
   CalendarPlus,
-  CreditCard,
-  RefreshCw
+  Zap,
+  Crown,
+  RefreshCw,
+  Loader2,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -55,11 +51,9 @@ interface User {
   role: string
   avatar_url: string | null
   created_at: string
-  subscription_status?: string
-  subscription?: Subscription | null
+  subscriptions: Subscription[]
 }
 
-// Hook de debounce
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value)
   useEffect(() => {
@@ -75,179 +69,119 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [page, setPage] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
 
-  const debouncedSearch = useDebounce(searchQuery, 300)
+  const debouncedSearch = useDebounce(searchQuery, 500)
+
+  useEffect(() => {
+    setPage(0)
+  }, [debouncedSearch])
 
   useEffect(() => {
     loadUsers()
-  }, [page])
-
-  useEffect(() => {
-    if (debouncedSearch) {
-      const filtered = users.filter(user =>
-        user.full_name?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        user.email.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        user.cpf?.includes(debouncedSearch) ||
-        user.crm?.toLowerCase().includes(debouncedSearch.toLowerCase())
-      )
-      setFilteredUsers(filtered)
-    } else {
-      setFilteredUsers(users)
-    }
-  }, [debouncedSearch, users])
+  }, [page, debouncedSearch])
 
   const loadUsers = async () => {
+    setIsLoading(true)
     try {
-      // Buscar total para paginacao
-      const { count } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-
-      setTotalCount(count || 0)
-
-      // Carregar perfis com dados completos de assinatura
-      const { data: profiles, error } = await supabase
-        .from('profiles')
-        .select(`
-          *,
-          subscriptions (id, status, plan, starts_at, expires_at)
-        `)
-        .order('created_at', { ascending: false })
-        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
-
-      if (error) throw error
-
-      const now = new Date()
-      const usersWithSubscription = profiles.map((profile: any) => {
-        const subscription = profile.subscriptions?.[0] || null
-        let realStatus = 'none'
-
-        if (subscription) {
-          const expiresAt = new Date(subscription.expires_at)
-          if (subscription.status === 'active' && expiresAt > now) {
-            realStatus = 'active'
-          } else if (subscription.status === 'active' && expiresAt <= now) {
-            realStatus = 'expired' // Status é active mas expirou
-          } else {
-            realStatus = subscription.status
-          }
-        }
-
-        return {
-          ...profile,
-          subscription_status: realStatus,
-          subscription
-        }
+      const params = new URLSearchParams({
+        page: page.toString(),
+        pageSize: PAGE_SIZE.toString(),
       })
+      if (debouncedSearch) params.set('search', debouncedSearch)
 
-      setUsers(usersWithSubscription)
-      setFilteredUsers(usersWithSubscription)
+      const res = await fetch(`/api/admin/users?${params}`)
+      if (!res.ok) throw new Error('Erro ao carregar')
+
+      const data = await res.json()
+      setUsers(data.users || [])
+      setTotalCount(data.totalCount || 0)
     } catch (error) {
       console.error('Error loading users:', error)
-      toast.error('Erro ao carregar usuários')
+      toast.error('Erro ao carregar usuarios')
     } finally {
       setIsLoading(false)
     }
   }
 
+  const getActiveSubscription = (user: User): Subscription | null => {
+    if (!user.subscriptions || user.subscriptions.length === 0) return null
+    // Pegar a mais recente que esta ativa
+    const active = user.subscriptions.find(s => s.status === 'active')
+    return active || user.subscriptions[0]
+  }
+
+  const getSubscriptionStatus = (user: User): string => {
+    const sub = getActiveSubscription(user)
+    if (!sub) return 'none'
+    const now = new Date()
+    const expiresAt = new Date(sub.expires_at)
+    if (sub.status === 'active' && expiresAt > now) return 'active'
+    if (sub.status === 'active' && expiresAt <= now) return 'expired'
+    return sub.status
+  }
+
   const toggleAdminRole = async (userId: string, currentRole: string) => {
     try {
-      const newRole = currentRole === 'admin' ? 'user' : 'admin'
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({ role: newRole })
-        .eq('id', userId)
-
-      if (error) throw error
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'toggle_admin', userId, currentRole }),
+      })
+      if (!res.ok) throw new Error('Erro')
+      const data = await res.json()
 
       setUsers(users.map(u =>
-        u.id === userId ? { ...u, role: newRole } : u
+        u.id === userId ? { ...u, role: data.newRole } : u
       ))
-
-      toast.success(`Usuário ${newRole === 'admin' ? 'promovido a admin' : 'removido de admin'}`)
+      toast.success(`Usuario ${data.newRole === 'admin' ? 'promovido a admin' : 'removido de admin'}`)
     } catch (error) {
-      console.error('Error updating role:', error)
-      toast.error('Erro ao atualizar permissão')
+      toast.error('Erro ao atualizar permissao')
     }
   }
 
-  const activateSubscription = async (userId: string, months: number = 12) => {
+  const activateSubscription = async (userId: string, plan: 'standard' | 'premium', months: number = 12) => {
     try {
-      const now = new Date()
-      const expiresAt = new Date(now)
-      expiresAt.setMonth(expiresAt.getMonth() + months)
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'activate_subscription', userId, plan, months }),
+      })
+      if (!res.ok) throw new Error('Erro')
 
-      // Verificar se já tem assinatura
-      const user = users.find(u => u.id === userId)
-
-      if (user?.subscription?.id) {
-        // Atualizar assinatura existente
-        const { error } = await supabase
-          .from('subscriptions')
-          .update({
-            status: 'active',
-            starts_at: now.toISOString(),
-            expires_at: expiresAt.toISOString()
-          })
-          .eq('id', user.subscription.id)
-
-        if (error) throw error
-      } else {
-        // Criar nova assinatura
-        const { error } = await supabase
-          .from('subscriptions')
-          .insert({
-            user_id: userId,
-            status: 'active',
-            plan: months === 12 ? 'annual' : 'semestral',
-            starts_at: now.toISOString(),
-            expires_at: expiresAt.toISOString()
-          })
-
-        if (error) throw error
-      }
-
-      toast.success(`Assinatura ativada por ${months} meses!`)
-      loadUsers() // Recarregar lista
+      toast.success(`Assinatura ${plan.toUpperCase()} ativada por ${months} meses!`)
+      loadUsers()
     } catch (error) {
-      console.error('Error activating subscription:', error)
       toast.error('Erro ao ativar assinatura')
     }
   }
 
-  const extendSubscription = async (userId: string, months: number = 12) => {
+  const extendSubscription = async (userId: string, months: number) => {
+    const user = users.find(u => u.id === userId)
+    const sub = getActiveSubscription(user!)
+    if (!sub) {
+      toast.error('Usuario nao possui assinatura')
+      return
+    }
+
     try {
-      const user = users.find(u => u.id === userId)
-      if (!user?.subscription?.id) {
-        toast.error('Usuário não possui assinatura')
-        return
-      }
-
-      // Estender a partir da data de expiração atual ou de agora (o que for maior)
-      const currentExpires = new Date(user.subscription.expires_at)
-      const now = new Date()
-      const baseDate = currentExpires > now ? currentExpires : now
-      const newExpiresAt = new Date(baseDate)
-      newExpiresAt.setMonth(newExpiresAt.getMonth() + months)
-
-      const { error } = await supabase
-        .from('subscriptions')
-        .update({
-          status: 'active',
-          expires_at: newExpiresAt.toISOString()
-        })
-        .eq('id', user.subscription.id)
-
-      if (error) throw error
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'extend_subscription',
+          userId,
+          subscriptionId: sub.id,
+          months,
+          currentExpiresAt: sub.expires_at,
+        }),
+      })
+      if (!res.ok) throw new Error('Erro')
 
       toast.success(`Assinatura estendida por ${months} meses!`)
       loadUsers()
     } catch (error) {
-      console.error('Error extending subscription:', error)
       toast.error('Erro ao estender assinatura')
     }
   }
@@ -256,35 +190,34 @@ export default function AdminUsersPage() {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     })
   }
 
-  const getPlanDisplayName = (plan: string) => {
-    const planNames: Record<string, string> = {
-      'standard': 'STANDARD',
-      'premium': 'PREMIUM',
-      'annual': 'STANDARD',
-      'semestral': 'STANDARD',
-    }
-    return planNames[plan?.toLowerCase()] || plan?.toUpperCase() || 'STANDARD'
+  const getPlanName = (plan: string) => {
+    if (!plan) return 'STANDARD'
+    const p = plan.toLowerCase()
+    if (p === 'premium') return 'PREMIUM'
+    return 'STANDARD'
   }
 
-  const getSubscriptionBadge = (status: string, subscription?: Subscription | null) => {
-    const expiresAt = subscription?.expires_at ? new Date(subscription.expires_at) : null
-    const expiresFormatted = expiresAt ? expiresAt.toLocaleDateString('pt-BR') : ''
-    const planName = subscription?.plan ? getPlanDisplayName(subscription.plan) : ''
+  const getSubscriptionBadge = (user: User) => {
+    const status = getSubscriptionStatus(user)
+    const sub = getActiveSubscription(user)
+    const planName = sub ? getPlanName(sub.plan) : ''
     const isPremium = planName === 'PREMIUM'
+    const expiresFormatted = sub?.expires_at ? formatDate(sub.expires_at) : ''
 
     switch (status) {
       case 'active':
         return (
           <div className="space-y-1">
-            <span className={`px-2 py-1 text-xs rounded-full ${
+            <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full ${
               isPremium
                 ? 'bg-[hsl(45,93%,58%)]/20 text-[hsl(45,93%,48%)]'
-                : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
             }`}>
+              {isPremium ? <Crown className="w-3 h-3" /> : <Zap className="w-3 h-3" />}
               {planName}
             </span>
             {expiresFormatted && (
@@ -295,7 +228,9 @@ export default function AdminUsersPage() {
       case 'expired':
         return (
           <div className="space-y-1">
-            <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">Expirado</span>
+            <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+              Expirado
+            </span>
             {expiresFormatted && (
               <p className="text-xs text-muted-foreground">Expirou: {expiresFormatted}</p>
             )}
@@ -304,61 +239,55 @@ export default function AdminUsersPage() {
       case 'canceled':
         return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">Cancelado</span>
       default:
-        return <span className="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">Sem assinatura</span>
+        return <span className="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Sem assinatura</span>
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
+  const activeCount = users.filter(u => getSubscriptionStatus(u) === 'active').length
+  const adminCount = users.filter(u => u.role === 'admin').length
+  const recentCount = users.filter(u => {
+    const diffDays = Math.floor((Date.now() - new Date(u.created_at).getTime()) / (1000 * 60 * 60 * 24))
+    return diffDays <= 7
+  }).length
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-serif font-bold">Usuários</h1>
-        <p className="text-muted-foreground">
-          Gerencie os usuários da plataforma
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-display font-bold">Usuarios</h1>
+          <p className="text-muted-foreground">
+            Gerencie os usuarios da plataforma
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={loadUsers} disabled={isLoading}>
+          <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          Atualizar
+        </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{users.length}</div>
-            <p className="text-sm text-muted-foreground">Total de usuários</p>
+            <div className="text-2xl font-bold">{totalCount}</div>
+            <p className="text-sm text-muted-foreground">Total de usuarios</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold">
-              {users.filter(u => u.subscription_status === 'active').length}
-            </div>
+            <div className="text-2xl font-bold">{activeCount}</div>
             <p className="text-sm text-muted-foreground">Assinantes ativos</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold">
-              {users.filter(u => u.role === 'admin').length}
-            </div>
+            <div className="text-2xl font-bold">{adminCount}</div>
             <p className="text-sm text-muted-foreground">Administradores</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold">
-              {users.filter(u => {
-                const date = new Date(u.created_at)
-                const now = new Date()
-                const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
-                return diffDays <= 7
-              }).length}
-            </div>
+            <div className="text-2xl font-bold">{recentCount}</div>
             <p className="text-sm text-muted-foreground">Novos esta semana</p>
           </CardContent>
         </Card>
@@ -369,15 +298,15 @@ export default function AdminUsersPage() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <CardTitle>Lista de Usuários</CardTitle>
+              <CardTitle>Lista de Usuarios</CardTitle>
               <CardDescription>
-                {filteredUsers.length} usuário(s) encontrado(s)
+                {users.length} usuario(s) nesta pagina | {totalCount} total
               </CardDescription>
             </div>
             <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Buscar usuários..."
+                placeholder="Buscar por nome ou email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
@@ -386,139 +315,143 @@ export default function AdminUsersPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Usuário</TableHead>
-                  <TableHead>Assinatura</TableHead>
-                  <TableHead>Função</TableHead>
-                  <TableHead>Cadastro</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.avatar_url || undefined} />
-                          <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                            {user.full_name
-                              ? user.full_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-                              : user.email.charAt(0).toUpperCase()
-                            }
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{user.full_name || 'Sem nome'}</p>
-                          <p className="text-sm text-muted-foreground">{user.email}</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {getSubscriptionBadge(user.subscription_status || 'none', user.subscription)}
-                    </TableCell>
-                    <TableCell>
-                      {user.role === 'admin' ? (
-                        <span className="flex items-center gap-1 text-sm">
-                          <Shield className="h-4 w-4 text-primary" />
-                          Admin
-                        </span>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">Usuário</span>
-                      )}
-                    </TableCell>
-                    <TableCell>{formatDate(user.created_at)}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Ver detalhes
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Mail className="mr-2 h-4 w-4" />
-                            Enviar email
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuLabel className="text-xs text-muted-foreground">Assinatura</DropdownMenuLabel>
-                          {user.subscription_status !== 'active' && (
-                            <>
-                              <DropdownMenuItem onClick={() => activateSubscription(user.id, 12)}>
-                                <CreditCard className="mr-2 h-4 w-4" />
-                                Ativar 12 meses
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => activateSubscription(user.id, 6)}>
-                                <CreditCard className="mr-2 h-4 w-4" />
-                                Ativar 6 meses
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                          {user.subscription && (
-                            <>
-                              <DropdownMenuItem onClick={() => extendSubscription(user.id, 12)}>
-                                <CalendarPlus className="mr-2 h-4 w-4" />
-                                Estender +12 meses
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => extendSubscription(user.id, 6)}>
-                                <CalendarPlus className="mr-2 h-4 w-4" />
-                                Estender +6 meses
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => extendSubscription(user.id, 1)}>
-                                <CalendarPlus className="mr-2 h-4 w-4" />
-                                Estender +1 mes
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => toggleAdminRole(user.id, user.role)}
-                          >
-                            {user.role === 'admin' ? (
-                              <>
-                                <ShieldOff className="mr-2 h-4 w-4" />
-                                Remover admin
-                              </>
-                            ) : (
-                              <>
-                                <Shield className="mr-2 h-4 w-4" />
-                                Tornar admin
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-
-                {filteredUsers.length === 0 && (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="overflow-x-auto -mx-6">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                      Nenhum usuário encontrado
-                    </TableCell>
+                    <TableHead>Usuario</TableHead>
+                    <TableHead>Assinatura</TableHead>
+                    <TableHead className="hidden md:table-cell">Funcao</TableHead>
+                    <TableHead className="hidden md:table-cell">Cadastro</TableHead>
+                    <TableHead className="text-right">Acoes</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {users.map((user) => {
+                    const subStatus = getSubscriptionStatus(user)
+                    const sub = getActiveSubscription(user)
 
-          {/* Pagination Controls */}
+                    return (
+                      <TableRow key={user.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={user.avatar_url || undefined} />
+                              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                {user.full_name
+                                  ? user.full_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                                  : user.email.charAt(0).toUpperCase()
+                                }
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0">
+                              <p className="font-medium truncate">{user.full_name || 'Sem nome'}</p>
+                              <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+                              {user.role === 'admin' && (
+                                <span className="inline-flex items-center gap-1 text-xs text-primary md:hidden">
+                                  <Shield className="h-3 w-3" /> Admin
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {getSubscriptionBadge(user)}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {user.role === 'admin' ? (
+                            <span className="flex items-center gap-1 text-sm">
+                              <Shield className="h-4 w-4 text-primary" />
+                              Admin
+                            </span>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">Usuario</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {formatDate(user.created_at)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Assinatura</DropdownMenuLabel>
+                              {subStatus !== 'active' && (
+                                <>
+                                  <DropdownMenuItem onClick={() => activateSubscription(user.id, 'standard', 12)}>
+                                    <Zap className="mr-2 h-4 w-4 text-green-500" />
+                                    Ativar STANDARD (12 meses)
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => activateSubscription(user.id, 'premium', 12)}>
+                                    <Crown className="mr-2 h-4 w-4 text-[hsl(45,93%,48%)]" />
+                                    Ativar PREMIUM (12 meses)
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                              {sub && subStatus === 'active' && (
+                                <>
+                                  <DropdownMenuItem onClick={() => extendSubscription(user.id, 12)}>
+                                    <CalendarPlus className="mr-2 h-4 w-4" />
+                                    Estender +12 meses
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => extendSubscription(user.id, 6)}>
+                                    <CalendarPlus className="mr-2 h-4 w-4" />
+                                    Estender +6 meses
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => extendSubscription(user.id, 1)}>
+                                    <CalendarPlus className="mr-2 h-4 w-4" />
+                                    Estender +1 mes
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuLabel>Permissao</DropdownMenuLabel>
+                              <DropdownMenuItem onClick={() => toggleAdminRole(user.id, user.role)}>
+                                {user.role === 'admin' ? (
+                                  <>
+                                    <ShieldOff className="mr-2 h-4 w-4" />
+                                    Remover admin
+                                  </>
+                                ) : (
+                                  <>
+                                    <Shield className="mr-2 h-4 w-4" />
+                                    Tornar admin
+                                  </>
+                                )}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+
+                  {users.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                        Nenhum usuario encontrado
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          {/* Pagination */}
           {totalCount > PAGE_SIZE && (
             <div className="flex justify-between items-center mt-4 pt-4 border-t">
               <p className="text-sm text-muted-foreground">
-                {totalCount > 0
-                  ? `${page * PAGE_SIZE + 1}-${Math.min((page + 1) * PAGE_SIZE, totalCount)} de ${totalCount}`
-                  : 'Nenhum resultado'}
+                {page * PAGE_SIZE + 1}-{Math.min((page + 1) * PAGE_SIZE, totalCount)} de {totalCount}
               </p>
               <div className="flex gap-2">
                 <Button
