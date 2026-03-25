@@ -967,6 +967,92 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Specialists Section */}
+      <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-card/50 to-background" />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="text-center mb-12 sm:mb-16"
+            >
+              <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
+                Especialistas
+              </span>
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold">
+                Quem conduz o <span className="text-primary">A.G.I.R.</span>
+              </h2>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={staggerContainer}
+              className="grid md:grid-cols-2 gap-6 sm:gap-8"
+            >
+              {[
+                {
+                  name: "Dr. Francisco Leoncio Dazzi",
+                  specialty: "Cirurgiao do Aparelho Digestivo",
+                  crm: "CRM 10.726",
+                  bio: "Mestre em cirurgia pelo IAMSPE. Atuacao direta na linha de frente da cirurgia geral e cirurgia do aparelho digestivo, com experiencia consolidada em cenarios de urgencia e tomada de decisao em ambiente de alta complexidade.",
+                  role: "No Programa AGIR, e responsavel pela estruturacao dos conteudos clinicos e desenvolvimento dos algoritmos de conduta, com foco em aplicabilidade pratica e seguranca no manejo do paciente cirurgico.",
+                },
+                {
+                  name: "Dr. Duilio Eutropio Neto",
+                  specialty: "Cirurgiao Oncologico",
+                  crm: "CRM 14.072",
+                  bio: "Especialista em cirurgia geral e cirurgia oncologica, com experiencia no manejo de casos de alta complexidade e planejamento cirurgico estrategico.",
+                  role: "No Programa AGIR, e responsavel pela curadoria cientifica e validacao dos conteudos, assegurando alinhamento com as melhores praticas e evidencias atuais.",
+                },
+              ].map((doctor, index) => (
+                <motion.div
+                  key={index}
+                  variants={fadeInUp}
+                  className="group relative rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 sm:p-8 hover:border-primary/30 transition-all duration-300"
+                >
+                  {/* Glow effect on hover */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                  <div className="relative z-10 space-y-4">
+                    {/* Icon + Name */}
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                        <Stethoscope className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-display text-lg sm:text-xl font-bold text-foreground">
+                          {doctor.name}
+                        </h3>
+                        <p className="text-primary text-sm font-medium">{doctor.specialty}</p>
+                        <p className="text-xs text-muted-foreground">{doctor.crm}</p>
+                      </div>
+                    </div>
+
+                    {/* Bio */}
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {doctor.bio}
+                    </p>
+
+                    {/* Role in AGIR */}
+                    <div className="pt-2 border-t border-border/30">
+                      <p className="text-sm text-foreground/80 leading-relaxed">
+                        {doctor.role}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA Section */}
       <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30" />
