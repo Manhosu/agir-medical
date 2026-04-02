@@ -402,7 +402,7 @@ export default function LessonViewerPage() {
 
           {/* Conteúdo HTML */}
           <div
-            className="prose prose-lg dark:prose-invert max-w-4xl mx-auto relative z-0"
+            className="prose prose-lg dark:prose-invert dark-prose max-w-4xl mx-auto relative z-0"
             dangerouslySetInnerHTML={{ __html: content }}
           />
 

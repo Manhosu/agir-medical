@@ -600,6 +600,144 @@
   margin: 2em 0;
 }
 
+/* Light prose - for white card content viewer (Fundamentacao Clinica) */
+.light-prose {
+  color: #1f2937;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  max-width: 65ch;
+}
+
+.light-prose * {
+  color: #374151 !important;
+  background-color: transparent !important;
+}
+
+.light-prose h1, .light-prose h2, .light-prose h3, .light-prose h4, .light-prose h5, .light-prose h6 {
+  color: #111827 !important;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+}
+
+.light-prose h1 { font-size: 1.5rem; }
+.light-prose h2 { font-size: 1.25rem; }
+.light-prose h3 { font-size: 1.125rem; }
+
+@media (min-width: 768px) {
+  .light-prose h1 { font-size: 1.875rem; }
+  .light-prose h2 { font-size: 1.5rem; }
+  .light-prose h3 { font-size: 1.25rem; }
+}
+
+.light-prose p {
+  color: #1f2937 !important;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  line-height: 1.75;
+}
+
+.light-prose strong, .light-prose b {
+  color: #111827 !important;
+  font-weight: 700;
+}
+
+.light-prose a {
+  color: #047857 !important;
+  text-decoration: underline;
+}
+
+.light-prose ul, .light-prose ol {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.light-prose ul { list-style-type: disc; }
+.light-prose ol { list-style-type: decimal; }
+
+.light-prose li {
+  color: #1f2937 !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.light-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.875rem;
+}
+
+.light-prose th {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+  padding: 0.75em;
+  border: 1px solid #d1d5db;
+  text-align: left;
+  font-weight: 600;
+}
+
+.light-prose td {
+  color: #1f2937 !important;
+  padding: 0.75em;
+  border: 1px solid #d1d5db;
+}
+
+.light-prose blockquote {
+  border-left: 4px solid #02884a;
+  padding-left: 1em;
+  margin: 1.5em 0;
+  color: #6b7280 !important;
+  font-style: italic;
+}
+
+.light-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  margin: 1.5em 0;
+}
+
+.light-prose code {
+  font-size: 0.875em;
+  background-color: #f3f4f6 !important;
+  padding: 0.125em 0.375em;
+  border-radius: 0.25rem;
+}
+
+.light-prose hr {
+  border: none;
+  border-top: 1px solid #d1d5db;
+  margin: 2em 0;
+}
+
+/* Force dark theme over inline styles from .docx HTML - only for dark-bg contexts */
+.dark-prose * {
+  color: hsl(var(--foreground)) !important;
+  background-color: transparent !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark-prose th,
+.dark-prose thead td {
+  background: hsl(var(--muted)) !important;
+}
+
+.dark-prose a,
+.dark-prose a * {
+  color: hsl(var(--primary)) !important;
+}
+
+.dark-prose strong,
+.dark-prose b {
+  color: hsl(var(--foreground)) !important;
+  font-weight: 700;
+}
+
 /* ========================================
    PROTECAO CONTRA IMPRESSAO
    Bloqueio total de print/PDF
