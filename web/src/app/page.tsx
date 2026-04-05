@@ -211,8 +211,8 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-2"
             >
-              Nao enfrente o plantao sozinho. Tenha respaldo para decidir,
-              <span className="text-foreground font-medium"> mesmo nos plantoes sem cirurgiao.</span>
+              Não enfrente o plantão sozinho. Tenha respaldo para decidir,
+              <span className="text-foreground font-medium"> mesmo nos plantões sem cirurgião.</span>
             </motion.p>
 
             {/* CTA */}
@@ -228,7 +228,7 @@ export default function Home() {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Button variant="hero" size="xl" className="group text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-10">
-                    Quero seguranca para decidir no plantao
+                    Quero segurança para decidir no plantão
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
@@ -248,9 +248,9 @@ export default function Home() {
               className="flex flex-wrap justify-center gap-4"
             >
               {[
-                { icon: Brain, text: "Raciocinio Estruturado" },
-                { icon: Shield, text: "Decisoes Seguras" },
-                { icon: Stethoscope, text: "Pratica Real" },
+                { icon: Brain, text: "Raciocínio Estruturado" },
+                { icon: Shield, text: "Decisões Seguras" },
+                { icon: Stethoscope, text: "Prática Real" },
               ].map((item, index) => (
                 <motion.div
                   key={index}
@@ -335,11 +335,11 @@ export default function Home() {
               className="text-center p-8 rounded-2xl bg-gradient-to-br from-destructive/5 to-destructive/10 border border-destructive/20"
             >
               <p className="text-lg md:text-xl text-muted-foreground mb-4">
-                A verdade e simples: o abdome agudo e uma das principais causas de{" "}
-                <span className="text-destructive font-semibold">erro, inseguranca e estresse</span> no plantao medico.
+                A verdade é simples: o abdome agudo é uma das principais causas de{" "}
+                <span className="text-destructive font-semibold">erro, insegurança e estresse</span> no plantão médico.
               </p>
               <p className="text-foreground font-medium">
-                E nao porque voce nao sabe medicina - mas porque ninguem te ensinou um metodo claro para decidir.
+                E não porque você não sabe medicina - mas porque ninguém te ensinou um método claro para decidir.
               </p>
             </motion.div>
           </div>
@@ -550,13 +550,13 @@ export default function Home() {
               className="text-center mb-16"
             >
               <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
-                Conteudo Programatico
+                Conteúdo Programático
               </span>
               <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
-                O que voce vai <span className="text-primary">aprender</span>
+                O que você vai <span className="text-primary">aprender</span>
               </h2>
               <p className="text-lg text-muted-foreground">
-                Ao longo do programa, voce aprendera na pratica:
+                Ao longo do programa, você aprenderá na prática:
               </p>
             </motion.div>
 
@@ -569,13 +569,13 @@ export default function Home() {
               className="grid gap-4 mb-12"
             >
               {[
-                { icon: Brain, text: "Como estruturar o raciocinio clinico desde a anamnese" },
+                { icon: Brain, text: "Como estruturar o raciocínio clínico desde a anamnese" },
                 { icon: AlertTriangle, text: "Quais sinais de alerta realmente mudam conduta" },
                 { icon: FileSearch, text: "Quais exames solicitar - e quais evitar" },
                 { icon: Scale, text: "Como classificar gravidade e risco" },
                 { icon: ArrowRightLeft, text: "Quando observar, quando estabilizar e quando encaminhar" },
-                { icon: MessageSquare, text: "Como organizar e apresentar um caso ao cirurgiao" },
-                { icon: FileText, text: "Prescricoes objetivas e aplicaveis ao plantao real" },
+                { icon: MessageSquare, text: "Como organizar e apresentar um caso ao cirurgião" },
+                { icon: FileText, text: "Prescrições objetivas e aplicáveis ao plantão real" },
               ].map((learning, index) => (
                 <motion.div
                   key={index}
@@ -658,8 +658,8 @@ export default function Home() {
               {[
                 {
                   icon: Brain,
-                  title: "Raciocinio clinico estruturado",
-                  description: "Aprenda a formular hipoteses diagnosticas coerentes, reconhecer padroes clinicos e entender quais dados realmente fazem diferenca.",
+                  title: "Raciocínio clínico estruturado",
+                  description: "Aprenda a formular hipóteses diagnósticas coerentes, reconhecer padrões clínicos e entender quais dados realmente fazem diferença.",
                 },
                 {
                   icon: FileCheck,
@@ -668,8 +668,8 @@ export default function Home() {
                 },
                 {
                   icon: Pill,
-                  title: "Prescricao orientada pela pratica",
-                  description: "Indicacoes objetivas, protocolos aplicaveis e modelos de prescricao para a vida real - nao apenas para provas.",
+                  title: "Prescrição orientada pela prática",
+                  description: "Indicações objetivas, protocolos aplicáveis e modelos de prescrição para a vida real - não apenas para provas.",
                 },
               ].map((item, index) => (
                 <motion.div
@@ -924,28 +924,28 @@ export default function Home() {
               <Accordion type="single" collapsible className="space-y-4">
                 {[
                   {
-                    question: "Para quem e o Programa A.G.I.R.?",
-                    answer: "O A.G.I.R. foi desenvolvido para medicos e estudantes que atuam na linha de frente do atendimento a dor abdominal e ao abdome agudo, especialmente em cenarios sem suporte cirurgico imediato.",
+                    question: "Para quem é o Programa A.G.I.R.?",
+                    answer: "O A.G.I.R. foi desenvolvido para médicos e estudantes que atuam na linha de frente do atendimento à dor abdominal e ao abdome agudo, especialmente em cenários sem suporte cirúrgico imediato.",
                   },
                   {
-                    question: "O curso e teorico ou pratico?",
-                    answer: "O A.G.I.R. e essencialmente pratico. Todo o conteudo e orientado para a realidade do plantao, com foco em raciocinio clinico estruturado, condutas claras, prescricao aplicavel e tomada de decisao responsavel.",
+                    question: "O curso é teórico ou prático?",
+                    answer: "O A.G.I.R. é essencialmente prático. Todo o conteúdo é orientado para a realidade do plantão, com foco em raciocínio clínico estruturado, condutas claras, prescrição aplicável e tomada de decisão responsável.",
                   },
                   {
-                    question: "O conteudo serve para quem trabalha em UPA ou hospital sem cirurgiao?",
-                    answer: "Sim. Esse e um dos principais focos do programa. O Programa A.G.I.R. foi criado justamente para capacitar profissionais que atendem em locais sem retaguarda cirurgica imediata.",
+                    question: "O conteúdo serve para quem trabalha em UPA ou hospital sem cirurgião?",
+                    answer: "Sim. Esse é um dos principais focos do programa. O Programa A.G.I.R. foi criado justamente para capacitar profissionais que atendem em locais sem retaguarda cirúrgica imediata.",
                   },
                   {
-                    question: "Vou conseguir aplicar o conteudo no proximo plantao?",
-                    answer: "Sim. O metodo A.G.I.R. e estruturado para aplicacao imediata. As aulas sao curtas, objetivas e baseadas em situacoes reais.",
+                    question: "Vou conseguir aplicar o conteúdo no próximo plantão?",
+                    answer: "Sim. O método A.G.I.R. é estruturado para aplicação imediata. As aulas são curtas, objetivas e baseadas em situações reais.",
                   },
                   {
                     question: "O programa ensina quando encaminhar para a Cirurgia Geral?",
-                    answer: "Sim. Um dos pilares do Programa A.G.I.R. e o raciocinio para acao. Voce aprendera a classificar risco, identificar sinais de gravidade e decidir o momento correto do encaminhamento.",
+                    answer: "Sim. Um dos pilares do Programa A.G.I.R. é o raciocínio para ação. Você aprenderá a classificar risco, identificar sinais de gravidade e decidir o momento correto do encaminhamento.",
                   },
                   {
-                    question: "Por quanto tempo terei acesso ao conteudo?",
-                    answer: "Ao entrar no Programa A.G.I.R., voce garante 12 meses de acesso completo, incluindo todo o conteudo atual, atualizacoes continuas e novas integracoes.",
+                    question: "Por quanto tempo terei acesso ao conteúdo?",
+                    answer: "Ao entrar no Programa A.G.I.R., você garante 12 meses de acesso completo, incluindo todo o conteúdo atual, atualizações contínuas e novas integrações.",
                   },
                 ].map((faq, index) => (
                   <AccordionItem
@@ -997,18 +997,18 @@ export default function Home() {
             >
               {[
                 {
-                  name: "Dr. Francisco Leoncio Dazzi",
-                  specialty: "Cirurgiao do Aparelho Digestivo",
+                  name: "Dr. Francisco Leôncio Dazzi",
+                  specialty: "Cirurgião do Aparelho Digestivo",
                   crm: "CRM 10.726",
-                  bio: "Mestre em cirurgia pelo IAMSPE. Atuacao direta na linha de frente da cirurgia geral e cirurgia do aparelho digestivo, com experiencia consolidada em cenarios de urgencia e tomada de decisao em ambiente de alta complexidade.",
-                  role: "No Programa AGIR, e responsavel pela estruturacao dos conteudos clinicos e desenvolvimento dos algoritmos de conduta, com foco em aplicabilidade pratica e seguranca no manejo do paciente cirurgico.",
+                  bio: "Mestre em cirurgia pelo IAMSPE. Atuação direta na linha de frente da cirurgia geral e cirurgia do aparelho digestivo, com experiência consolidada em cenários de urgência e tomada de decisão em ambiente de alta complexidade.",
+                  role: "No Programa AGIR, é responsável pela estruturação dos conteúdos clínicos e desenvolvimento dos algoritmos de conduta, com foco em aplicabilidade prática e segurança no manejo do paciente cirúrgico.",
                 },
                 {
-                  name: "Dr. Duilio Eutropio Neto",
-                  specialty: "Cirurgiao Oncologico",
+                  name: "Dr. Duílio Eutrópio Neto",
+                  specialty: "Cirurgião Oncológico",
                   crm: "CRM 14.072",
-                  bio: "Especialista em cirurgia geral e cirurgia oncologica, com experiencia no manejo de casos de alta complexidade e planejamento cirurgico estrategico.",
-                  role: "No Programa AGIR, e responsavel pela curadoria cientifica e validacao dos conteudos, assegurando alinhamento com as melhores praticas e evidencias atuais.",
+                  bio: "Especialista em cirurgia geral e cirurgia oncológica, com experiência no manejo de casos de alta complexidade e planejamento cirúrgico estratégico.",
+                  role: "No Programa AGIR, é responsável pela curadoria científica e validação dos conteúdos, assegurando alinhamento com as melhores práticas e evidências atuais.",
                 },
               ].map((doctor, index) => (
                 <motion.div
@@ -1092,7 +1092,7 @@ export default function Home() {
                 className="p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl bg-card/80 backdrop-blur-sm border border-primary/30 glow-primary"
               >
                 <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
-                  Nao quero mais improvisar na{" "}
+                  Não quero mais improvisar na{" "}
                   <motion.span
                     className="text-primary"
                     animate={{ textShadow: ["0 0 10px hsl(150 97% 27% / 0.5)", "0 0 30px hsl(150 97% 27% / 0.8)", "0 0 10px hsl(150 97% 27% / 0.5)"] }}
@@ -1103,7 +1103,7 @@ export default function Home() {
                 </h2>
 
                 <p className="text-xl text-muted-foreground mb-10">
-                  Aprenda a avaliar, investigar e agir com metodo, a partir do proximo plantao.
+                  Aprenda a avaliar, investigar e agir com método, a partir do próximo plantão.
                 </p>
 
                 {/* CTA Button */}
@@ -1134,10 +1134,10 @@ export default function Home() {
                   className="grid sm:grid-cols-2 gap-4 max-w-xl mx-auto"
                 >
                   {[
-                    { icon: CreditCard, text: "Parcelamento em ate 12x" },
+                    { icon: CreditCard, text: "Parcelamento em até 12x" },
                     { icon: Lock, text: "Pagamento seguro" },
-                    { icon: Zap, text: "Acesso imediato apos confirmacao" },
-                    { icon: Calendar, text: "Conteudo aplicavel desde o proximo plantao" },
+                    { icon: Zap, text: "Acesso imediato após confirmação" },
+                    { icon: Calendar, text: "Conteúdo aplicável desde o próximo plantão" },
                   ].map((benefit, index) => (
                     <motion.div
                       key={index}

@@ -48,45 +48,45 @@ interface Subscription {
 // Dados dos planos - Valores com promocao de lancamento
 const standardPlan = {
   name: 'STANDARD',
-  description: 'Acesso completo ao metodo A.G.I.R.',
+  description: 'Acesso completo ao método A.G.I.R.',
   pricePerMonth: '59,90',
   promoPrice: '49,90',
-  promoLabel: 'Oferta exclusiva de lancamento',
+  promoLabel: 'Oferta exclusiva de lançamento',
   pricePerDay: 'R$ 1,70',
   features: [
     '12 meses de acesso completo',
-    'Acesso a todo o conteudo pelo App',
+    'Acesso a todo o conteúdo pelo App',
     'Guidelines personalizados',
-    'Conteudo 100% voltado para o plantao',
+    'Conteúdo 100% voltado para o plantão',
     'Grupo exclusivo no WhatsApp',
-    'Discussao de casos clinicos reais',
-    'Atualizacoes cientificas recorrentes',
+    'Discussão de casos clínicos reais',
+    'Atualizações científicas recorrentes',
   ],
   paymentOptions: [
     { method: 'Pix', highlight: true },
-    { method: 'Debito' },
-    { method: 'Credito - em ate 12 vezes' },
+    { method: 'Débito' },
+    { method: 'Crédito - em até 12 vezes' },
   ],
 }
 
 const premiumPlan = {
   name: 'PREMIUM',
-  description: 'Metodo A.G.I.R. + suporte clinico avancado',
+  description: 'Método A.G.I.R. + suporte clínico avançado',
   pricePerMonth: '99,90',
   promoPrice: '79,90',
-  promoLabel: 'Oferta exclusiva de lancamento',
+  promoLabel: 'Oferta exclusiva de lançamento',
   pricePerDay: 'R$ 2,70',
   features: [
     'Tudo do Plano Standard',
     'Suporte personalizado por WhatsApp',
-    'Mentoria clinica com especialistas',
+    'Mentoria clínica com especialistas',
     'Respaldo para casos complexos',
-    'Atendimento prioritario',
+    'Atendimento prioritário',
   ],
   paymentOptions: [
     { method: 'Pix', highlight: true },
-    { method: 'Debito' },
-    { method: 'Credito - em ate 12 vezes' },
+    { method: 'Débito' },
+    { method: 'Crédito - em até 12 vezes' },
   ],
 }
 
@@ -94,53 +94,53 @@ const comparisonData = [
   { feature: '12 meses de acesso', standard: true, premium: true },
   { feature: 'Acesso via App', standard: true, premium: true },
   { feature: 'Guidelines personalizados', standard: true, premium: true },
-  { feature: 'Conteudo pratico para plantao', standard: true, premium: true },
+  { feature: 'Conteúdo prático para plantão', standard: true, premium: true },
   { feature: 'Grupo WhatsApp exclusivo', standard: true, premium: true },
-  { feature: 'Discussao de casos clinicos', standard: true, premium: true },
-  { feature: 'Atualizacoes cientificas', standard: true, premium: true },
+  { feature: 'Discussão de casos clínicos', standard: true, premium: true },
+  { feature: 'Atualizações científicas', standard: true, premium: true },
   { feature: 'Suporte personalizado WhatsApp', standard: false, premium: true },
   { feature: 'Mentoria com especialistas', standard: false, premium: true },
 ]
 
 const standardReasons = [
-  { icon: Target, text: 'Quer um metodo estruturado para avaliar dor abdominal' },
+  { icon: Target, text: 'Quer um método estruturado para avaliar dor abdominal' },
   { icon: Users, text: 'Atua em PS ou UPA e precisa de clareza para decidir' },
-  { icon: ShieldCheck, text: 'Busca seguranca clinica baseada em evidencias' },
+  { icon: ShieldCheck, text: 'Busca segurança clínica baseada em evidências' },
   { icon: BookOpen, text: 'Prefere estudar no seu ritmo, com apoio do grupo' },
 ]
 
 const premiumReasons = [
-  { icon: MessageCircle, text: 'Atua frequentemente sem retaguarda cirurgica imediata' },
-  { icon: Target, text: 'Enfrenta casos mais complexos ou limitrofes' },
+  { icon: MessageCircle, text: 'Atua frequentemente sem retaguarda cirúrgica imediata' },
+  { icon: Target, text: 'Enfrenta casos mais complexos ou limítrofes' },
   { icon: Award, text: 'Quer suporte direto para discutir condutas' },
-  { icon: ShieldCheck, text: 'Deseja um nivel extra de seguranca e respaldo' },
+  { icon: ShieldCheck, text: 'Deseja um nível extra de segurança e respaldo' },
 ]
 
 const faqs = [
   {
-    question: 'Qual a diferenca entre os planos?',
+    question: 'Qual a diferença entre os planos?',
     answer:
-      'O conteudo base e identico. O Plano Premium inclui suporte personalizado via WhatsApp e mentoria clinica com especialistas, ideal para quem atua sem retaguarda cirurgica imediata.',
+      'O conteúdo base é idêntico. O Plano Premium inclui suporte personalizado via WhatsApp e mentoria clínica com especialistas, ideal para quem atua sem retaguarda cirúrgica imediata.',
   },
   {
     question: 'Por quanto tempo tenho acesso?',
     answer:
-      'Ambos os planos oferecem 12 meses de acesso completo, com atualizacoes cientificas recorrentes durante todo o periodo.',
+      'Ambos os planos oferecem 12 meses de acesso completo, com atualizações científicas recorrentes durante todo o período.',
   },
   {
-    question: 'Como funciona o acesso ao conteudo?',
+    question: 'Como funciona o acesso ao conteúdo?',
     answer:
-      'Todo o conteudo fica disponivel em nosso App exclusivo, podendo ser acessado a qualquer momento pelo celular, tablet ou computador.',
+      'Todo o conteúdo fica disponível em nosso App exclusivo, podendo ser acessado a qualquer momento pelo celular, tablet ou computador.',
   },
   {
     question: 'Posso parcelar o pagamento?',
     answer:
-      'Sim! Oferecemos parcelamento em ate 12x no cartao de credito. O PIX a vista oferece o melhor desconto.',
+      'Sim! Oferecemos parcelamento em até 12x no cartão de crédito. O PIX à vista oferece o melhor desconto.',
   },
   {
     question: 'Posso trocar de plano depois?',
     answer:
-      'Sim, e possivel fazer upgrade do Standard para o Premium a qualquer momento, pagando apenas a diferenca proporcional.',
+      'Sim, é possível fazer upgrade do Standard para o Premium a qualquer momento, pagando apenas a diferença proporcional.',
   },
 ]
 
@@ -452,7 +452,7 @@ export default function SubscriptionPage() {
           <p className="text-muted-foreground max-w-2xl mx-auto">
             {hasActiveSubscription
               ? 'Gerencie sua assinatura e acompanhe seu acesso ao Programa A.G.I.R.'
-              : 'Tenha acesso completo ao metodo A.G.I.R. e transforme sua pratica clinica no plantao.'}
+              : 'Tenha acesso completo ao método A.G.I.R. e transforme sua prática clínica no plantão.'}
           </p>
         </motion.div>
       </div>
@@ -569,7 +569,7 @@ export default function SubscriptionPage() {
             Compare os planos
           </h2>
           <p className="text-muted-foreground">
-            O conteudo base e o mesmo. O que muda e o nivel de acompanhamento.
+            O conteúdo base é o mesmo. O que muda é o nível de acompanhamento.
           </p>
         </motion.div>
 
@@ -632,8 +632,8 @@ export default function SubscriptionPage() {
             Qual plano escolher?
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Ambos os planos oferecem acesso completo ao metodo A.G.I.R. A diferenca esta no
-            nivel de acompanhamento e suporte clinico.
+            Ambos os planos oferecem acesso completo ao método A.G.I.R. A diferença está no
+            nível de acompanhamento e suporte clínico.
           </p>
         </motion.div>
 
@@ -645,10 +645,10 @@ export default function SubscriptionPage() {
             className="glass rounded-2xl p-6"
           >
             <h3 className="text-xl font-bold gradient-text mb-2 font-display">
-              Escolha Standard se voce:
+              Escolha Standard se você:
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Ideal para quem quer metodo, organizacao e decisao segura.
+              Ideal para quem quer método, organização e decisão segura.
             </p>
             <ul className="space-y-3">
               {standardReasons.map((item, index) => (
@@ -674,10 +674,10 @@ export default function SubscriptionPage() {
             className="glass-strong rounded-2xl p-6 border border-[hsl(45,93%,58%)]/20"
           >
             <h3 className="text-xl font-bold text-[hsl(45,93%,58%)] mb-2 font-display">
-              Escolha Premium se voce:
+              Escolha Premium se você:
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Ideal para quem quer metodo + acompanhamento proximo.
+              Ideal para quem quer método + acompanhamento próximo.
             </p>
             <ul className="space-y-3">
               {premiumReasons.map((item, index) => (

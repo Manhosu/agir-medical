@@ -95,7 +95,7 @@ export default function AdminPixPaymentsPage() {
       if (result.subscription_created) {
         toast.success(`Pagamento aprovado e assinatura ${payment.plan.toUpperCase()} ativada!`)
       } else {
-        toast.success('Pagamento aprovado! Usuario nao vinculado - ative a assinatura manualmente.')
+        toast.success('Pagamento aprovado! Usuário não vinculado - ative a assinatura manualmente.')
       }
 
       setSelectedPayment(null)
@@ -249,7 +249,7 @@ export default function AdminPixPaymentsPage() {
                     <TableHead>Valor</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Data</TableHead>
-                    <TableHead className="text-right">Acoes</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -331,7 +331,7 @@ export default function AdminPixPaymentsPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Email</p>
-                  <p className="text-sm">{selectedPayment.email || 'Nao informado'}</p>
+                  <p className="text-sm">{selectedPayment.email || 'Não informado'}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Plano</p>
@@ -342,7 +342,7 @@ export default function AdminPixPaymentsPage() {
                   <p className="font-medium text-primary">{formatAmount(selectedPayment.amount)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Data da solicitacao</p>
+                  <p className="text-xs text-muted-foreground">Data da solicitação</p>
                   <p className="text-sm">{formatDate(selectedPayment.created_at)}</p>
                 </div>
               </div>

@@ -67,7 +67,7 @@ export function PixPaymentModal({
     }
     const cleanCpf = cpf.replace(/\D/g, '')
     if (cleanCpf.length !== 11) {
-      toast.error('CPF invalido. Digite os 11 digitos')
+      toast.error('CPF inválido. Digite os 11 dígitos')
       return
     }
 
@@ -135,8 +135,8 @@ export function PixPaymentModal({
             <div>
               <h3 className="text-lg font-semibold">Pagamento registrado!</h3>
               <p className="text-sm text-muted-foreground mt-2">
-                Apos realizar o PIX, sua assinatura sera ativada em ate 24 horas uteis.
-                Voce recebera uma notificacao quando o acesso for liberado.
+                Após realizar o PIX, sua assinatura será ativada em até 24 horas úteis.
+                Você receberá uma notificação quando o acesso for liberado.
               </p>
             </div>
             <Button onClick={() => handleClose(false)} className="w-full">
@@ -213,7 +213,7 @@ export function PixPaymentModal({
             </Button>
 
             <p className="text-xs text-muted-foreground text-center">
-              Apos o pagamento, seu acesso sera liberado em ate 24h uteis
+              Após o pagamento, seu acesso será liberado em até 24h úteis
             </p>
           </div>
         )}

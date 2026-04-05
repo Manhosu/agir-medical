@@ -375,13 +375,13 @@ export default function AdminSubscriptionsPage() {
             </div>
           ) : recentActivations.length === 0 ? (
             <p className="text-center py-8 text-muted-foreground">
-              Nenhuma ativacao registrada
+              Nenhuma ativação registrada
             </p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Usuario</TableHead>
+                  <TableHead>Usuário</TableHead>
                   <TableHead>Plano</TableHead>
                   <TableHead>Origem</TableHead>
                   <TableHead>Data</TableHead>
