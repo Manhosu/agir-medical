@@ -609,12 +609,21 @@
 }
 
 .light-prose * {
-  color: #374151 !important;
-  background-color: transparent !important;
+  /* Fallback color - inline styles from original docs will override this */
+  color: #374151;
+}
+
+/* Only force transparent bg on elements that shouldn't have colored backgrounds */
+.light-prose p,
+.light-prose h1, .light-prose h2, .light-prose h3, .light-prose h4, .light-prose h5, .light-prose h6,
+.light-prose li,
+.light-prose ul, .light-prose ol,
+.light-prose blockquote {
+  background-color: transparent;
 }
 
 .light-prose h1, .light-prose h2, .light-prose h3, .light-prose h4, .light-prose h5, .light-prose h6 {
-  color: #111827 !important;
+  color: #111827;
   font-family: var(--font-display);
   font-weight: 700;
   line-height: 1.25;
@@ -633,19 +642,19 @@
 }
 
 .light-prose p {
-  color: #1f2937 !important;
+  color: #1f2937;
   margin-top: 1em;
   margin-bottom: 1em;
   line-height: 1.75;
 }
 
 .light-prose strong, .light-prose b {
-  color: #111827 !important;
+  color: #111827;
   font-weight: 700;
 }
 
 .light-prose a {
-  color: #047857 !important;
+  color: #047857;
   text-decoration: underline;
 }
 
@@ -659,7 +668,7 @@
 .light-prose ol { list-style-type: decimal; }
 
 .light-prose li {
-  color: #1f2937 !important;
+  color: #1f2937;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
@@ -672,8 +681,8 @@
 }
 
 .light-prose th {
-  background-color: #f3f4f6 !important;
-  color: #111827 !important;
+  background-color: #f3f4f6;
+  color: #111827;
   padding: 0.75em;
   border: 1px solid #d1d5db;
   text-align: left;
@@ -681,7 +690,7 @@
 }
 
 .light-prose td {
-  color: #1f2937 !important;
+  color: #1f2937;
   padding: 0.75em;
   border: 1px solid #d1d5db;
 }
@@ -690,7 +699,7 @@
   border-left: 4px solid #02884a;
   padding-left: 1em;
   margin: 1.5em 0;
-  color: #6b7280 !important;
+  color: #6b7280;
   font-style: italic;
 }
 
@@ -704,7 +713,7 @@
 
 .light-prose code {
   font-size: 0.875em;
-  background-color: #f3f4f6 !important;
+  background-color: #f3f4f6;
   padding: 0.125em 0.375em;
   border-radius: 0.25rem;
 }

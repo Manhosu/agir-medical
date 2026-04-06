@@ -106,10 +106,10 @@ export function ContentModal({
       setProgress(100)
       setMaxProgress(100)
       onProgressUpdate?.(100, true)
-      toast.success('Aula concluida com sucesso!')
+      toast.success('Aula concluída com sucesso!')
     } catch (error) {
       console.error('Error completing lesson:', error)
-      toast.error('Erro ao marcar como concluida')
+      toast.error('Erro ao marcar como concluída')
     } finally {
       setIsSaving(false)
     }
@@ -230,10 +230,10 @@ export function ContentModal({
             {showCompletionButton && !isCompleted && (
               <div className="mt-12 p-6 bg-primary/5 border border-primary/20 rounded-lg text-center">
                 <h3 className="text-xl font-serif font-bold mb-2">
-                  Voce chegou ao fim!
+                  Você chegou ao fim!
                 </h3>
                 <p className="text-muted-foreground mb-4">
-                  Clique no botao abaixo para marcar esta aula como concluida.
+                  Clique no botão abaixo para marcar esta aula como concluída.
                 </p>
                 <Button
                   size="lg"
@@ -252,10 +252,10 @@ export function ContentModal({
               <div className="mt-12 p-6 bg-primary/10 border border-primary/30 rounded-lg text-center">
                 <CheckCircle2 className="h-12 w-12 text-primary mx-auto mb-3" />
                 <h3 className="text-xl font-serif font-bold mb-2 text-primary">
-                  Aula Concluida!
+                  Aula Concluída!
                 </h3>
                 <p className="text-muted-foreground">
-                  Voce ja concluiu esta aula. Continue explorando outros conteudos.
+                  Você já concluiu esta aula. Continue explorando outros conteúdos.
                 </p>
               </div>
             )}
@@ -268,7 +268,7 @@ export function ContentModal({
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>Progresso: {Math.round(maxProgress)}%</span>
           {isCompleted && (
-            <span className="text-primary font-medium">• Concluida</span>
+            <span className="text-primary font-medium">• Concluída</span>
           )}
         </div>
         <span className="text-xs text-muted-foreground">
