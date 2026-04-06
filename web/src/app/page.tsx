@@ -173,7 +173,7 @@ export default function Home() {
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
-              <span className="text-xs sm:text-sm text-muted-foreground">Programa de Formacao Medica</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">Programa de Formação Médica</span>
             </motion.div>
 
             {/* Main headline with logo */}
@@ -186,7 +186,7 @@ export default function Home() {
               <span className="font-display text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-3 sm:mb-4">Programa</span>
               <Image
                 src="/logo-horizontal-white.png"
-                alt="A.G.I.R. - Abdome Agudo Guiado por Investigacao e Raciocinio"
+                alt="A.G.I.R. - Abdome Agudo Guiado por Investigação e Raciocínio"
                 width={500}
                 height={140}
                 className="h-14 sm:h-20 md:h-28 lg:h-32 w-auto"
@@ -201,7 +201,7 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-sm sm:text-lg md:text-xl text-primary/80 font-medium mb-4"
             >
-              Abdome Agudo Guiado por Investigacao e Raciocinio
+              Abdome Agudo Guiado por Investigação e Raciocínio
             </motion.p>
 
             {/* Value proposition */}
@@ -301,10 +301,10 @@ export default function Home() {
               className="grid gap-4 mb-12"
             >
               {[
-                { icon: HelpCircle, text: "Sintomas inespecificos" },
-                { icon: Activity, text: "Diagnosticos que se sobrepoem" },
-                { icon: Clock, text: "Pressao por decisoes rapidas" },
-                { icon: AlertTriangle, text: "Medo de errar ou atrasar um diagnostico grave" },
+                { icon: HelpCircle, text: "Sintomas inespecíficos" },
+                { icon: Activity, text: "Diagnósticos que se sobrepõem" },
+                { icon: Clock, text: "Pressão por decisões rápidas" },
+                { icon: AlertTriangle, text: "Medo de errar ou atrasar um diagnóstico grave" },
                 { icon: UserX, text: "Pouco suporte cirurgico na retaguarda" },
               ].map((problem, index) => (
                 <motion.div
@@ -365,7 +365,7 @@ export default function Home() {
               O Metodo <span className="text-primary text-glow">A.G.I.R.</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Quatro pilares fundamentais que transformam completamente a forma como voce encara o abdome agudo.
+              Quatro pilares fundamentais que transformam completamente a forma como você encara o abdome agudo.
             </p>
           </motion.div>
 
@@ -380,26 +380,26 @@ export default function Home() {
             {[
               {
                 letter: "A",
-                title: "Avaliacao Estruturada",
-                description: "Historia clinica dirigida, exame fisico com proposito e identificacao precoce de gravidade.",
+                title: "Avaliação Estruturada",
+                description: "História clínica dirigida, exame físico com propósito e identificação precoce de gravidade.",
                 icon: ClipboardCheck,
               },
               {
                 letter: "G",
                 title: "Guiado por Evidencias",
-                description: "Fluxos claros, prioridades bem definidas e decisoes fundamentadas.",
+                description: "Fluxos claros, prioridades bem definidas e decisões fundamentadas.",
                 icon: BookOpen,
               },
               {
                 letter: "I",
-                title: "Investigacao Inteligente",
-                description: "Solicite apenas exames que impactam a conduta - e aprenda a interpreta-los corretamente.",
+                title: "Investigação Inteligente",
+                description: "Solicite apenas exames que impactam a conduta - e aprenda a interpretá-los corretamente.",
                 icon: Search,
               },
               {
                 letter: "R",
-                title: "Raciocinio para Acao",
-                description: "Classifique risco, tome decisoes seguras e encaminhe com informacoes relevantes.",
+                title: "Raciocínio para Ação",
+                description: "Classifique risco, tome decisões seguras e encaminhe com informações relevantes.",
                 icon: Target,
               },
             ].map((pillar, index) => (
@@ -455,7 +455,7 @@ export default function Home() {
             className="text-center mt-12"
           >
             <p className="text-xl text-foreground font-medium">
-              Esse metodo muda completamente a forma como voce encara o abdome agudo.
+              Esse método muda completamente a forma como você encara o abdome agudo.
             </p>
           </motion.div>
         </div>
@@ -495,11 +495,11 @@ export default function Home() {
             >
               {[
                 { icon: GraduationCap, text: "Estudantes em internato de medicina" },
-                { icon: Stethoscope, text: "Recem-formados iniciando plantoes" },
-                { icon: Users, text: "Medicos generalistas" },
-                { icon: Building2, text: "Medicos de UPA e PS clinico" },
+                { icon: Stethoscope, text: "Recém-formados iniciando plantões" },
+                { icon: Users, text: "Médicos generalistas" },
+                { icon: Building2, text: "Médicos de UPA e PS clínico" },
                 { icon: Users, text: "Revalidantes" },
-                { icon: Stethoscope, text: "Residentes de Clinica Medica, GO e Medicina de Familia" },
+                { icon: Stethoscope, text: "Residentes de Clínica Médica, GO e Medicina de Família" },
                 { icon: Building2, text: "Profissionais que atuam em hospitais sem equipe de Cirurgia Geral" },
               ].map((audience, index) => (
                 <motion.div
@@ -528,8 +528,8 @@ export default function Home() {
               className="p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center"
             >
               <p className="text-xl md:text-2xl text-foreground font-medium">
-                Se voce atende dor abdominal e sente inseguranca,{" "}
-                <span className="text-primary font-bold">o Programa A.G.I.R. e para voce.</span>
+                Se você atende dor abdominal e sente insegurança,{" "}
+                <span className="text-primary font-bold">o Programa A.G.I.R. é para você.</span>
               </p>
             </motion.div>
           </div>
@@ -642,8 +642,8 @@ export default function Home() {
                 Por que o A.G.I.R. e <span className="text-primary">diferente?</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                Porque ele foi desenvolvido para a realidade do plantao - sem teoria excessiva,
-                sem floreios, sem conteudos desconectados da pratica.
+                Porque ele foi desenvolvido para a realidade do plantão - sem teoria excessiva,
+                sem floreios, sem conteúdos desconectados da prática.
               </p>
             </motion.div>
 
@@ -722,7 +722,7 @@ export default function Home() {
                 Muito alem das aulas
               </h3>
               <p className="text-muted-foreground">
-                O A.G.I.R. e uma comunidade de formacao clinica continua.
+                O A.G.I.R. é uma comunidade de formação clínica contínua.
               </p>
             </motion.div>
 
@@ -736,8 +736,8 @@ export default function Home() {
             >
               {[
                 { icon: Users, text: "Grupo exclusivo no Telegram" },
-                { icon: MessageCircle, text: "Discussao de casos clinicos reais" },
-                { icon: BookOpen, text: "Atualizacoes cientificas recorrentes" },
+                { icon: MessageCircle, text: "Discussão de casos clínicos reais" },
+                { icon: BookOpen, text: "Atualizações científicas recorrentes" },
                 { icon: Headphones, text: "Suporte da equipe do programa" },
                 { icon: Sparkles, text: "Suporte personalizado no Pacote Premium" },
               ].map((extra, index) => (
@@ -777,10 +777,10 @@ export default function Home() {
               className="text-center mb-16"
             >
               <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
-                Transformacao
+                Transformação
               </span>
               <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6">
-                Com o A.G.I.R., voce <span className="text-primary">transforma</span> sua pratica
+                Com o A.G.I.R., você <span className="text-primary">transforma</span> sua prática
               </h2>
             </motion.div>
 
@@ -805,7 +805,7 @@ export default function Home() {
                   viewport={{ once: true }}
                   className="space-y-4"
                 >
-                  {["Improvisar", "Atender com medo", "Encaminhar sem seguranca"].map((item, index) => (
+                  {["Improvisar", "Atender com medo", "Encaminhar sem segurança"].map((item, index) => (
                     <motion.div
                       key={index}
                       variants={fadeInLeft}
@@ -839,7 +839,7 @@ export default function Home() {
                   viewport={{ once: true }}
                   className="space-y-4"
                 >
-                  {["Decidir com metodo", "Atender com clareza", "Agir com confianca"].map((item, index) => (
+                  {["Decidir com método", "Atender com clareza", "Agir com confiança"].map((item, index) => (
                     <motion.div
                       key={index}
                       variants={fadeInRight}
@@ -867,10 +867,10 @@ export default function Home() {
               className="text-center"
             >
               <p className="text-xl md:text-2xl text-muted-foreground mb-6">
-                A dor abdominal e o abdome agudo <span className="text-foreground font-semibold">nao permitem improviso.</span>
+                A dor abdominal e o abdome agudo <span className="text-foreground font-semibold">não permitem improviso.</span>
               </p>
               <p className="text-lg text-foreground mb-8">
-                Exigem <span className="text-primary font-bold">metodo</span>, <span className="text-primary font-bold">raciocinio</span> e <span className="text-primary font-bold">decisao responsavel</span>.
+                Exigem <span className="text-primary font-bold">método</span>, <span className="text-primary font-bold">raciocínio</span> e <span className="text-primary font-bold">decisão responsável</span>.
               </p>
 
               <Link href="/register">
@@ -879,7 +879,7 @@ export default function Home() {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Button variant="hero" size="xl" className="group text-sm sm:text-base md:text-lg px-5 sm:px-8 md:px-10 w-full sm:w-auto">
-                    Quero decidir com metodo e confianca
+                    Quero decidir com método e confiança
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
@@ -1171,7 +1171,7 @@ export default function Home() {
             >
               <Image
                 src="/logo-horizontal-white.png"
-                alt="A.G.I.R. - Abdome Agudo Guiado por Investigacao e Raciocinio"
+                alt="A.G.I.R. - Abdome Agudo Guiado por Investigação e Raciocínio"
                 width={200}
                 height={56}
                 className="h-12 w-auto"

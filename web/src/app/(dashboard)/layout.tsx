@@ -172,7 +172,7 @@ export default function DashboardLayout({
               </Avatar>
               <div className="flex flex-col items-start text-left flex-1 min-w-0">
                 <span className="text-sm font-medium truncate w-full">
-                  {profile?.full_name || 'Usuario'}
+                  {profile?.full_name || 'Usuário'}
                 </span>
                 <span className="text-xs text-muted-foreground truncate w-full">
                   {currentUser?.email}
@@ -225,7 +225,7 @@ export default function DashboardLayout({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>{profile?.full_name || 'Usuario'}</DropdownMenuLabel>
+              <DropdownMenuLabel>{profile?.full_name || 'Usuário'}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {navItems.map((item) => (
                 <DropdownMenuItem key={item.href} asChild>

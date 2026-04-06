@@ -28,9 +28,9 @@ const adminNavItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/subscriptions', label: 'Assinaturas', icon: CreditCard },
   { href: '/admin/pix-payments', label: 'Pagamentos PIX', icon: QrCode },
-  { href: '/admin/users', label: 'Usuarios', icon: Users },
+  { href: '/admin/users', label: 'Usuários', icon: Users },
   { href: '/admin/courses', label: 'Cursos', icon: BookOpen },
-  { href: '/admin/reports', label: 'Relatorios', icon: BarChart3 },
+  { href: '/admin/reports', label: 'Relatórios', icon: BarChart3 },
 ]
 
 export default function AdminLayout({

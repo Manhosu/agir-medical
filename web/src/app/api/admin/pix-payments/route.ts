@@ -21,7 +21,7 @@ function checkAdmin(request: NextRequest): boolean {
 // GET - listar pagamentos PIX
 export async function GET(request: NextRequest) {
   if (!checkAdmin(request)) {
-    return NextResponse.json({ error: 'Nao autorizado' }, { status: 401 })
+    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
   }
 
   const { searchParams } = new URL(request.url)
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
 // PATCH - aprovar ou rejeitar pagamento
 export async function PATCH(request: NextRequest) {
   if (!checkAdmin(request)) {
-    return NextResponse.json({ error: 'Nao autorizado' }, { status: 401 })
+    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
   }
 
   const { id, action } = await request.json()
@@ -89,7 +89,7 @@ export async function PATCH(request: NextRequest) {
     .single()
 
   if (fetchError || !payment) {
-    return NextResponse.json({ error: 'Pagamento nao encontrado' }, { status: 404 })
+    return NextResponse.json({ error: 'Pagamento não encontrado' }, { status: 404 })
   }
 
   // Atualizar status

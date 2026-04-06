@@ -140,11 +140,11 @@ export default function CourseDetailPage() {
 
   const handleOpenContent = () => {
     if (!hasActiveSubscription) {
-      toast.error('Voce precisa de uma assinatura ativa para acessar o conteudo')
+      toast.error('Você precisa de uma assinatura ativa para acessar o conteúdo')
       return
     }
     if (!lessonContent) {
-      toast.error('Conteudo nao disponivel')
+      toast.error('Conteúdo não disponível')
       return
     }
     setIsModalOpen(true)
@@ -152,11 +152,11 @@ export default function CourseDetailPage() {
 
   const handleOpenGuideline = () => {
     if (!hasActiveSubscription) {
-      toast.error('Voce precisa de uma assinatura ativa para acessar o conteudo')
+      toast.error('Você precisa de uma assinatura ativa para acessar o conteúdo')
       return
     }
     if (!course?.guideline_url) {
-      toast.error('Guideline nao disponivel')
+      toast.error('Guideline não disponível')
       return
     }
     setIsGuidelineOpen(true)

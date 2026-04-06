@@ -79,23 +79,23 @@ export function SecureContentViewer({
       // Mostrar aviso ao usuário
       switch (type) {
         case 'print':
-          toast.error('Impressao nao permitida', {
-            description: 'Este conteudo e protegido contra impressao.'
+          toast.error('Impressão não permitida', {
+            description: 'Este conteúdo é protegido contra impressão.'
           })
-          applyBlur('Tentativa de impressao detectada', 3000)
+          applyBlur('Tentativa de impressão detectada', 3000)
           break
         case 'copy':
         case 'clipboard':
         case 'cut':
-          toast.error('Copia nao permitida', {
-            description: 'Este conteudo e protegido contra copia.'
+          toast.error('Cópia não permitida', {
+            description: 'Este conteúdo é protegido contra cópia.'
           })
           break
         case 'screenshot':
           // BLUR INSTANTÂNEO via DOM para máxima velocidade
           applyInstantBlur()
           toast.error('Captura de tela detectada', {
-            description: 'O conteudo foi protegido.'
+            description: 'O conteúdo foi protegido.'
           })
           applyBlur('Tentativa de screenshot detectada', 5000)
           break
@@ -110,17 +110,17 @@ export function SecureContentViewer({
           toast.error('Menu de contexto desativado')
           break
         case 'selectAll':
-          toast.error('Selecao nao permitida')
+          toast.error('Seleção não permitida')
           break
         default:
-          toast.error('Acao nao permitida')
+          toast.error('Ação não permitida')
       }
 
       // Se muitas violações, bloquear temporariamente
       if (violationCount > 3) {
         applyBlur('Muitas tentativas detectadas', 15000)
         toast.error('Muitas tentativas detectadas', {
-          description: 'Conteudo bloqueado por 15 segundos.'
+          description: 'Conteúdo bloqueado por 15 segundos.'
         })
         setViolationCount(0)
       }
@@ -138,7 +138,7 @@ export function SecureContentViewer({
     onDetected: () => {
       applyBlur('DevTools detectado')
       toast.error('DevTools detectado', {
-        description: 'Feche as ferramentas de desenvolvedor para visualizar o conteudo.'
+        description: 'Feche as ferramentas de desenvolvedor para visualizar o conteúdo.'
       })
     },
     onClosed: () => {

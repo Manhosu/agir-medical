@@ -198,7 +198,7 @@ export default function EditCoursePage() {
   if (!course) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Curso nao encontrado</p>
+        <p className="text-muted-foreground">Curso não encontrado</p>
         <Link href="/admin/courses">
           <Button variant="link">Voltar para lista de cursos</Button>
         </Link>
@@ -266,7 +266,7 @@ export default function EditCoursePage() {
               <Textarea
                 id="description"
                 name="description"
-                placeholder="Descreva o conteudo do curso..."
+                placeholder="Descreva o conteúdo do curso..."
                 value={formData.description}
                 onChange={handleChange}
                 disabled={isSubmitting}

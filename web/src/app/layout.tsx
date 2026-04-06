@@ -22,9 +22,9 @@ const cuprum = Cuprum({
 })
 
 export const metadata: Metadata = {
-  title: "A.G.I.R. - Programa de Formacao Medica",
-  description: "Abdome Agudo Guiado por Investigacao e Raciocinio - Programa de formacao medica para atendimento seguro",
-  keywords: ["agir", "medicina", "abdome agudo", "formacao medica", "plantao", "cirurgia"],
+  title: "A.G.I.R. - Programa de Formação Médica",
+  description: "Abdome Agudo Guiado por Investigação e Raciocínio - Programa de formação médica para atendimento seguro",
+  keywords: ["agir", "medicina", "abdome agudo", "formação médica", "plantão", "cirurgia"],
 }
 
 export default function RootLayout({

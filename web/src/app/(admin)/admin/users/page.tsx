@@ -161,7 +161,7 @@ export default function AdminUsersPage() {
     const user = users.find(u => u.id === userId)
     const sub = getActiveSubscription(user!)
     if (!sub) {
-      toast.error('Usuario nao possui assinatura')
+      toast.error('Usuário não possui assinatura')
       return
     }
 
@@ -254,7 +254,7 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-display font-bold">Usuarios</h1>
+          <h1 className="text-3xl font-display font-bold">Usuários</h1>
           <p className="text-muted-foreground">
             Gerencie os usuarios da plataforma
           </p>
@@ -298,7 +298,7 @@ export default function AdminUsersPage() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <CardTitle>Lista de Usuarios</CardTitle>
+              <CardTitle>Lista de Usuários</CardTitle>
               <CardDescription>
                 {users.length} usuario(s) nesta pagina | {totalCount} total
               </CardDescription>

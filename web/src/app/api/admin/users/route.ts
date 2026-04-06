@@ -140,5 +140,5 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: true })
   }
 
-  return NextResponse.json({ error: 'Acao desconhecida' }, { status: 400 })
+  return NextResponse.json({ error: 'Ação desconhecida' }, { status: 400 })
 }

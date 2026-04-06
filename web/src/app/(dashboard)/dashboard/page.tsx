@@ -260,12 +260,12 @@ export default function DashboardPage() {
             <p className="text-muted-foreground mb-6 leading-relaxed">
               A AGIR nasceu da necessidade real de estudantes de medicina: ter acesso aos
               <strong className="text-foreground"> guidelines e protocolos atualizados</strong>, organizados de forma
-              clara e objetiva para provas de residencia.
+              clara e objetiva para provas de residência.
             </p>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Nosso conteudo e desenvolvido por medicos especializados que conhecem as bancas e
-              sabem exatamente o que e cobrado. Chega de perder tempo procurando material espalhado -
-              aqui voce encontra tudo em um so lugar.
+              Nosso conteúdo é desenvolvido por médicos especializados que conhecem as bancas e
+              sabem exatamente o que é cobrado. Chega de perder tempo procurando material espalhado -
+              aqui você encontra tudo em um só lugar.
             </p>
             <div className="flex flex-wrap gap-3">
               <Badge variant="secondary" className="gap-1">
@@ -312,13 +312,13 @@ export default function DashboardPage() {
           <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent pb-8">
             <div className="flex items-center gap-2 mb-2">
               <Lightbulb className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium text-primary">Metodologia Unica</span>
+              <span className="text-sm font-medium text-primary">Metodologia Única</span>
             </div>
             <CardTitle className="text-2xl font-serif">
-              Por que a AGIR e diferente?
+              Por que a AGIR é diferente?
             </CardTitle>
             <CardDescription className="text-base">
-              Nosso conteudo nao e apenas uma copia de livros - e uma curadoria inteligente do que realmente importa.
+              Nosso conteúdo não é apenas uma cópia de livros - é uma curadoria inteligente do que realmente importa.
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
@@ -330,7 +330,7 @@ export default function DashboardPage() {
                 <h3 className="font-semibold text-lg">Foco no que Cai</h3>
                 <p className="text-muted-foreground">
                   Analisamos provas anteriores e identificamos os temas mais cobrados.
-                  Voce estuda o que realmente importa.
+                  Você estuda o que realmente importa.
                 </p>
               </div>
 
@@ -340,8 +340,8 @@ export default function DashboardPage() {
                 </div>
                 <h3 className="font-semibold text-lg">Linguagem Clara</h3>
                 <p className="text-muted-foreground">
-                  Guidelines traduzidos para uma linguagem acessivel, sem perder a precisao tecnica
-                  necessaria para a prova.
+                  Guidelines traduzidos para uma linguagem acessível, sem perder a precisão técnica
+                  necessária para a prova.
                 </p>
               </div>
 
@@ -351,8 +351,8 @@ export default function DashboardPage() {
                 </div>
                 <h3 className="font-semibold text-lg">Sempre Atualizado</h3>
                 <p className="text-muted-foreground">
-                  Quando um guideline e atualizado, nosso conteudo tambem e.
-                  Voce sempre estuda a versao mais recente.
+                  Quando um guideline é atualizado, nosso conteúdo também é.
+                  Você sempre estuda a versão mais recente.
                 </p>
               </div>
             </div>
@@ -377,7 +377,7 @@ export default function DashboardPage() {
                 ))}
               </div>
               <p className="text-muted-foreground mb-4 italic">
-                "A AGIR foi essencial na minha aprovacao. O conteudo e direto ao ponto e
+                "A AGIR foi essencial na minha aprovação. O conteúdo é direto ao ponto e
                 muito bem organizado. Recomendo demais!"
               </p>
               <div className="flex items-center gap-3">
@@ -386,7 +386,7 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className="font-medium text-sm text-foreground">Dra. Marina C.</p>
-                  <p className="text-xs text-muted-foreground">Aprovada em Clinica Medica - USP</p>
+                  <p className="text-xs text-muted-foreground">Aprovada em Clínica Médica - USP</p>
                 </div>
               </div>
             </Card>
@@ -509,24 +509,24 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* O que esta incluso */}
+        {/* O que está incluso */}
         <Card className="border-2 border-primary/20 bg-card">
           <CardHeader className="text-center pb-2">
             <Badge className="w-fit mx-auto mb-2" variant="outline">
               <Shield className="w-3 h-3 mr-1" />
               Garantia de Qualidade
             </Badge>
-            <CardTitle className="text-2xl font-serif">O que esta incluso na assinatura?</CardTitle>
+            <CardTitle className="text-2xl font-serif">O que está incluso na assinatura?</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
               {[
                 'Acesso a todos os guidelines da plataforma',
-                'Atualizacoes automaticas de conteudo',
+                'Atualizações automáticas de conteúdo',
                 'Novos cursos adicionados regularmente',
                 'Acesso pelo computador e celular',
                 'Suporte por email',
-                'Certificados de conclusao',
+                'Certificados de conclusão',
                 'Marcacao de progresso',
                 'Cancelamento a qualquer momento'
               ].map((item, i) => (
