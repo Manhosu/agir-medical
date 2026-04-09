@@ -186,13 +186,13 @@ export default function CoursesListScreen() {
         entering={FadeIn.delay(500).duration(400)}
         style={[styles.emptyTitle, { color: colors.text }]}
       >
-        Nenhum curso disponivel
+        Nenhum curso disponível
       </Animated.Text>
       <Animated.Text
         entering={FadeIn.delay(600).duration(400)}
         style={[styles.emptyDescription, { color: colors.textSecondary }]}
       >
-        Em breve teremos novos cursos para voce
+        Em breve teremos novos cursos para você
       </Animated.Text>
     </Animated.View>
   )
@@ -213,7 +213,7 @@ export default function CoursesListScreen() {
         style={[styles.headerSubtitle, { color: colors.textSecondary }]}
       >
         {hasActiveSubscription
-          ? 'Acesse todos os cursos disponiveis'
+          ? 'Acesse todos os cursos disponíveis'
           : 'Assine para ter acesso completo'}
       </Animated.Text>
 
@@ -231,10 +231,10 @@ export default function CoursesListScreen() {
           >
             <View style={styles.subscriptionBannerContent}>
               <Text style={[styles.subscriptionBannerTitle, { color: colors.primaryForeground }]}>
-                Desbloqueie todo o conteudo
+                Desbloqueie todo o conteúdo
               </Text>
               <Text style={[styles.subscriptionBannerText, { color: colors.primaryForeground }]}>
-                Assine agora e tenha acesso completo ao metodo A.G.I.R.
+                Assine agora e tenha acesso completo ao método A.G.I.R.
               </Text>
             </View>
             <Text style={[styles.subscriptionBannerArrow, { color: colors.primaryForeground }]}>→</Text>

@@ -41,11 +41,11 @@ const openPlansPage = async () => {
     if (canOpen) {
       await Linking.openURL(URLS.PLANS)
     } else {
-      Alert.alert('Erro', 'Nao foi possivel abrir o navegador.')
+      Alert.alert('Erro', 'Não foi possível abrir o navegador.')
     }
   } catch (error) {
     console.error('Error opening plans URL:', error)
-    Alert.alert('Erro', 'Nao foi possivel abrir a pagina de planos.')
+    Alert.alert('Erro', 'Não foi possível abrir a página de planos.')
   }
 }
 
@@ -111,7 +111,7 @@ function LessonCard({
         activeOpacity={1}
         accessibilityRole="button"
         accessibilityLabel={`Aula ${index + 1}: ${lesson.title}`}
-        accessibilityHint={lesson.progress?.is_completed ? 'Aula concluida. Toque para revisar' : 'Toque para abrir a aula'}
+        accessibilityHint={lesson.progress?.is_completed ? 'Aula concluída. Toque para revisar' : 'Toque para abrir a aula'}
       >
         <View
           style={[
@@ -197,8 +197,8 @@ export default function CourseDetailScreen() {
   const handleLessonPress = (lesson: LessonWithProgress) => {
     if (!hasActiveSubscription) {
       Alert.alert(
-        'Assinatura Necessaria',
-        'Voce precisa de uma assinatura ativa para acessar o conteudo completo do Programa A.G.I.R.',
+        'Assinatura Necessária',
+        'Você precisa de uma assinatura ativa para acessar o conteúdo completo do Programa A.G.I.R.',
         [
           { text: 'Cancelar', style: 'cancel' },
           {
@@ -236,7 +236,7 @@ export default function CourseDetailScreen() {
       <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
         <Animated.Text entering={FadeIn.duration(400)} style={styles.errorIcon}>⚠️</Animated.Text>
         <Animated.Text entering={FadeIn.delay(200).duration(400)} style={[styles.errorText, { color: colors.textSecondary }]}>
-          Curso nao encontrado
+          Curso não encontrado
         </Animated.Text>
       </View>
     )
@@ -312,7 +312,7 @@ export default function CourseDetailScreen() {
               entering={FadeInUp.delay(300).duration(400)}
               style={[styles.lessonsTitle, { color: colors.text, marginBottom: 12 }]}
             >
-              Tipo de Conteudo
+              Tipo de Conteúdo
             </Animated.Text>
 
             <Animated.View entering={FadeInUp.delay(320).duration(500).springify()}>
@@ -321,8 +321,8 @@ export default function CourseDetailScreen() {
                 onPress={() => {
                   if (!hasActiveSubscription) {
                     Alert.alert(
-                      'Assinatura Necessaria',
-                      'Voce precisa de uma assinatura ativa para acessar o conteudo.',
+                      'Assinatura Necessária',
+                      'Você precisa de uma assinatura ativa para acessar o conteúdo.',
                       [
                         { text: 'Cancelar', style: 'cancel' },
                         { text: 'Assinar Agora', onPress: openPlansPage },
@@ -358,8 +358,8 @@ export default function CourseDetailScreen() {
                 onPress={() => {
                   if (!hasActiveSubscription) {
                     Alert.alert(
-                      'Assinatura Necessaria',
-                      'Voce precisa de uma assinatura ativa para acessar o conteudo.',
+                      'Assinatura Necessária',
+                      'Você precisa de uma assinatura ativa para acessar o conteúdo.',
                       [
                         { text: 'Cancelar', style: 'cancel' },
                         { text: 'Assinar Agora', onPress: openPlansPage },
@@ -401,7 +401,7 @@ export default function CourseDetailScreen() {
             >
               <Text style={styles.warningIcon}>🔒</Text>
               <View style={styles.warningInfo}>
-                <Text style={[styles.warningTitle, { color: colors.text }]}>Assinatura Necessaria</Text>
+                <Text style={[styles.warningTitle, { color: colors.text }]}>Assinatura Necessária</Text>
                 <Text style={[styles.warningText, { color: colors.textSecondary }]}>
                   Toque aqui para assinar e liberar o conteudo
                 </Text>

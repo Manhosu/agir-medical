@@ -211,13 +211,13 @@ export default function DashboardScreen() {
       {/* Stats Grid */}
       <View style={styles.statsGrid}>
         <StatCard
-          label="Cursos Disponiveis"
+          label="Cursos Disponíveis"
           value={stats.availableCourses}
           index={0}
           colors={colors}
         />
         <StatCard
-          label="Aulas Concluidas"
+          label="Aulas Concluídas"
           value={`${stats.completedLessons}/${stats.totalLessons}`}
           index={1}
           colors={colors}
@@ -244,7 +244,7 @@ export default function DashboardScreen() {
         entering={FadeIn.delay(700).duration(400)}
         style={[styles.sectionTitle, { color: colors.text }]}
       >
-        Acesso Rapido
+        Acesso Rápido
       </Animated.Text>
 
       <AnimatedTouchable

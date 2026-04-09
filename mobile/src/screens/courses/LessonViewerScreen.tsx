@@ -121,7 +121,7 @@ export default function LessonViewerScreen() {
     if (!hasActiveSubscription && !isLoading) {
       Alert.alert(
         'Acesso Negado',
-        'Voce precisa de uma assinatura ativa para acessar o conteudo.',
+        'Você precisa de uma assinatura ativa para acessar o conteúdo.',
         [{ text: 'OK', onPress: () => navigation.goBack() }],
       )
     }
@@ -149,7 +149,7 @@ export default function LessonViewerScreen() {
 
       // Carregar conteudo
       const contentData = await fetchLessonContent(lessonId)
-      setContent(contentData?.content_html || '<p>Conteudo nao disponivel.</p>')
+      setContent(contentData?.content_html || '<p>Conteúdo não disponível.</p>')
 
       // Carregar todas as aulas do curso para navegacao
       const { data: allLessonsData } = await supabase
@@ -178,7 +178,7 @@ export default function LessonViewerScreen() {
       }
     } catch (error) {
       console.error('Error loading lesson:', error)
-      Alert.alert('Erro', 'Erro ao carregar aula')
+      Alert.alert('Erro', 'Erro ao carregar a aula')
     } finally {
       setIsLoading(false)
     }
@@ -221,7 +221,7 @@ export default function LessonViewerScreen() {
       await saveProgress(user.id, lessonId, 100)
       setDisplayProgress(100)
       maxProgressRef.current = 100
-      Alert.alert('Sucesso', 'Aula marcada como concluida!')
+      Alert.alert('Sucesso', 'Aula marcada como concluída!')
     }
   }
 
@@ -403,7 +403,7 @@ export default function LessonViewerScreen() {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Carregando conteudo...</Text>
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Carregando conteúdo...</Text>
       </View>
     )
   }
@@ -447,7 +447,7 @@ export default function LessonViewerScreen() {
           onPress={markAsCompleted}
           disabled={displayProgress < 90 || displayProgress >= 100}>
           <Text style={[styles.completeButtonText, { color: displayProgress >= 90 ? colors.text : colors.textTertiary }]}>
-            {displayProgress >= 100 ? '✓ Concluida' : displayProgress >= 90 ? 'Concluir' : `Leia ate o fim (${displayProgress}%)`}
+            {displayProgress >= 100 ? '✓ Concluída' : displayProgress >= 90 ? 'Concluir' : `Leia até o fim (${displayProgress}%)`}
           </Text>
         </TouchableOpacity>
       </View>

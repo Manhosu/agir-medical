@@ -45,14 +45,14 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
       await sendOtp(email.trim().toLowerCase())
       setStep('otp')
       Alert.alert(
-        'Codigo Enviado',
-        'Enviamos um codigo de 8 digitos para seu email. Verifique tambem a pasta de spam.',
+        'Código Enviado',
+        'Enviamos um código de 8 dígitos para seu email. Verifique também a pasta de spam.',
       )
       setTimeout(() => otpInputRef.current?.focus(), 500)
     } catch (error: any) {
       Alert.alert(
         'Erro',
-        error.message || 'Erro ao enviar codigo. Tente novamente.',
+        error.message || 'Erro ao enviar código. Tente novamente.',
       )
     } finally {
       setIsSubmitting(false)
@@ -61,7 +61,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
 
   const handleVerifyOtp = async () => {
     if (!otpCode || otpCode.length !== 8) {
-      Alert.alert('Erro', 'Digite o codigo de 8 digitos')
+      Alert.alert('Erro', 'Digite o código de 8 dígitos')
       return
     }
 
@@ -73,8 +73,8 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
       Alert.alert(
         'Erro no Login',
         error.message === 'Token has expired or is invalid'
-          ? 'Codigo invalido ou expirado. Tente novamente.'
-          : error.message || 'Erro ao verificar codigo',
+          ? 'Código inválido ou expirado. Tente novamente.'
+          : error.message || 'Erro ao verificar código',
       )
       setIsSubmitting(false)
     }
@@ -224,7 +224,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
           entering={FadeIn.delay(step === 'email' ? 1000 : 400).duration(500)}
           style={styles.footer}
         >
-          <Text style={[styles.footerText, { color: colors.textSecondary }]}>Nao tem uma conta?</Text>
+          <Text style={[styles.footerText, { color: colors.textSecondary }]}>Não tem uma conta?</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Register')}
             disabled={isSubmitting}

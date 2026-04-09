@@ -40,7 +40,7 @@ export default function ProfileScreen() {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
 
     if (!permissionResult.granted) {
-      Alert.alert('Permissao necessaria', 'Precisamos de acesso a sua galeria para selecionar uma foto.')
+      Alert.alert('Permissão necessária', 'Precisamos de acesso à sua galeria para selecionar uma foto.')
       return
     }
 
@@ -221,7 +221,7 @@ export default function ProfileScreen() {
         style={styles.section}
       >
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Informacoes Pessoais</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Informações Pessoais</Text>
           {!isEditing && (
             <TouchableOpacity
               onPress={() => setIsEditing(true)}
@@ -246,7 +246,7 @@ export default function ProfileScreen() {
               />
             ) : (
               <Text style={[styles.fieldValue, { color: colors.text }]}>
-                {profile?.full_name || 'Nao informado'}
+                {profile?.full_name || 'Não informado'}
               </Text>
             )}
           </View>
@@ -274,7 +274,7 @@ export default function ProfileScreen() {
               />
             ) : (
               <Text style={[styles.fieldValue, { color: colors.text }]}>
-                {profile?.phone || 'Nao informado'}
+                {profile?.phone || 'Não informado'}
               </Text>
             )}
           </View>
@@ -320,7 +320,7 @@ export default function ProfileScreen() {
         entering={FadeInUp.delay(600).duration(500)}
         style={styles.section}
       >
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Preferencias</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Preferências</Text>
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.field}>
             <ThemeToggle />
@@ -361,7 +361,7 @@ export default function ProfileScreen() {
           style={styles.footerLogo}
           resizeMode="contain"
         />
-        <Text style={[styles.footerVersion, { color: colors.textMuted }]}>Versao 1.0.0</Text>
+        <Text style={[styles.footerVersion, { color: colors.textMuted }]}>Versão 1.0.0</Text>
       </Animated.View>
     </ScrollView>
   )
