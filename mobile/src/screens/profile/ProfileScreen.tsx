@@ -195,7 +195,7 @@ export default function ProfileScreen() {
           entering={FadeInUp.delay(400).duration(400)}
           style={[styles.name, { color: colors.text }]}
         >
-          {profile?.full_name || 'Usuario'}
+          {profile?.full_name || 'Usuário'}
         </Animated.Text>
         <Animated.Text
           entering={FadeIn.delay(500).duration(400)}

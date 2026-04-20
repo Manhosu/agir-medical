@@ -125,15 +125,15 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
             entering={FadeIn.delay(400).duration(400)}
             style={[styles.title, { color: colors.text }]}
           >
-            {step === 'email' ? 'Entrar' : 'Verificar Codigo'}
+            {step === 'email' ? 'Entrar' : 'Verificar Código'}
           </Animated.Text>
           <Animated.Text
             entering={FadeIn.delay(500).duration(400)}
             style={[styles.description, { color: colors.textSecondary }]}
           >
             {step === 'email'
-              ? 'Digite seu email para receber um codigo de acesso'
-              : `Enviamos um codigo para ${email}`}
+              ? 'Digite seu email para receber um código de acesso'
+              : `Enviamos um código para ${email}`}
           </Animated.Text>
 
           {step === 'email' ? (
@@ -152,7 +152,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
                 keyboardType="email-address"
                 editable={!isSubmitting}
                 accessibilityLabel="Campo de email"
-                accessibilityHint="Digite seu email para receber o codigo de acesso"
+                accessibilityHint="Digite seu email para receber o código de acesso"
               />
             </Animated.View>
           ) : (
@@ -160,7 +160,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
               entering={FadeInUp.delay(100).duration(400)}
               style={styles.inputGroup}
             >
-              <Text style={[styles.label, { color: colors.text }]}>Codigo de Acesso</Text>
+              <Text style={[styles.label, { color: colors.text }]}>Código de Acesso</Text>
               <TextInput
                 ref={otpInputRef}
                 style={[styles.otpInput, { backgroundColor: colors.border, color: colors.text, borderColor: colors.textTertiary }]}
@@ -171,8 +171,8 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
                 keyboardType="number-pad"
                 maxLength={8}
                 editable={!isSubmitting}
-                accessibilityLabel="Campo de codigo OTP"
-                accessibilityHint="Digite o codigo de 8 digitos enviado para seu email"
+                accessibilityLabel="Campo de código OTP"
+                accessibilityHint="Digite o código de 8 dígitos enviado para seu email"
               />
             </Animated.View>
           )}
@@ -190,13 +190,13 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
             onPressOut={onPressOut}
             disabled={isSubmitting}
             accessibilityRole="button"
-            accessibilityLabel={step === 'email' ? 'Enviar codigo' : 'Verificar codigo'}
-            accessibilityHint={step === 'email' ? 'Toque para enviar o codigo de acesso' : 'Toque para verificar o codigo'}>
+            accessibilityLabel={step === 'email' ? 'Enviar código' : 'Verificar código'}
+            accessibilityHint={step === 'email' ? 'Toque para enviar o código de acesso' : 'Toque para verificar o codigo'}>
             {isSubmitting ? (
               <ActivityIndicator color={colors.primaryForeground} />
             ) : (
               <Text style={[styles.buttonText, { color: colors.primaryForeground }]}>
-                {step === 'email' ? 'Enviar Codigo de Acesso' : 'Verificar Codigo'}
+                {step === 'email' ? 'Enviar Código de Acesso' : 'Verificar Código'}
               </Text>
             )}
           </AnimatedTouchable>
@@ -214,7 +214,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
               <TouchableOpacity
                 onPress={handleSendOtp}
                 disabled={isSubmitting}>
-                <Text style={[styles.otpActionText, { color: colors.primary }]}>Reenviar codigo</Text>
+                <Text style={[styles.otpActionText, { color: colors.primary }]}>Reenviar código</Text>
               </TouchableOpacity>
             </Animated.View>
           )}

@@ -343,9 +343,9 @@ export default function CourseDetailScreen() {
                   <Text style={{ fontSize: 22 }}>⚡</Text>
                 </View>
                 <View style={styles.contentTypeInfo}>
-                  <Text style={[styles.contentTypeTitle, { color: colors.text }]}>Conduta Rapida</Text>
+                  <Text style={[styles.contentTypeTitle, { color: colors.text }]}>Conduta Rápida</Text>
                   <Text style={[styles.contentTypeSubtitle, { color: colors.textSecondary }]}>
-                    Guideline / Protocolo do Plantao
+                    Guideline / Protocolo do Plantão
                   </Text>
                 </View>
                 <Text style={[styles.lessonArrow, { color: colors.primary }]}>→</Text>
@@ -381,9 +381,9 @@ export default function CourseDetailScreen() {
                   <Text style={{ fontSize: 22 }}>📖</Text>
                 </View>
                 <View style={styles.contentTypeInfo}>
-                  <Text style={[styles.contentTypeTitle, { color: colors.text }]}>Fundamentacao Clinica</Text>
+                  <Text style={[styles.contentTypeTitle, { color: colors.text }]}>Fundamentação Clínica</Text>
                   <Text style={[styles.contentTypeSubtitle, { color: colors.textSecondary }]}>
-                    Conteudo Completo
+                    Conteúdo Completo
                   </Text>
                 </View>
                 <Text style={[styles.lessonArrow, { color: colors.textTertiary }]}>→</Text>
@@ -403,7 +403,7 @@ export default function CourseDetailScreen() {
               <View style={styles.warningInfo}>
                 <Text style={[styles.warningTitle, { color: colors.text }]}>Assinatura Necessária</Text>
                 <Text style={[styles.warningText, { color: colors.textSecondary }]}>
-                  Toque aqui para assinar e liberar o conteudo
+                  Toque aqui para assinar e liberar o conteúdo
                 </Text>
               </View>
               <Text style={[styles.warningArrow, { color: colors.primary }]}>→</Text>

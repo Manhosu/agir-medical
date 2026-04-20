@@ -186,13 +186,13 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
           entering={FadeIn.delay(900).duration(500)}
           style={styles.footer}
         >
-          <Text style={[styles.footerText, { color: colors.textSecondary }]}>Ja tem uma conta?</Text>
+          <Text style={[styles.footerText, { color: colors.textSecondary }]}>Já tem uma conta?</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
             disabled={isSubmitting}
             accessibilityRole="button"
             accessibilityLabel="Entrar"
-            accessibilityHint="Ja tem conta? Toque para fazer login">
+            accessibilityHint="Já tem conta? Toque para fazer login">
             <Text style={[styles.footerLink, { color: colors.primary }]}>Entrar</Text>
           </TouchableOpacity>
         </Animated.View>
