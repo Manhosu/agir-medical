@@ -230,7 +230,7 @@ export default function DashboardScreen() {
           progress={stats.overallProgress}
         />
         <StatCard
-          label="Status da Assinatura"
+          label="Status da Conta"
           value=""
           index={3}
           colors={colors}

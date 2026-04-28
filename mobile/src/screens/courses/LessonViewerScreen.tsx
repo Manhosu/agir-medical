@@ -116,12 +116,12 @@ export default function LessonViewerScreen() {
   //   }
   // }, [])
 
-  // Verificar assinatura
+  // Verificar acesso
   useEffect(() => {
     if (!hasActiveSubscription && !isLoading) {
       Alert.alert(
-        'Acesso Negado',
-        'Você precisa de uma assinatura ativa para acessar o conteúdo.',
+        'Acesso indisponível',
+        'Sua conta não possui acesso ativo. Entre em contato com o suporte: contato@programa-agir.com.br',
         [{ text: 'OK', onPress: () => navigation.goBack() }],
       )
     }

@@ -210,7 +210,7 @@ export default function ProfileScreen() {
             hasActiveSubscription ? styles.badgeActive : styles.badgeInactive,
           ]}>
           <Text style={[styles.badgeText, { color: colors.text }]}>
-            {hasActiveSubscription ? 'Assinante' : 'Sem Assinatura'}
+            {hasActiveSubscription ? 'Conta Ativa' : 'Conta Inativa'}
           </Text>
         </Animated.View>
       </Animated.View>

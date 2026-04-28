@@ -8,7 +8,6 @@ import {
   RefreshControl,
   Image,
   ActivityIndicator,
-  Linking,
 } from 'react-native'
 import Animated, {
   FadeIn,
@@ -28,18 +27,8 @@ import { useAuthStore } from '../../stores/authStore'
 import { useCourses } from '../../hooks/useCourses'
 import { useTheme } from '../../hooks/useTheme'
 import type { CoursesScreenProps } from '../../navigation/types'
-import { URLS } from '../../config/urls'
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
-
-// Funcao para abrir pagina de planos no navegador
-const openPlansPage = async () => {
-  try {
-    await Linking.openURL(URLS.PLANS)
-  } catch (error) {
-    console.error('Error opening plans URL:', error)
-  }
-}
 
 // Animated Progress Bar for Course Cards
 function AnimatedCourseProgress({ progress, color }: { progress: number, color: string }) {
@@ -214,32 +203,24 @@ export default function CoursesListScreen() {
       >
         {hasActiveSubscription
           ? 'Acesse todos os cursos disponíveis'
-          : 'Assine para ter acesso completo'}
+          : 'Sua conta não possui acesso ativo'}
       </Animated.Text>
 
-      {/* Subscription CTA Banner */}
+      {/* Info card para conta sem acesso */}
       {!hasActiveSubscription && (
-        <TouchableOpacity
-          onPress={openPlansPage}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Assinar plano"
-          accessibilityHint="Toque para ver os planos de assinatura">
-          <Animated.View
-            entering={FadeInUp.delay(400).duration(500).springify()}
-            style={[styles.subscriptionBanner, { backgroundColor: colors.primary }]}
-          >
-            <View style={styles.subscriptionBannerContent}>
-              <Text style={[styles.subscriptionBannerTitle, { color: colors.primaryForeground }]}>
-                Desbloqueie todo o conteúdo
-              </Text>
-              <Text style={[styles.subscriptionBannerText, { color: colors.primaryForeground }]}>
-                Assine agora e tenha acesso completo ao método A.G.I.R.
-              </Text>
-            </View>
-            <Text style={[styles.subscriptionBannerArrow, { color: colors.primaryForeground }]}>→</Text>
-          </Animated.View>
-        </TouchableOpacity>
+        <Animated.View
+          entering={FadeInUp.delay(400).duration(500).springify()}
+          style={[styles.infoBanner, { backgroundColor: colors.card, borderColor: colors.border }]}
+        >
+          <View style={styles.subscriptionBannerContent}>
+            <Text style={[styles.subscriptionBannerTitle, { color: colors.text }]}>
+              Acesso indisponível
+            </Text>
+            <Text style={[styles.subscriptionBannerText, { color: colors.textSecondary }]}>
+              Para ativar seu acesso, entre em contato com o suporte: contato@programa-agir.com.br
+            </Text>
+          </View>
+        </Animated.View>
       )}
     </Animated.View>
   )
@@ -318,12 +299,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 4,
   },
-  subscriptionBanner: {
+  infoBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 12,
     padding: 16,
     marginTop: 16,
+    borderWidth: 1,
   },
   subscriptionBannerContent: {
     flex: 1,
@@ -336,11 +318,6 @@ const styles = StyleSheet.create({
   subscriptionBannerText: {
     fontSize: 13,
     opacity: 0.9,
-  },
-  subscriptionBannerArrow: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginLeft: 12,
   },
   courseCard: {
     borderRadius: 16,

@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
-  Linking,
 } from 'react-native'
 import Animated, {
   FadeIn,
@@ -30,24 +29,8 @@ import { useCourses } from '../../hooks/useCourses'
 import { useTheme } from '../../hooks/useTheme'
 import type { CoursesScreenProps } from '../../navigation/types'
 import type { Course, Lesson, UserProgress } from '../../types/database'
-import { URLS } from '../../config/urls'
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
-
-// Funcao para abrir pagina de planos no navegador
-const openPlansPage = async () => {
-  try {
-    const canOpen = await Linking.canOpenURL(URLS.PLANS)
-    if (canOpen) {
-      await Linking.openURL(URLS.PLANS)
-    } else {
-      Alert.alert('Erro', 'Não foi possível abrir o navegador.')
-    }
-  } catch (error) {
-    console.error('Error opening plans URL:', error)
-    Alert.alert('Erro', 'Não foi possível abrir a página de planos.')
-  }
-}
 
 interface LessonWithProgress extends Lesson {
   progress?: UserProgress | null
@@ -197,16 +180,9 @@ export default function CourseDetailScreen() {
   const handleLessonPress = (lesson: LessonWithProgress) => {
     if (!hasActiveSubscription) {
       Alert.alert(
-        'Assinatura Necessária',
-        'Você precisa de uma assinatura ativa para acessar o conteúdo completo do Programa A.G.I.R.',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          {
-            text: 'Assinar Agora',
-            onPress: openPlansPage,
-            style: 'default',
-          },
-        ],
+        'Acesso indisponível',
+        'Sua conta não possui acesso ativo. Entre em contato com o suporte: contato@programa-agir.com.br',
+        [{ text: 'Entendi', style: 'default' }],
       )
       return
     }
@@ -321,12 +297,9 @@ export default function CourseDetailScreen() {
                 onPress={() => {
                   if (!hasActiveSubscription) {
                     Alert.alert(
-                      'Assinatura Necessária',
-                      'Você precisa de uma assinatura ativa para acessar o conteúdo.',
-                      [
-                        { text: 'Cancelar', style: 'cancel' },
-                        { text: 'Assinar Agora', onPress: openPlansPage },
-                      ],
+                      'Acesso indisponível',
+                      'Sua conta não possui acesso ativo. Entre em contato com o suporte: contato@programa-agir.com.br',
+                      [{ text: 'Entendi', style: 'default' }],
                     )
                     return
                   }
@@ -358,12 +331,9 @@ export default function CourseDetailScreen() {
                 onPress={() => {
                   if (!hasActiveSubscription) {
                     Alert.alert(
-                      'Assinatura Necessária',
-                      'Você precisa de uma assinatura ativa para acessar o conteúdo.',
-                      [
-                        { text: 'Cancelar', style: 'cancel' },
-                        { text: 'Assinar Agora', onPress: openPlansPage },
-                      ],
+                      'Acesso indisponível',
+                      'Sua conta não possui acesso ativo. Entre em contato com o suporte: contato@programa-agir.com.br',
+                      [{ text: 'Entendi', style: 'default' }],
                     )
                     return
                   }
@@ -392,23 +362,20 @@ export default function CourseDetailScreen() {
           </>
         )}
 
-        {/* Subscription Warning */}
+        {/* Acesso indisponível - apenas info */}
         {!hasActiveSubscription && (
-          <TouchableOpacity onPress={openPlansPage} activeOpacity={0.8}>
-            <Animated.View
-              entering={FadeIn.delay(350).duration(500).springify()}
-              style={[styles.warningCard, { backgroundColor: `${colors.primary}15`, borderColor: `${colors.primary}50` }]}
-            >
-              <Text style={styles.warningIcon}>🔒</Text>
-              <View style={styles.warningInfo}>
-                <Text style={[styles.warningTitle, { color: colors.text }]}>Assinatura Necessária</Text>
-                <Text style={[styles.warningText, { color: colors.textSecondary }]}>
-                  Toque aqui para assinar e liberar o conteúdo
-                </Text>
-              </View>
-              <Text style={[styles.warningArrow, { color: colors.primary }]}>→</Text>
-            </Animated.View>
-          </TouchableOpacity>
+          <Animated.View
+            entering={FadeIn.delay(350).duration(500).springify()}
+            style={[styles.warningCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+          >
+            <Text style={styles.warningIcon}>🔒</Text>
+            <View style={styles.warningInfo}>
+              <Text style={[styles.warningTitle, { color: colors.text }]}>Acesso indisponível</Text>
+              <Text style={[styles.warningText, { color: colors.textSecondary }]}>
+                Para ativar seu acesso, entre em contato com o suporte:{'\n'}contato@programa-agir.com.br
+              </Text>
+            </View>
+          </Animated.View>
         )}
 
         {/* Lessons List */}
