@@ -239,6 +239,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   // Enviar OTP por email
   sendOtp: async (email: string) => {
+    // Bypass para conta de revisao Apple - nao envia email real
+    if (email.toLowerCase().trim() === 'apple.review@programa-agir.com.br') {
+      return
+    }
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
     })
@@ -249,6 +254,22 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   // Verificar OTP
   verifyOtp: async (email: string, token: string) => {
     set({ isLoading: true })
+
+    const normalizedEmail = email.toLowerCase().trim()
+
+    // Bypass para conta de revisao Apple
+    if (normalizedEmail === 'apple.review@programa-agir.com.br' && token === '123456') {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password: 'AppleReview2026!',
+      })
+
+      if (error) {
+        set({ isLoading: false })
+        throw error
+      }
+      return
+    }
 
     const { error } = await supabase.auth.verifyOtp({
       email,
