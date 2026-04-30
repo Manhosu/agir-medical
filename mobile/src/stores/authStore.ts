@@ -102,6 +102,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             3000
           )
 
+          // Override de assinatura para conta de revisao Apple
+          // Garante que o reviewer sempre tenha acesso, mesmo se o fetch falhar/timeout
+          const isAppleReviewer = session.user.email?.toLowerCase() === 'apple.review@programa-agir.com.br'
+
           set({
             user: session.user,
             profile,
@@ -109,7 +113,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             isLoading: false,
             isAuthenticated: true,
             isAdmin: profile?.role === 'admin',
-            hasActiveSubscription: !!subscriptionResult?.data,
+            hasActiveSubscription: isAppleReviewer || !!subscriptionResult?.data,
           })
         } else if (event === 'SIGNED_OUT') {
           set({
@@ -170,6 +174,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           3000
         )
 
+        // Override de assinatura para conta de revisao Apple
+        const isAppleReviewer = session.user.email?.toLowerCase() === 'apple.review@programa-agir.com.br'
+
         set({
           user: session.user,
           profile,
@@ -177,7 +184,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           isLoading: false,
           isAuthenticated: true,
           isAdmin: profile?.role === 'admin',
-          hasActiveSubscription: !!subscriptionResult?.data,
+          hasActiveSubscription: isAppleReviewer || !!subscriptionResult?.data,
           initialized: true,
         })
       } else {
@@ -259,15 +266,25 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
     // Bypass para conta de revisao Apple
     if (normalizedEmail === 'apple.review@programa-agir.com.br' && token === '123456') {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('[Apple Reviewer Bypass] Triggered for', normalizedEmail)
+
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password: 'AppleReview2026!',
       })
 
       if (error) {
+        console.error('[Apple Reviewer Bypass] signInWithPassword failed:', error.message, 'status:', error.status)
         set({ isLoading: false })
-        throw error
+        throw new Error('Erro ao autenticar conta de revisao: ' + error.message)
       }
+
+      console.log('[Apple Reviewer Bypass] signInWithPassword OK, user:', data.user?.id)
+
+      // Aguardar onAuthStateChange processar (fetch de profile + subscription)
+      await new Promise(resolve => setTimeout(resolve, 800))
+
+      console.log('[Apple Reviewer Bypass] Login flow complete')
       return
     }
 
