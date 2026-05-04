@@ -60,9 +60,8 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   }
 
   const handleVerifyOtp = async () => {
-    // Aceitar 6 ou 8 digitos: 6 = bypass de revisao Apple, 8 = OTP padrao do Supabase
-    if (!otpCode || (otpCode.length !== 8 && otpCode.length !== 6)) {
-      Alert.alert('Erro', 'Digite o código de acesso')
+    if (!otpCode || otpCode.length !== 8) {
+      Alert.alert('Erro', 'Digite o código de 8 dígitos')
       return
     }
 

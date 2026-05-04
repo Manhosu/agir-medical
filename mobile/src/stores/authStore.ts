@@ -264,8 +264,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
     const normalizedEmail = email.toLowerCase().trim()
 
-    // Bypass para conta de revisao Apple
-    if (normalizedEmail === 'apple.review@programa-agir.com.br' && token === '123456') {
+    // Bypass para conta de revisao Apple (8 digitos para padronizar com o sistema)
+    if (normalizedEmail === 'apple.review@programa-agir.com.br' && token === '12345678') {
       console.log('[Apple Reviewer Bypass] Triggered for', normalizedEmail)
 
       const { data, error } = await supabase.auth.signInWithPassword({
