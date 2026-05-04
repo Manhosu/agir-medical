@@ -33,8 +33,8 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
   const floatingStyle = useFloatingAnimation(8, 4000)
 
   const handleRegister = async () => {
-    if (!fullName || !email || !phone) {
-      Alert.alert('Erro', 'Preencha todos os campos')
+    if (!fullName || !email) {
+      Alert.alert('Erro', 'Preencha nome e email')
       return
     }
 
@@ -43,7 +43,8 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
     try {
       // Generate random password (Supabase requires one)
       const randomPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2) + 'Aa1!'
-      await signUp(email.trim().toLowerCase(), randomPassword, fullName.trim(), phone.trim())
+      const phoneTrimmed = phone.trim()
+      await signUp(email.trim().toLowerCase(), randomPassword, fullName.trim(), phoneTrimmed || undefined)
       Alert.alert(
         'Conta Criada',
         'Bem-vindo ao AGIR! Sua conta foi criada com sucesso.',
@@ -147,7 +148,7 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
             entering={FadeInUp.delay(700).duration(400)}
             style={styles.inputGroup}
           >
-            <Text style={[styles.label, { color: colors.text }]}>Telefone</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Telefone (opcional)</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.border, color: colors.text, borderColor: colors.textTertiary }]}
               placeholder="(00) 00000-0000"
