@@ -129,6 +129,65 @@ export default function ProfileScreen() {
     ])
   }
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Excluir Conta',
+      'Esta ação é permanente e irá apagar todos os seus dados, incluindo perfil, progresso e histórico. Não é possível recuperar a conta após a exclusão.\n\nDeseja realmente excluir sua conta?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir Conta',
+          style: 'destructive',
+          onPress: confirmDeleteAccount,
+        },
+      ],
+    )
+  }
+
+  const confirmDeleteAccount = () => {
+    Alert.alert(
+      'Confirmação Final',
+      'Tem certeza absoluta? Esta ação não pode ser desfeita.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sim, excluir definitivamente',
+          style: 'destructive',
+          onPress: executeDeleteAccount,
+        },
+      ],
+    )
+  }
+
+  const executeDeleteAccount = async () => {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData.session?.access_token
+
+      if (!token) {
+        Alert.alert('Erro', 'Sessão expirada. Faça login novamente.')
+        return
+      }
+
+      const { error } = await supabase.functions.invoke('delete-account', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      if (error) {
+        Alert.alert('Erro', error.message || 'Não foi possível excluir a conta. Tente novamente ou entre em contato pelo email franciscodazzi@hotmail.com.')
+        return
+      }
+
+      Alert.alert(
+        'Conta Excluída',
+        'Sua conta e todos os dados foram removidos permanentemente.',
+        [{ text: 'OK', onPress: () => signOut() }],
+      )
+    } catch (err: any) {
+      Alert.alert('Erro', err.message || 'Erro ao excluir conta')
+    }
+  }
+
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -334,21 +393,36 @@ export default function ProfileScreen() {
         style={styles.section}
       >
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Conta</Text>
-        <AnimatedTouchable
-          style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }, cardStyle]}
+        <TouchableOpacity
+          style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border, marginBottom: 12 }]}
           onPress={handleLogout}
-          onPressIn={onCardPressIn}
-          onPressOut={onCardPressOut}
-          activeOpacity={1}
+          activeOpacity={0.7}
           accessibilityRole="button"
           accessibilityLabel="Sair da conta"
           accessibilityHint="Toque para desconectar da sua conta"
         >
           <View style={styles.actionItem}>
-            <Text style={[styles.actionItemText, { color: colors.destructive }]}>Sair da Conta</Text>
+            <Text style={[styles.actionItemText, { color: colors.text }]}>Sair da Conta</Text>
             <Text style={[styles.actionItemIcon, { color: colors.textMuted }]}>→</Text>
           </View>
-        </AnimatedTouchable>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.card, { backgroundColor: colors.card, borderColor: colors.destructive }]}
+          onPress={handleDeleteAccount}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Excluir conta"
+          accessibilityHint="Toque para excluir sua conta permanentemente"
+        >
+          <View style={styles.actionItem}>
+            <Text style={[styles.actionItemText, { color: colors.destructive }]}>Excluir Conta</Text>
+            <Text style={[styles.actionItemIcon, { color: colors.destructive }]}>→</Text>
+          </View>
+        </TouchableOpacity>
+        <Text style={[styles.deleteHint, { color: colors.textMuted }]}>
+          A exclusão é permanente e remove todos os seus dados.
+        </Text>
       </Animated.View>
 
       {/* App Info */}
@@ -527,6 +601,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
+  },
+  deleteHint: {
+    fontSize: 12,
+    marginTop: 8,
+    textAlign: 'center',
   },
   actionItemText: {
     fontSize: 16,

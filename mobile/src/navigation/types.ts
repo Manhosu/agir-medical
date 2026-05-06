@@ -5,7 +5,6 @@ import type { CompositeScreenProps } from '@react-navigation/native'
 // Tipos das rotas de autenticação
 export type AuthStackParamList = {
   Login: undefined
-  Register: undefined
 }
 
 // Tipos das rotas principais (tabs)

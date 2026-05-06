@@ -224,15 +224,12 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
           entering={FadeIn.delay(step === 'email' ? 1000 : 400).duration(500)}
           style={styles.footer}
         >
-          <Text style={[styles.footerText, { color: colors.textSecondary }]}>Não tem uma conta?</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Register')}
-            disabled={isSubmitting}
-            accessibilityRole="button"
-            accessibilityLabel="Criar conta"
-            accessibilityHint="Toque para criar uma nova conta">
-            <Text style={[styles.footerLink, { color: colors.primary }]}>Criar conta</Text>
-          </TouchableOpacity>
+          <Text style={[styles.footerInfo, { color: colors.textSecondary }]}>
+            Acesso exclusivo para assinantes.
+          </Text>
+          <Text style={[styles.footerInfo, { color: colors.textSecondary }]}>
+            Saiba mais em programa-agir.com.br
+          </Text>
         </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -337,17 +334,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
     marginTop: 24,
-    gap: 8,
+    gap: 4,
   },
-  footerText: {
-    fontSize: 14,
-  },
-  footerLink: {
-    fontSize: 14,
-    fontWeight: '500',
+  footerInfo: {
+    fontSize: 13,
+    textAlign: 'center',
   },
 })
