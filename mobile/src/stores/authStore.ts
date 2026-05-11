@@ -246,13 +246,32 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   // Enviar OTP por email
   sendOtp: async (email: string) => {
+    const normalizedEmail = email.toLowerCase().trim()
+
     // Bypass para conta de revisao Apple - nao envia email real
-    if (email.toLowerCase().trim() === 'apple.review@programa-agir.com.br') {
+    if (normalizedEmail === 'apple.review@programa-agir.com.br') {
       return
     }
 
+    // Verificar se o email esta cadastrado antes de enviar OTP.
+    // Impede que signInWithOtp crie contas novas automaticamente
+    // (exigencia Apple Guideline 3.1.3(a) - Reader App).
+    const { data: exists, error: checkError } = await supabase.rpc(
+      'check_user_email_exists',
+      { email_input: normalizedEmail }
+    )
+
+    if (checkError) {
+      console.warn('check_user_email_exists error:', checkError.message)
+      // Em caso de erro na verificacao, prossegue normalmente para nao bloquear usuarios reais
+    } else if (!exists) {
+      throw new Error(
+        'Email não cadastrado. Para acessar o A.G.I.R., crie sua conta em programa-agir.com.br'
+      )
+    }
+
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: normalizedEmail,
     })
 
     if (error) throw error
