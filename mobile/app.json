@@ -34,6 +34,9 @@
       "newArchEnabled": false
     },
     "scheme": "agir",
+    "plugins": [
+      "./plugins/withAdiRegistration"
+    ],
     "extra": {
       "eas": {
         "projectId": "807544f0-4b3c-4f2a-8325-8a5957ce27ad"
