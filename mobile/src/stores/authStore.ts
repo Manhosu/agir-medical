@@ -17,7 +17,6 @@ interface AuthState {
 interface AuthActions {
   initialize: () => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, fullName?: string, phone?: string) => Promise<void>
   sendOtp: (email: string) => Promise<void>
   verifyOtp: (email: string, token: string) => Promise<void>
   signOut: () => Promise<void>
@@ -213,37 +212,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     // Nao setar isLoading false aqui - deixar o onAuthStateChange fazer
   },
 
-  // Cadastro
-  signUp: async (email: string, password: string, fullName?: string, phone?: string) => {
-    set({ isLoading: true })
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          phone: phone,
-        },
-      },
-    })
-
-    if (error) {
-      set({ isLoading: false })
-      throw error
-    }
-
-    // Save phone to profile after signup
-    if (phone && data.user) {
-      await supabase
-        .from('profiles')
-        .update({ phone })
-        .eq('id', data.user.id)
-    }
-
-    // Nao setar isLoading false aqui - deixar o onAuthStateChange fazer
-  },
-
   // Enviar OTP por email
   sendOtp: async (email: string) => {
     const normalizedEmail = email.toLowerCase().trim()
@@ -262,9 +230,12 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     )
 
     if (checkError) {
-      console.warn('check_user_email_exists error:', checkError.message)
-      // Em caso de erro na verificacao, prossegue normalmente para nao bloquear usuarios reais
-    } else if (!exists) {
+      // Falha segura: se nao conseguimos verificar, bloqueamos o OTP
+      // para evitar que signInWithOtp crie contas novas automaticamente
+      throw new Error('Não foi possível verificar o cadastro. Tente novamente.')
+    }
+
+    if (!exists) {
       throw new Error(
         'Email não cadastrado. Para acessar o A.G.I.R., crie sua conta em programa-agir.com.br'
       )
