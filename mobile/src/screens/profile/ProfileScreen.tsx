@@ -37,13 +37,9 @@ export default function ProfileScreen() {
   const floatingStyle = useFloatingAnimation(6, 3500)
 
   const handlePickImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
-
-    if (!permissionResult.granted) {
-      Alert.alert('Permissão necessária', 'Precisamos de acesso à sua galeria para selecionar uma foto.')
-      return
-    }
-
+    // Usa o Android Photo Picker (uso esporadico, sem permissao READ_MEDIA_IMAGES).
+    // launchImageLibraryAsync sem requisicao previa de permissao aciona o seletor
+    // do sistema, que nao requer permissao de leitura de midia.
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,

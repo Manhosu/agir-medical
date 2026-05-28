@@ -35,7 +35,8 @@
     },
     "scheme": "agir",
     "plugins": [
-      "./plugins/withAdiRegistration"
+      "./plugins/withAdiRegistration",
+      "./plugins/withRemoveMediaPermissions"
     ],
     "extra": {
       "eas": {
